@@ -19,15 +19,28 @@ DEBUG = os.getenv('DEBUG', 'True').lower() in ('true', '1', 't', 'yes')
 
 ALLOWED_HOSTS = [host.strip() for host in os.getenv('ALLOWED_HOSTS', '*').split(',') if host.strip()]
 if '*' not in ALLOWED_HOSTS:
-    for domain in ['.ngrok-free.app', '.ngrok.io', '.ngrok.app', '.trycloudflare.com', 'localhost', '127.0.0.1', 'testserver']:
+    tunnel_domains = [
+        '.ngrok-free.app',
+        '.ngrok-free.dev',
+        '.ngrok.io',
+        '.ngrok.app',
+        '.ngrok.dev',
+        '.trycloudflare.com',
+        'localhost',
+        '127.0.0.1',
+        'testserver',
+    ]
+    for domain in tunnel_domains:
         if domain not in ALLOWED_HOSTS:
             ALLOWED_HOSTS.append(domain)
 
 # CSRF Trusted Origins for public tunnels and local development
 CSRF_TRUSTED_ORIGINS = [
     'https://*.ngrok-free.app',
+    'https://*.ngrok-free.dev',
     'https://*.ngrok.io',
     'https://*.ngrok.app',
+    'https://*.ngrok.dev',
     'https://*.trycloudflare.com',
     'http://localhost:8000',
     'http://127.0.0.1:8000',
