@@ -33,3 +33,7 @@ theme_backup/
 *.swp
 *.swo
 .DS_Store
+
+# Binaries & Tunnel executables
+*.exe
+*.zip

@@ -17,9 +17,24 @@ SECRET_KEY = os.getenv(
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG', 'True').lower() in ('true', '1', 't', 'yes')
 
-ALLOWED_HOSTS = [host.strip() for host in os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1,[::1]').split(',') if host.strip()]
-if 'testserver' not in ALLOWED_HOSTS:
-    ALLOWED_HOSTS.append('testserver')
+ALLOWED_HOSTS = [host.strip() for host in os.getenv('ALLOWED_HOSTS', '*').split(',') if host.strip()]
+if '*' not in ALLOWED_HOSTS:
+    for domain in ['.ngrok-free.app', '.ngrok.io', '.ngrok.app', '.trycloudflare.com', 'localhost', '127.0.0.1', 'testserver']:
+        if domain not in ALLOWED_HOSTS:
+            ALLOWED_HOSTS.append(domain)
+
+# CSRF Trusted Origins for public tunnels and local development
+CSRF_TRUSTED_ORIGINS = [
+    'https://*.ngrok-free.app',
+    'https://*.ngrok.io',
+    'https://*.ngrok.app',
+    'https://*.trycloudflare.com',
+    'http://localhost:8000',
+    'http://127.0.0.1:8000',
+]
+extra_csrf = os.getenv('CSRF_TRUSTED_ORIGINS', '')
+if extra_csrf:
+    CSRF_TRUSTED_ORIGINS.extend([origin.strip() for origin in extra_csrf.split(',') if origin.strip()])
 
 # Application definition
 INSTALLED_APPS = [
