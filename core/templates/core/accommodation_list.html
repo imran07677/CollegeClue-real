@@ -1,0 +1,384 @@
+{% extends "base.html" %}
+{% load core_extras %}
+
+{% block title %}Near by PG/Flats & Hostels - College Clue{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Page Header -->
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 pb-2 border-bottom">
+        <div>
+            <div class="d-flex align-items-center gap-2 mb-1">
+                <div class="bg-warning-subtle text-warning-emphasis p-2 rounded-3 d-inline-flex align-items-center justify-content-center" style="width: 42px; height: 42px;">
+                    <i class="bi bi-houses-fill fs-4 text-warning"></i>
+                </div>
+                <h2 class="fw-bold mb-0">Near by PG/Flats</h2>
+            </div>
+            <p class="text-muted small mb-0 ms-md-1">
+                Discover student paying guest accommodations (PG), flats, and campus hostels near your chosen college.
+            </p>
+        </div>
+        <div class="mt-3 mt-md-0 d-flex align-items-center gap-2">
+            <span class="badge bg-primary-subtle text-primary border border-primary-subtle fs-6 px-3 py-2 rounded-pill shadow-sm">
+                <i class="bi bi-geo-alt-fill me-1"></i>{{ accommodations|length }} Available Properties
+            </span>
+        </div>
+    </div>
+
+    <!-- On-Page Search Bar & Filter Controls -->
+    <div class="card border-0 shadow-sm rounded-4 mb-4 bg-white p-3 p-md-4" style="border: 1px solid rgba(0,0,0,0.06) !important;">
+        <form method="get" action="{% url 'accommodation_list' %}" id="nearbyPgSearchForm">
+            <div class="row g-2 align-items-center">
+                <!-- Search Input Field -->
+                <div class="col-12 col-md-7 col-lg-8">
+                    <div class="input-group input-group-lg shadow-sm rounded-3 overflow-hidden border">
+                        <span class="input-group-text bg-white border-0 ps-3 text-secondary">
+                            <i class="bi bi-search text-warning fs-5"></i>
+                        </span>
+                        <input type="text" name="q" value="{{ search_query|default:'' }}" class="form-control border-0 bg-white py-3 fs-6" placeholder="Search by PG/Flat name, college, locality, facilities..." aria-label="Search nearby PG and Flats" autocomplete="off">
+                        {% if search_query %}
+                            <a href="{% url 'accommodation_list' %}" class="btn btn-white border-0 text-muted d-flex align-items-center px-3" title="Clear Search Query">
+                                <i class="bi bi-x-circle fs-5"></i>
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- One Filter Button + Search Submit -->
+                <div class="col-12 col-md-5 col-lg-4 d-flex gap-2">
+                    <!-- The Filter Button -->
+                    <button type="button" class="btn btn-outline-dark btn-lg flex-grow-1 fw-bold rounded-3 d-flex align-items-center justify-content-center gap-2 shadow-sm" data-bs-toggle="modal" data-bs-target="#pgFilterModal" title="Filter by College, Room Type & Price Range">
+                        <i class="bi bi-sliders2 text-primary fs-5"></i>
+                        <span>Filter</span>
+                        {% if active_filters_count > 0 %}
+                            <span class="badge bg-primary text-white rounded-pill ms-1">{{ active_filters_count }}</span>
+                        {% endif %}
+                    </button>
+
+                    <!-- Search Submit Button -->
+                    <button type="submit" class="btn btn-warning btn-lg px-4 fw-bold text-dark rounded-3 shadow-sm d-flex align-items-center justify-content-center gap-1" title="Execute Search">
+                        <i class="bi bi-search"></i>
+                        <span>Search</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Hidden Fields to Preserve Filter Parameters During Text Search -->
+            {% if request.GET.college %}<input type="hidden" name="college" value="{{ request.GET.college }}">{% endif %}
+            {% if request.GET.room_type %}<input type="hidden" name="room_type" value="{{ request.GET.room_type }}">{% endif %}
+            {% if request.GET.min_rent %}<input type="hidden" name="min_rent" value="{{ request.GET.min_rent }}">{% endif %}
+            {% if request.GET.max_rent %}<input type="hidden" name="max_rent" value="{{ request.GET.max_rent }}">{% endif %}
+            {% if request.GET.type %}<input type="hidden" name="type" value="{{ request.GET.type }}">{% endif %}
+            {% if request.GET.city %}<input type="hidden" name="city" value="{{ request.GET.city }}">{% endif %}
+        </form>
+
+        <!-- Quick Filter Category Pills & Active Filter Tags -->
+        <div class="d-flex flex-wrap align-items-center gap-2 mt-3 pt-3 border-top">
+            <span class="small fw-bold text-secondary me-1"><i class="bi bi-funnel-fill text-warning me-1"></i>Category:</span>
+            <a href="{% url 'accommodation_list' %}" class="badge {% if not request.GET.type and not request.GET.room_type %}bg-primary text-white{% else %}bg-light text-dark border{% endif %} py-2 px-3 text-decoration-none rounded-pill shadow-xs">
+                All Listings
+            </a>
+            <a href="{% url 'accommodation_list' %}?type=PG" class="badge {% if request.GET.type == 'PG' %}bg-primary text-white{% else %}bg-light text-dark border{% endif %} py-2 px-3 text-decoration-none rounded-pill shadow-xs">
+                <i class="bi bi-house-door-fill text-warning me-1"></i>PGs
+            </a>
+            <a href="{% url 'accommodation_list' %}?type=Flat" class="badge {% if request.GET.type == 'Flat' %}bg-primary text-white{% else %}bg-light text-dark border{% endif %} py-2 px-3 text-decoration-none rounded-pill shadow-xs">
+                <i class="bi bi-building-fill text-info me-1"></i>Flats
+            </a>
+            <a href="{% url 'accommodation_list' %}?type=Hostel" class="badge {% if request.GET.type == 'Hostel' %}bg-primary text-white{% else %}bg-light text-dark border{% endif %} py-2 px-3 text-decoration-none rounded-pill shadow-xs">
+                <i class="bi bi-houses text-success me-1"></i>Hostels
+            </a>
+
+            <span class="text-secondary opacity-50 mx-1">|</span>
+            <span class="small fw-bold text-secondary me-1">Room:</span>
+            <a href="{% url 'accommodation_list' %}?room_type=Single" class="badge {% if request.GET.room_type == 'Single' %}bg-primary text-white{% else %}bg-light text-dark border{% endif %} py-2 px-3 text-decoration-none rounded-pill shadow-xs">
+                Single Room
+            </a>
+            <a href="{% url 'accommodation_list' %}?room_type=Double" class="badge {% if request.GET.room_type == 'Double' %}bg-primary text-white{% else %}bg-light text-dark border{% endif %} py-2 px-3 text-decoration-none rounded-pill shadow-xs">
+                Double Sharing
+            </a>
+            <a href="{% url 'accommodation_list' %}?room_type=Triple" class="badge {% if request.GET.room_type == 'Triple' %}bg-primary text-white{% else %}bg-light text-dark border{% endif %} py-2 px-3 text-decoration-none rounded-pill shadow-xs">
+                Triple Sharing
+            </a>
+
+            {% if active_filters_count > 0 or search_query %}
+                <a href="{% url 'accommodation_list' %}" class="btn btn-outline-danger btn-sm rounded-pill ms-auto px-3 py-1 fw-semibold d-inline-flex align-items-center gap-1 shadow-sm" style="font-size: 0.78rem;">
+                    <i class="bi bi-x-circle"></i> Clear All Filters
+                </a>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Active Filter Indicators -->
+    {% if active_filters_count > 0 or search_query %}
+        <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
+            <span class="small text-secondary fw-semibold">Filtered by:</span>
+            {% if search_query %}
+                <span class="badge bg-warning-subtle text-warning-emphasis border border-warning px-3 py-2 rounded-pill">
+                    <i class="bi bi-search me-1"></i>"{{ search_query }}"
+                </span>
+            {% endif %}
+            {% if request.GET.college %}
+                {% for col in colleges %}
+                    {% if col.id|stringformat:"s" == request.GET.college %}
+                        <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-3 py-2 rounded-pill">
+                            <i class="bi bi-mortarboard me-1"></i>Near: {{ col.name|truncatechars:28 }}
+                        </span>
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+            {% if request.GET.room_type %}
+                <span class="badge bg-info-subtle text-info-emphasis border border-info-subtle px-3 py-2 rounded-pill">
+                    <i class="bi bi-door-open me-1"></i>{{ request.GET.room_type }} Room
+                </span>
+            {% endif %}
+            {% if request.GET.min_rent or request.GET.max_rent %}
+                <span class="badge bg-success-subtle text-success-emphasis border border-success-subtle px-3 py-2 rounded-pill">
+                    <i class="bi bi-currency-rupee me-1"></i>
+                    {% if request.GET.min_rent and request.GET.max_rent %}
+                        ₹{{ request.GET.min_rent }} - ₹{{ request.GET.max_rent }}/mo
+                    {% elif request.GET.min_rent %}
+                        &gt; ₹{{ request.GET.min_rent }}/mo
+                    {% else %}
+                        &lt; ₹{{ request.GET.max_rent }}/mo
+                    {% endif %}
+                </span>
+            {% endif %}
+            {% if request.GET.type %}
+                <span class="badge bg-secondary-subtle text-secondary-emphasis border px-3 py-2 rounded-pill">
+                    Type: {{ request.GET.type }}
+                </span>
+            {% endif %}
+            {% if request.GET.city %}
+                <span class="badge bg-light text-dark border px-3 py-2 rounded-pill">
+                    <i class="bi bi-geo-alt me-1"></i>{{ request.GET.city }}
+                </span>
+            {% endif %}
+        </div>
+    {% endif %}
+
+    <!-- Accommodation Cards Grid -->
+    <div class="row g-4">
+        {% for acc in accommodations %}
+            <div class="col-md-6 col-lg-4">
+                <div class="card h-100 accommodation-card border shadow-sm rounded-4 overflow-hidden position-relative">
+                    <div class="card-top-accent"></div>
+                    <div class="card-body p-4 d-flex flex-column">
+                        <!-- Top Badges -->
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <div>
+                                {% if acc.type == 'PG' %}
+                                    <span class="badge bg-warning-subtle text-warning-emphasis border border-warning fw-semibold px-2 py-1">
+                                        <i class="bi bi-house-door-fill me-1"></i>PG
+                                    </span>
+                                {% elif acc.type == 'Flat' %}
+                                    <span class="badge bg-info-subtle text-info-emphasis border border-info-subtle fw-semibold px-2 py-1">
+                                        <i class="bi bi-building-fill me-1"></i>Flat / Apartment
+                                    </span>
+                                {% else %}
+                                    <span class="badge bg-primary-subtle text-primary border border-primary-subtle fw-semibold px-2 py-1">
+                                        <i class="bi bi-houses me-1"></i>Hostel
+                                    </span>
+                                {% endif %}
+                                <span class="badge bg-light text-secondary border ms-1">{{ acc.room_type }} Room</span>
+                            </div>
+
+                            {% if acc.is_available %}
+                                <span class="badge bg-success-subtle text-success border border-success-subtle">
+                                    <i class="bi bi-check-circle-fill me-1"></i>Vacant
+                                </span>
+                            {% else %}
+                                <span class="badge bg-danger-subtle text-danger border border-danger-subtle">
+                                    <i class="bi bi-x-circle-fill me-1"></i>Occupied
+                                </span>
+                            {% endif %}
+                        </div>
+
+                        <!-- Accommodation Name -->
+                        <h5 class="fw-bold text-dark mb-1">
+                            <a href="{% url 'accommodation_detail' pk=acc.pk %}" class="text-decoration-none text-dark hover-primary">
+                                {{ acc.name }}
+                            </a>
+                        </h5>
+
+                        <!-- College and Location -->
+                        <div class="mb-2">
+                            {% if acc.college %}
+                                <a href="{% url 'college_detail' slug=acc.college.slug %}" class="text-primary small mb-1 fw-semibold text-truncate d-block text-decoration-none" title="View {{ acc.college.name }} Profile">
+                                    <i class="bi bi-mortarboard-fill me-1"></i>Near {{ acc.college.name }}
+                                </a>
+                            {% endif %}
+                            <p class="text-muted small mb-0 text-truncate">
+                                <i class="bi bi-geo-alt-fill text-danger me-1"></i>{{ acc.city }}{% if acc.address %}, {{ acc.address }}{% endif %}
+                            </p>
+                        </div>
+
+                        <!-- Amenities Tags -->
+                        <div class="mb-3 d-flex flex-wrap gap-1">
+                            <span class="badge bg-light text-secondary border small"><i class="bi bi-wifi me-1"></i>Wi-Fi</span>
+                            <span class="badge bg-light text-secondary border small"><i class="bi bi-shield-check me-1"></i>Vetted</span>
+                            {% if 'AC' in acc.facilities or 'Air' in acc.facilities %}
+                                <span class="badge bg-light text-secondary border small"><i class="bi bi-snow me-1"></i>AC</span>
+                            {% endif %}
+                            {% if 'Food' in acc.facilities or 'Mess' in acc.facilities or 'Kitchen' in acc.facilities %}
+                                <span class="badge bg-light text-secondary border small"><i class="bi bi-cup-hot me-1"></i>Meals</span>
+                            {% endif %}
+                        </div>
+
+                        <!-- Description Snippet -->
+                        <p class="text-secondary small mb-3 flex-grow-1" style="font-size: 0.84rem; line-height: 1.45;">
+                            {{ acc.facilities|truncatewords:18 }}
+                        </p>
+
+                        <!-- Bottom Rent & Details Button -->
+                        <div class="d-flex justify-content-between align-items-center pt-3 border-top mt-auto">
+                            <div>
+                                <small class="text-muted d-block" style="font-size: 0.72rem;">Monthly Rent</small>
+                                <span class="fw-bold text-primary fs-5">{{ acc.rent|inr }}</span>
+                                <small class="text-muted" style="font-size: 0.72rem;">/mo</small>
+                            </div>
+                            <a href="{% url 'accommodation_detail' pk=acc.pk %}" class="btn btn-outline-primary btn-sm fw-semibold rounded-pill px-3 shadow-sm">
+                                View Details <i class="bi bi-arrow-right ms-1"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <!-- Empty State -->
+            <div class="col-12 text-center py-5">
+                <div class="card border-0 bg-light rounded-4 p-5 shadow-sm mx-auto" style="max-width: 580px;">
+                    <i class="bi bi-houses fs-1 text-warning d-block mb-3"></i>
+                    <h4 class="fw-bold text-dark mb-2">No Matching PGs or Flats Found</h4>
+                    <p class="text-muted small mb-4">
+                        We could not find any properties matching your current search or filter criteria. Try expanding your price range, choosing another college, or clearing filters.
+                    </p>
+                    <div class="d-flex justify-content-center gap-2">
+                        <a href="{% url 'accommodation_list' %}" class="btn btn-primary rounded-pill px-4 fw-bold shadow-sm">
+                            <i class="bi bi-arrow-counterclockwise me-1"></i>Reset All Filters
+                        </a>
+                        <button type="button" class="btn btn-outline-secondary rounded-pill px-3" data-bs-toggle="modal" data-bs-target="#pgFilterModal">
+                            <i class="bi bi-sliders2 me-1"></i>Change Filters
+                        </button>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- ====================================================================== -->
+<!-- DEDICATED FILTER MODAL (Near by College, Select room type, Price range) -->
+<!-- ====================================================================== -->
+<div class="modal fade" id="pgFilterModal" tabindex="-1" aria-labelledby="pgFilterModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content rounded-4 border-0 shadow-lg">
+            <div class="modal-header border-bottom pb-3 px-4 pt-4">
+                <div class="d-flex align-items-center gap-2">
+                    <div class="bg-warning-subtle text-warning-emphasis p-2 rounded-3 d-flex align-items-center justify-content-center" style="width: 44px; height: 44px;">
+                        <i class="bi bi-sliders2 fs-4 text-warning"></i>
+                    </div>
+                    <div>
+                        <h5 class="modal-title fw-bold text-dark mb-0" id="pgFilterModalLabel">Filter Nearby PG / Flats</h5>
+                        <p class="text-muted small mb-0">Select your target college, room configuration, and monthly budget.</p>
+                    </div>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            
+            <form method="get" action="{% url 'accommodation_list' %}" id="modalPgFilterForm">
+                {% if search_query %}
+                    <input type="hidden" name="q" value="{{ search_query }}">
+                {% endif %}
+                
+                <div class="modal-body p-4">
+                    <div class="row g-3">
+                        <!-- 1. Near by College -->
+                        <div class="col-12">
+                            <label for="modalSelectCollege" class="form-label fw-bold text-dark small mb-1">
+                                <i class="bi bi-mortarboard-fill text-primary me-1"></i>Near by College
+                            </label>
+                            <select name="college" id="modalSelectCollege" class="form-select form-select-lg fs-6 rounded-3 shadow-none border-secondary border-opacity-25">
+                                <option value="">-- All Nearby Colleges --</option>
+                                {% for col in colleges %}
+                                    <option value="{{ col.id }}" {% if request.GET.college == col.id|stringformat:"s" %}selected{% endif %}>
+                                        {{ col.name }} &bull; {{ col.city }} ({{ col.university.short_name|default:col.university.name }})
+                                    </option>
+                                {% endfor %}
+                            </select>
+                            <div class="form-text small text-muted">Select an approved college to find verified student residences within commuting distance.</div>
+                        </div>
+
+                        <!-- 2. Select room type -->
+                        <div class="col-md-6">
+                            <label for="modalSelectRoomType" class="form-label fw-bold text-dark small mb-1">
+                                <i class="bi bi-door-open-fill text-warning me-1"></i>Select Room Type
+                            </label>
+                            <select name="room_type" id="modalSelectRoomType" class="form-select form-select-lg fs-6 rounded-3 shadow-none border-secondary border-opacity-25">
+                                <option value="">-- All Room Configurations --</option>
+                                <option value="Single" {% if request.GET.room_type == 'Single' %}selected{% endif %}>Single Room (Private)</option>
+                                <option value="Double" {% if request.GET.room_type == 'Double' %}selected{% endif %}>Double Sharing (2 Beds)</option>
+                                <option value="Triple" {% if request.GET.room_type == 'Triple' %}selected{% endif %}>Triple Sharing (3 Beds)</option>
+                            </select>
+                        </div>
+
+                        <!-- Housing Category (PG, Flat, Hostel) -->
+                        <div class="col-md-6">
+                            <label for="modalSelectType" class="form-label fw-bold text-dark small mb-1">
+                                <i class="bi bi-houses-fill text-success me-1"></i>Housing Category
+                            </label>
+                            <select name="type" id="modalSelectType" class="form-select form-select-lg fs-6 rounded-3 shadow-none border-secondary border-opacity-25">
+                                <option value="">-- All Categories (PG, Flats, Hostels) --</option>
+                                <option value="PG" {% if request.GET.type == 'PG' %}selected{% endif %}>Paying Guest (PG)</option>
+                                <option value="Flat" {% if request.GET.type == 'Flat' %}selected{% endif %}>Flat / Apartment</option>
+                                <option value="Hostel" {% if request.GET.type == 'Hostel' %}selected{% endif %}>Student Hostel</option>
+                            </select>
+                        </div>
+
+                        <!-- 3. Price range (Min Rent & Max Rent) -->
+                        <div class="col-12">
+                            <label class="form-label fw-bold text-dark small mb-1">
+                                <i class="bi bi-currency-rupee text-success me-1"></i>Price Range (Monthly Rent in ₹)
+                            </label>
+                            <div class="row g-2">
+                                <div class="col-6">
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-light text-muted">₹ Min</span>
+                                        <input type="number" name="min_rent" class="form-control form-control-lg fs-6" placeholder="e.g. 3000" min="0" step="500" value="{{ request.GET.min_rent|default:'' }}">
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-light text-muted">₹ Max</span>
+                                        <input type="number" name="max_rent" class="form-control form-control-lg fs-6" placeholder="e.g. 12000" min="0" step="500" value="{{ request.GET.max_rent|default:'' }}">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-text small text-muted">Specify your minimum and maximum monthly budget per occupant.</div>
+                        </div>
+
+                        <!-- City / Locality -->
+                        <div class="col-12">
+                            <label for="modalSelectCity" class="form-label fw-bold text-dark small mb-1">
+                                <i class="bi bi-geo-alt-fill text-danger me-1"></i>City / Locality
+                            </label>
+                            <input type="text" name="city" id="modalSelectCity" class="form-control form-control-lg fs-6 rounded-3" placeholder="e.g. Bengaluru, New Delhi, Mumbai, Kolkata, Chennai" value="{{ request.GET.city|default:'' }}">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer border-top p-3 px-4 d-flex justify-content-between">
+                    <a href="{% url 'accommodation_list' %}" class="btn btn-light rounded-pill px-3 fw-semibold">
+                        <i class="bi bi-arrow-counterclockwise me-1"></i>Reset All
+                    </a>
+                    <div class="d-flex gap-2">
+                        <button type="button" class="btn btn-secondary rounded-pill px-3" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-warning text-dark rounded-pill px-4 fw-bold shadow-sm">
+                            <i class="bi bi-funnel-fill me-1"></i>Apply Filters
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

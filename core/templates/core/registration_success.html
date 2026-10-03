@@ -1,0 +1,155 @@
+{% extends "base.html" %}
+{% load core_extras %}
+
+{% block title %}Application Submitted Successfully! - College Clue{% endblock %}
+
+{% block data_confetti %}true{% endblock %}
+
+{% block content %}
+<div class="container py-5 text-center">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-lg rounded-4 overflow-hidden mb-4">
+                <!-- Header with Success Icon -->
+                <div class="bg-success text-white py-5 px-4 text-center">
+                    <div class="bg-white text-success rounded-circle d-inline-flex align-items-center justify-content-center mb-3 shadow" style="width: 80px; height: 80px;">
+                        <i class="bi bi-check-lg display-4 fw-bold"></i>
+                    </div>
+                    <h2 class="fw-bold mb-1">Registration Successful!</h2>
+                    <p class="mb-0 text-light opacity-90">
+                        Congratulations! Your admission application has been registered with {{ registration.college.name }}.
+                    </p>
+                </div>
+
+                <div class="card-body p-4 p-md-5 text-start">
+                    <!-- High-Impact Accommodation Suggestion & Auto-Redirect Banner -->
+                    <div class="card border-2 border-primary rounded-4 bg-primary-subtle p-4 mb-4 shadow-sm">
+                        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+                            <div>
+                                <span class="badge bg-primary text-white px-3 py-1 rounded-pill fw-bold mb-2">
+                                    <i class="bi bi-houses-fill me-1"></i>Crucial Next Step
+                                </span>
+                                <h4 class="fw-bold text-dark mb-1">Find Verified PGs &amp; Hostels Near {{ registration.college.name }}</h4>
+                                <p class="text-secondary small mb-2">
+                                    Moving to {{ registration.college.city }}? Secure furnished rooms, campus residences, and verified PGs near your faculty.
+                                </p>
+                                <div class="small text-muted" id="redirectNotice">
+                                    <i class="bi bi-clock-history me-1"></i>Redirecting to nearby accommodations in <strong id="redirectTimer" class="text-primary">6</strong> seconds...
+                                    <button type="button" id="cancelRedirectBtn" class="btn btn-link btn-sm text-decoration-none p-0 ms-2 text-danger fw-semibold">
+                                        Stay on Slip
+                                    </button>
+                                </div>
+                            </div>
+                            <div>
+                                <a id="viewAccommodationsBtn" href="{% url 'college_accommodations' slug=registration.college.slug %}" class="btn btn-primary btn-lg fw-bold text-nowrap shadow-sm px-4">
+                                    Explore PGs &amp; Hostels <i class="bi bi-arrow-right ms-1"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tracking ID Highlight Box -->
+                    <div class="alert alert-secondary text-center rounded-3 p-3 mb-4 shadow-sm border-0 bg-light">
+                        <small class="text-uppercase fw-semibold d-block text-secondary mb-1">Permanent Tracking Registration ID</small>
+                        <h4 class="fw-bold text-primary mb-0 font-monospace" id="reg-id-display">{{ registration.registration_id }}</h4>
+                    </div>
+
+                    <!-- Summary Table -->
+                    <h5 class="fw-bold text-dark mb-3"><i class="bi bi-file-earmark-person text-primary me-2"></i>Applicant Details</h5>
+                    <table class="table table-bordered mb-4">
+                        <tbody>
+                            <tr>
+                                <th class="bg-light text-secondary" style="width: 35%;">Applicant Name</th>
+                                <td class="fw-semibold text-dark">{{ registration.full_name }}</td>
+                            </tr>
+                            <tr>
+                                <th class="bg-light text-secondary">Contact Email</th>
+                                <td>{{ registration.email }}</td>
+                            </tr>
+                            <tr>
+                                <th class="bg-light text-secondary">Mobile Phone</th>
+                                <td>{{ registration.phone }}</td>
+                            </tr>
+                            <tr>
+                                <th class="bg-light text-secondary">Allotted College</th>
+                                <td class="fw-bold text-primary">{{ registration.college.name }} ({{ registration.college.university.name }})</td>
+                            </tr>
+                            <tr>
+                                <th class="bg-light text-secondary">Course Applied</th>
+                                <td class="fw-bold text-success">{{ registration.course.name }}</td>
+                            </tr>
+                            <tr>
+                                <th class="bg-light text-secondary">Application Status</th>
+                                <td>
+                                    <span class="badge bg-warning text-dark px-3 py-1">
+                                        <i class="bi bi-clock me-1"></i>{{ registration.status }}
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th class="bg-light text-secondary">Date &amp; Timestamp</th>
+                                <td>{{ registration.created_at|date:"F j, Y, P" }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <!-- Instructions -->
+                    <div class="card bg-light border-0 rounded-3 p-3 mb-4">
+                        <h6 class="fw-bold text-dark mb-2"><i class="bi bi-info-circle-fill text-primary me-2"></i>Official Next Steps</h6>
+                        <ol class="small text-secondary mb-0 ps-3">
+                            <li class="mb-1">A verification email containing your official registration ID has been dispatched to <strong>{{ registration.email }}</strong>.</li>
+                            <li class="mb-1">Please quote your Registration ID during all counseling and verification stages.</li>
+                            <li class="mb-1">The admissions department will contact you within 3 business days regarding certificate verification.</li>
+                        </ol>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="d-flex flex-wrap gap-2 justify-content-between pt-2">
+                        <button onclick="window.print()" class="btn btn-outline-secondary px-4">
+                            <i class="bi bi-printer me-1"></i>Print Slip
+                        </button>
+                        <div class="d-flex gap-2">
+                            <a href="{% url 'college_accommodations' slug=registration.college.slug %}" class="btn btn-outline-primary px-3">
+                                <i class="bi bi-houses me-1"></i>View Nearby Hostels
+                            </a>
+                            <a href="{% url 'home' %}" class="btn btn-primary px-4 fw-semibold">
+                                Return Home
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    let timeLeft = 6;
+    const timerElem = document.getElementById('redirectTimer');
+    const noticeElem = document.getElementById('redirectNotice');
+    const cancelBtn = document.getElementById('cancelRedirectBtn');
+    const targetUrl = "{% url 'college_accommodations' slug=registration.college.slug %}";
+
+    let interval = setInterval(function () {
+        timeLeft--;
+        if (timerElem) {
+            timerElem.textContent = timeLeft;
+        }
+        if (timeLeft <= 0) {
+            clearInterval(interval);
+            window.location.href = targetUrl;
+        }
+    }, 1000);
+
+    if (cancelBtn) {
+        cancelBtn.addEventListener('click', function () {
+            clearInterval(interval);
+            if (noticeElem) {
+                noticeElem.innerHTML = '<span class="text-success"><i class="bi bi-check-circle me-1"></i>Auto-redirect paused. You can browse at your own pace.</span>';
+            }
+        });
+    }
+});
+</script>
+{% endblock %}

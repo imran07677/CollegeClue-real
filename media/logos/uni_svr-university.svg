@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <defs>
+    <linearGradient id="grad_44174" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1e3c72;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#2a5298;stop-opacity:1" />
+    </linearGradient>
+    <filter id="shadow_grad_44174" x="-10%" y="-10%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="4" stdDeviation="5" flood-opacity="0.25" />
+    </filter>
+  </defs>
+  <rect width="190" height="190" x="5" y="5" rx="36" fill="url(#grad_44174)" filter="url(#shadow_grad_44174)" />
+  <circle cx="100" cy="100" r="76" fill="none" stroke="#ffd700" stroke-width="2.5" stroke-dasharray="6 4" opacity="0.6" />
+  <g transform="translate(88, 38) scale(1.1)" fill="#ffd700">
+    <path d="M12 2L2 7l10 5 10-5-10-5zm0 9l-8-4v6l8 4 8-4v-6l-8 4zm0 6l-6-3v2l6 3 6-3v-2l-6 3z" />
+  </g>
+  <text x="100" y="126" font-family="'Segoe UI', -apple-system, system-ui, sans-serif" font-size="24" font-weight="800" fill="#ffffff" text-anchor="middle" letter-spacing="1.5">SU</text>
+  <text x="100" y="152" font-family="'Segoe UI', -apple-system, system-ui, sans-serif" font-size="10" font-weight="600" fill="#ffd700" text-anchor="middle" letter-spacing="1">CAMPUS DIRECTORY</text>
+</svg>

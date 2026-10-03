@@ -1,0 +1,541 @@
+{% extends "base.html" %}
+
+{% block title %}Admission Applications - University Partner Portal - College Clue{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Breadcrumb & Back -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <a href="{% url 'university_dashboard' %}" class="text-decoration-none text-muted small">
+            <i class="bi bi-arrow-left me-1"></i>Back to Campus Dashboard
+        </a>
+        <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-3 py-1 rounded-pill small">
+            University Admissions Registry
+        </span>
+    </div>
+
+    <!-- Header Banner -->
+    <div class="card border-0 shadow-sm rounded-4 mb-4 bg-gradient bg-primary text-white p-4">
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+            <div>
+                <span class="badge bg-warning text-dark px-3 py-1 rounded-pill fw-bold mb-2">Centralized Applications Review</span>
+                <h2 class="fw-bold text-white mb-1">
+                    <i class="bi bi-inbox-fill me-2 text-warning"></i>Student Admission Applications
+                </h2>
+                <p class="text-white-50 mb-0 small">
+                    Review and verify student admission applications submitted for your colleges and campuses. Approve confirmed admissions or request modifications.
+                </p>
+            </div>
+            <div>
+                <a href="{% url 'university_dashboard' %}" class="btn btn-outline-light px-3 py-2 fw-semibold">
+                    <i class="bi bi-building me-1"></i>Manage Campuses
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats Counters -->
+    <div class="row g-3 mb-4">
+        <div class="col-6 col-md-3">
+            <a href="{% url 'university_applications' %}{% if selected_college_id %}?college={{ selected_college_id }}{% if selected_course_id %}&course={{ selected_course_id }}{% endif %}{% elif selected_course_id %}?course={{ selected_course_id }}{% endif %}" class="text-decoration-none">
+                <div class="card border-0 shadow-sm rounded-4 p-3 bg-white h-100 {% if not status_filter %}border-start border-4{% endif %}" style="border-color: #ede8dc !important; {% if not status_filter %}border-left-color: #525445 !important;{% endif %}">
+                    <div class="d-flex align-items-center">
+                        <div class="p-3 rounded-circle me-3" style="background-color: #f4efe4; color: #525445;">
+                            <i class="bi bi-files fs-3"></i>
+                        </div>
+                        <div>
+                            <div class="text-muted small fw-semibold">Total Received</div>
+                            <h3 class="fw-bold mb-0 text-dark">{{ stats.total }}</h3>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div class="col-6 col-md-3">
+            <a href="{% url 'university_applications' %}?status=Pending{% if selected_college_id %}&college={{ selected_college_id }}{% endif %}{% if selected_course_id %}&course={{ selected_course_id }}{% endif %}" class="text-decoration-none">
+                <div class="card border-0 shadow-sm rounded-4 p-3 bg-white h-100 {% if status_filter == 'Pending' %}border-start border-4 border-warning{% endif %}" style="border-color: #ede8dc !important;">
+                    <div class="d-flex align-items-center">
+                        <div class="bg-warning-subtle text-warning-emphasis p-3 rounded-circle me-3">
+                            <i class="bi bi-hourglass-split fs-3"></i>
+                        </div>
+                        <div>
+                            <div class="text-muted small fw-semibold">Pending Review</div>
+                            <h3 class="fw-bold mb-0 text-warning">{{ stats.pending }}</h3>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div class="col-6 col-md-3">
+            <a href="{% url 'university_applications' %}?status=Confirmed{% if selected_college_id %}&college={{ selected_college_id }}{% endif %}{% if selected_course_id %}&course={{ selected_course_id }}{% endif %}" class="text-decoration-none">
+                <div class="card border-0 shadow-sm rounded-4 p-3 bg-white h-100 {% if status_filter == 'Confirmed' %}border-start border-4 border-success{% endif %}" style="border-color: #ede8dc !important;">
+                    <div class="d-flex align-items-center">
+                        <div class="bg-success-subtle text-success p-3 rounded-circle me-3">
+                            <i class="bi bi-check-circle-fill fs-3"></i>
+                        </div>
+                        <div>
+                            <div class="text-muted small fw-semibold">Approved &amp; Confirmed</div>
+                            <h3 class="fw-bold mb-0 text-success">{{ stats.confirmed }}</h3>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div class="col-6 col-md-3">
+            <a href="{% url 'university_applications' %}?status=Cancelled{% if selected_college_id %}&college={{ selected_college_id }}{% endif %}{% if selected_course_id %}&course={{ selected_course_id }}{% endif %}" class="text-decoration-none">
+                <div class="card border-0 shadow-sm rounded-4 p-3 bg-white h-100 {% if status_filter == 'Cancelled' %}border-start border-4 border-danger{% endif %}" style="border-color: #ede8dc !important;">
+                    <div class="d-flex align-items-center">
+                        <div class="bg-danger-subtle text-danger p-3 rounded-circle me-3">
+                            <i class="bi bi-x-circle-fill fs-3"></i>
+                        </div>
+                        <div>
+                            <div class="text-muted small fw-semibold">Cancelled / Rejected</div>
+                            <h3 class="fw-bold mb-0 text-danger">{{ stats.cancelled }}</h3>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <!-- Filter & Search Bar -->
+    <div class="card border-0 shadow-sm rounded-4 p-3 mb-4 bg-white" style="border: 1px solid #ede8dc !important;">
+        <form method="get" class="row g-2 align-items-center">
+            {% if status_filter %}
+                <input type="hidden" name="status" value="{{ status_filter }}">
+            {% endif %}
+
+            {% if colleges|length > 1 %}
+                <div class="col-md-3">
+                    <div class="input-group">
+                        <span class="input-group-text bg-white border" style="border-color: #ede8dc !important; color: #525445;"><i class="bi bi-building"></i></span>
+                        <select name="college" class="form-select border" style="border-color: #ede8dc !important;" onchange="this.form.submit()">
+                            <option value="">-- All Campuses --</option>
+                            {% for col in colleges %}
+                                <option value="{{ col.id }}" {% if selected_college_id == col.id %}selected{% endif %}>
+                                    {{ col.name }} ({{ col.city }})
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="input-group">
+                        <span class="input-group-text bg-white border" style="border-color: #ede8dc !important; color: #525445;"><i class="bi bi-journal-bookmark-fill"></i></span>
+                        <select name="course" class="form-select border" style="border-color: #ede8dc !important;" onchange="this.form.submit()">
+                            <option value="">-- All Applied Courses --</option>
+                            {% for c in available_courses %}
+                                <option value="{{ c.id }}" {% if selected_course_id == c.id %}selected{% endif %}>
+                                    {{ c.name }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="input-group">
+                        <span class="input-group-text bg-white border" style="border-color: #ede8dc !important; color: #636655;"><i class="bi bi-search"></i></span>
+                        <input type="text" name="q" class="form-control border" style="border-color: #ede8dc !important;" placeholder="Search applicant by name, email, phone, or UUID..." value="{{ search_q }}">
+                        {% if search_q %}
+                            <a href="{% url 'university_applications' %}{% if status_filter %}?status={{ status_filter }}{% endif %}{% if selected_college_id %}&college={{ selected_college_id }}{% endif %}{% if selected_course_id %}&course={{ selected_course_id }}{% endif %}" class="btn btn-light border-0 text-muted" title="Clear Search">
+                                <i class="bi bi-x-circle"></i>
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            {% else %}
+                <div class="col-md-4">
+                    <div class="input-group">
+                        <span class="input-group-text bg-white border" style="border-color: #ede8dc !important; color: #525445;"><i class="bi bi-journal-bookmark-fill"></i></span>
+                        <select name="course" class="form-select border" style="border-color: #ede8dc !important;" onchange="this.form.submit()">
+                            <option value="">-- All Applied Courses --</option>
+                            {% for c in available_courses %}
+                                <option value="{{ c.id }}" {% if selected_course_id == c.id %}selected{% endif %}>
+                                    {{ c.name }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-8">
+                    <div class="input-group">
+                        <span class="input-group-text bg-white border" style="border-color: #ede8dc !important; color: #636655;"><i class="bi bi-search"></i></span>
+                        <input type="text" name="q" class="form-control border" style="border-color: #ede8dc !important;" placeholder="Search applicant by name, email, phone, or UUID..." value="{{ search_q }}">
+                        {% if search_q %}
+                            <a href="{% url 'university_applications' %}{% if status_filter %}?status={{ status_filter }}{% endif %}{% if selected_course_id %}&course={{ selected_course_id }}{% endif %}" class="btn btn-light border-0 text-muted" title="Clear Search">
+                                <i class="bi bi-x-circle"></i>
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endif %}
+        </form>
+
+        <!-- Active Filter Indicator if Course or Search is Active -->
+        {% if selected_course or search_q or selected_college_id %}
+            <div class="d-flex flex-wrap align-items-center gap-2 mt-2 pt-2 border-top" style="border-color: #ede8dc !important;">
+                <span class="small text-muted fw-semibold">Active Filter:</span>
+                {% if selected_course %}
+                    <span class="badge d-inline-flex align-items-center gap-1" style="background-color: #525445; color: #faf8f2; font-size: 0.8rem; padding: 0.35rem 0.65rem;">
+                        <i class="bi bi-journal-bookmark me-1"></i>Course: {{ selected_course.name }}
+                        <a href="{% url 'university_applications' %}{% if status_filter %}?status={{ status_filter }}{% endif %}{% if selected_college_id %}&college={{ selected_college_id }}{% endif %}" class="text-white ms-1 text-decoration-none" title="Remove course filter">&times;</a>
+                    </span>
+                {% endif %}
+                {% if search_q %}
+                    <span class="badge d-inline-flex align-items-center gap-1" style="background-color: #f4efe4; color: #434538; border: 1px solid #ede8dc; font-size: 0.8rem; padding: 0.35rem 0.65rem;">
+                        <i class="bi bi-search me-1"></i>Query: "{{ search_q }}"
+                        <a href="{% url 'university_applications' %}{% if status_filter %}?status={{ status_filter }}{% endif %}{% if selected_course_id %}&course={{ selected_course_id }}{% endif %}" class="text-dark ms-1 text-decoration-none" title="Clear search">&times;</a>
+                    </span>
+                {% endif %}
+                <a href="{% url 'university_applications' %}{% if status_filter %}?status={{ status_filter }}{% endif %}" class="small text-danger text-decoration-none ms-auto">
+                    <i class="bi bi-x-circle me-1"></i>Reset all filters
+                </a>
+            </div>
+        {% endif %}
+
+        <!-- Status Filter Tabs -->
+        <div class="d-flex flex-wrap gap-2 align-items-center mt-3 pt-2 border-top" style="border-color: #ede8dc !important;">
+            <span class="small text-muted fw-semibold me-1">Status:</span>
+            <a href="{% url 'university_applications' %}{% if selected_college_id %}?college={{ selected_college_id }}{% if selected_course_id %}&course={{ selected_course_id }}{% endif %}{% elif selected_course_id %}?course={{ selected_course_id }}{% endif %}" class="btn btn-sm status-tab-btn {% if not status_filter %}btn-primary fw-bold{% else %}btn-outline-secondary{% endif %}">
+                All ({{ stats.total }})
+            </a>
+            <a href="{% url 'university_applications' %}?status=Pending{% if selected_college_id %}&college={{ selected_college_id }}{% endif %}{% if selected_course_id %}&course={{ selected_course_id }}{% endif %}" class="btn btn-sm status-tab-btn {% if status_filter == 'Pending' %}btn-warning text-dark fw-bold{% else %}btn-outline-warning text-dark{% endif %}">
+                <i class="bi bi-hourglass-split me-1"></i>Pending Review ({{ stats.pending }})
+            </a>
+            <a href="{% url 'university_applications' %}?status=Confirmed{% if selected_college_id %}&college={{ selected_college_id }}{% endif %}{% if selected_course_id %}&course={{ selected_course_id }}{% endif %}" class="btn btn-sm status-tab-btn {% if status_filter == 'Confirmed' %}btn-success fw-bold{% else %}btn-outline-success{% endif %}">
+                <i class="bi bi-check-circle me-1"></i>Approved ({{ stats.confirmed }})
+            </a>
+            <a href="{% url 'university_applications' %}?status=Cancelled{% if selected_college_id %}&college={{ selected_college_id }}{% endif %}{% if selected_course_id %}&course={{ selected_course_id }}{% endif %}" class="btn btn-sm status-tab-btn {% if status_filter == 'Cancelled' %}btn-danger fw-bold{% else %}btn-outline-danger{% endif %}">
+                <i class="bi bi-x-circle me-1"></i>Cancelled ({{ stats.cancelled }})
+            </a>
+        </div>
+    </div>
+
+    <!-- Applications List -->
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden bg-white" style="border: 1px solid #ede8dc !important;">
+        <div class="card-header bg-white py-3 px-4 d-flex justify-content-between align-items-center border-bottom" style="border-color: #ede8dc !important;">
+            <h5 class="fw-bold mb-0 text-dark">
+                <i class="bi bi-card-checklist me-2" style="color: #525445;"></i>Applications Record
+            </h5>
+            <span class="badge rounded-pill" style="background: #ede8dc; color: #434538;">{{ applications|length }} match{{ applications|length|pluralize:"es" }}</span>
+        </div>
+
+        <div class="card-body p-4">
+            {% if applications %}
+                <div class="row g-4">
+                    {% for app in applications %}
+                        <div class="col-12">
+                            <div class="border rounded-4 p-3 p-md-4 shadow-sm {% if app.status == 'Confirmed' %}border-success-subtle bg-light{% elif app.status == 'Cancelled' %}border-danger-subtle bg-light{% else %}bg-white border-warning-subtle{% endif %}">
+                                <!-- Top Bar: UUID & Status -->
+                                <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2 mb-3 pb-3 border-bottom">
+                                    <div>
+                                        <div class="d-flex flex-wrap align-items-center gap-2 mb-1">
+                                            {% if app.status == 'Confirmed' %}
+                                                <span class="badge bg-success px-3 py-1 rounded-pill fw-bold">
+                                                    <i class="bi bi-check-circle-fill me-1"></i>Confirmed / Approved
+                                                </span>
+                                            {% elif app.status == 'Cancelled' %}
+                                                <span class="badge bg-danger px-3 py-1 rounded-pill fw-bold">
+                                                    <i class="bi bi-x-circle-fill me-1"></i>Cancelled / Rejected
+                                                </span>
+                                            {% else %}
+                                                <span class="badge bg-warning text-dark px-3 py-1 rounded-pill fw-bold">
+                                                    <i class="bi bi-hourglass-split me-1"></i>Pending Admissions Review
+                                                </span>
+                                            {% endif %}
+                                            <span class="badge bg-light text-secondary border font-monospace small">
+                                                ID: {{ app.registration_id }}
+                                            </span>
+                                        </div>
+                                        <div class="small text-muted">
+                                            <i class="bi bi-clock me-1"></i>Applied on <strong>{{ app.created_at|date:"F j, Y, g:i A" }}</strong>
+                                        </div>
+                                    </div>
+
+                                    <!-- Quick Action Controls -->
+                                    <div class="d-flex flex-wrap gap-2">
+                                        <button type="button" class="btn btn-sm btn-primary px-3 fw-semibold shadow-xs" data-bs-toggle="modal" data-bs-target="#statusModal-{{ app.registration_id }}">
+                                            <i class="bi bi-arrow-repeat me-1"></i>Change Decision / Status
+                                        </button>
+
+                                        {% if app.status != 'Confirmed' %}
+                                            <button type="button" class="btn btn-sm btn-success px-3 fw-bold shadow-xs" data-bs-toggle="modal" data-bs-target="#approveModal-{{ app.registration_id }}">
+                                                <i class="bi bi-check-circle-fill me-1"></i>Approve
+                                            </button>
+                                        {% endif %}
+
+                                        {% if app.status != 'Cancelled' %}
+                                            <button type="button" class="btn btn-sm btn-outline-danger px-3 fw-semibold" data-bs-toggle="modal" data-bs-target="#rejectModal-{{ app.registration_id }}">
+                                                <i class="bi bi-x-circle me-1"></i>Reject / Cancel
+                                            </button>
+                                        {% endif %}
+                                    </div>
+                                </div>
+
+                                <!-- Application Details Row -->
+                                <div class="row g-3">
+                                    <!-- Applicant Info -->
+                                    <div class="col-md-4">
+                                        <div class="small fw-bold text-muted text-uppercase mb-2">Student Information</div>
+                                        <h5 class="fw-bold text-dark mb-1">{{ app.full_name }}</h5>
+                                        <div class="small text-secondary mb-1">
+                                            <i class="bi bi-envelope me-1 text-primary"></i><a href="mailto:{{ app.email }}" class="text-decoration-none">{{ app.email }}</a>
+                                        </div>
+                                        <div class="small text-secondary mb-1">
+                                            <i class="bi bi-telephone me-1 text-success"></i><a href="tel:{{ app.phone }}" class="text-decoration-none">{{ app.phone }}</a>
+                                        </div>
+                                        {% if app.father_or_guardian_name %}
+                                            <div class="small text-muted mb-1">
+                                                <i class="bi bi-people me-1"></i>Guardian: <strong>{{ app.father_or_guardian_name }}</strong>
+                                            </div>
+                                        {% endif %}
+                                        {% if app.date_of_birth or app.gender %}
+                                            <div class="small text-muted">
+                                                {% if app.gender %}<span class="badge bg-light text-secondary border me-1">{{ app.gender }}</span>{% endif %}
+                                                {% if app.date_of_birth %}DOB: {{ app.date_of_birth|date:"M j, Y" }}{% endif %}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+
+                                    <!-- Academic Eligibility & Marks -->
+                                    <div class="col-md-4 border-start-md ps-md-3">
+                                        <div class="small fw-bold text-muted text-uppercase mb-2">Academic Qualifications &amp; Cutoffs</div>
+                                        <div class="mb-2">
+                                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                                <small class="text-secondary">Class X (10th):</small>
+                                                <span class="badge {% if app.class_10_percentage and app.class_10_percentage >= app.college.min_10th_percentage %}bg-success-subtle text-success border border-success-subtle{% else %}bg-danger-subtle text-danger border border-danger-subtle{% endif %} fw-bold">
+                                                    {{ app.class_10_percentage|default:"N/A" }}%
+                                                </span>
+                                            </div>
+                                            {% if app.class_10_school %}
+                                                <div class="text-muted text-truncate" style="font-size: 0.76rem;" title="{{ app.class_10_school }}">
+                                                    <i class="bi bi-building me-1"></i>{{ app.class_10_school }}
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                        <div>
+                                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                                <small class="text-secondary">Class XII (12th):</small>
+                                                <span class="badge {% if app.class_12_percentage and app.class_12_percentage >= app.college.min_12th_percentage %}bg-success-subtle text-success border border-success-subtle{% else %}bg-danger-subtle text-danger border border-danger-subtle{% endif %} fw-bold">
+                                                    {{ app.class_12_percentage|default:"N/A" }}%
+                                                </span>
+                                            </div>
+                                            {% if app.class_12_school %}
+                                                <div class="text-muted text-truncate" style="font-size: 0.76rem;" title="{{ app.class_12_school }}">
+                                                    <i class="bi bi-building me-1"></i>{{ app.class_12_school }}
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+
+                                    <!-- College & Program -->
+                                    <div class="col-md-4 border-start-md ps-md-3">
+                                        <div class="small fw-bold text-muted text-uppercase mb-2">Target Program &amp; Campus</div>
+                                        <div class="fw-bold text-dark mb-1">{{ app.college.name }}</div>
+                                        <div class="small text-muted mb-1">
+                                            <i class="bi bi-geo-alt-fill text-danger me-1"></i>{{ app.college.city }} &bull; {{ app.college.university.name }}
+                                        </div>
+                                        <div class="small mb-1">
+                                            <span class="badge bg-primary-subtle text-primary border border-primary-subtle fw-semibold">
+                                                <i class="bi bi-mortarboard me-1"></i>{{ app.course.name }}
+                                            </span>
+                                            <span class="ms-1 text-muted">({{ app.course.duration_years }} Years &bull; ₹{{ app.course.fee }}/yr)</span>
+                                        </div>
+                                        <div class="small text-secondary">
+                                            <i class="bi bi-people me-1"></i>Available Seats: <strong class="{% if app.course.available_seats > 0 %}text-success{% else %}text-danger{% endif %}">{{ app.course.available_seats }}</strong> / {{ app.course.seats }}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Admissions Committee Notes & Status Row -->
+                                <div class="row g-3 mt-1 pt-2 border-top">
+                                    <div class="col-12">
+                                        <div class="small fw-bold text-muted text-uppercase mb-1">Admissions Committee Notes</div>
+                                        {% if app.admin_notes %}
+                                            <div class="p-2 rounded-3 bg-light border small text-dark mb-1">
+                                                <i class="bi bi-chat-quote text-primary me-1"></i>{{ app.admin_notes }}
+                                            </div>
+                                        {% else %}
+                                            <div class="small text-muted fst-italic mb-1">No notes recorded yet.</div>
+                                        {% endif %}
+                                        {% if app.reviewed_by %}
+                                            <div class="small text-muted">
+                                                Reviewed by <strong>{{ app.reviewed_by.get_full_name|default:app.reviewed_by.username }}</strong> on {{ app.reviewed_at|date:"M j, Y" }}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Modal: Approve Admission -->
+                        <div class="modal fade" id="approveModal-{{ app.registration_id }}" tabindex="-1" aria-labelledby="approveModalLabel-{{ app.registration_id }}" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content rounded-4 border-0 shadow">
+                                    <div class="modal-header bg-success text-white">
+                                        <h5 class="modal-title fw-bold" id="approveModalLabel-{{ app.registration_id }}">
+                                            <i class="bi bi-check-circle-fill me-2"></i>Confirm Admission Approval
+                                        </h5>
+                                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <form method="post" action="{% url 'university_application_approve' app.registration_id %}">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                                        <div class="modal-body p-4">
+                                            <p class="mb-3">
+                                                Are you sure you want to approve and confirm admission for <strong>{{ app.full_name }}</strong> in <strong>{{ app.course.name }}</strong> at <strong>{{ app.college.name }}</strong>?
+                                            </p>
+                                            <div class="mb-3">
+                                                <label class="form-label small fw-semibold text-secondary">Admissions Instructions / Notes for Student (Optional):</label>
+                                                <textarea name="admin_notes" class="form-control" rows="3" placeholder="e.g. Please bring original 10th & 12th marks cards to room 102 on Monday. Welcome to the campus!"></textarea>
+                                            </div>
+                                            <div class="alert alert-info py-2 small mb-0">
+                                                <i class="bi bi-info-circle me-1"></i>An official approval email will be sent automatically to <strong>{{ app.email }}</strong>.
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer border-top-0 pt-0">
+                                            <button type="button" class="btn btn-light px-3" data-bs-dismiss="modal">Cancel</button>
+                                            <button type="submit" class="btn btn-success px-4 fw-bold">
+                                                <i class="bi bi-check-circle-fill me-1"></i>Approve &amp; Send Confirmation
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Modal: Reject / Cancel Admission -->
+                        <div class="modal fade" id="rejectModal-{{ app.registration_id }}" tabindex="-1" aria-labelledby="rejectModalLabel-{{ app.registration_id }}" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content rounded-4 border-0 shadow">
+                                    <div class="modal-header bg-danger text-white">
+                                        <h5 class="modal-title fw-bold" id="rejectModalLabel-{{ app.registration_id }}">
+                                            <i class="bi bi-x-circle-fill me-2"></i>Reject / Cancel Application
+                                        </h5>
+                                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <form method="post" action="{% url 'university_application_reject' app.registration_id %}">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                                        <div class="modal-body p-4">
+                                            <p class="mb-3">
+                                                Are you sure you want to cancel the application for <strong>{{ app.full_name }}</strong>?
+                                            </p>
+                                            <div class="mb-3">
+                                                <label class="form-label small fw-semibold text-secondary">Reason for Rejection / Feedback (Optional):</label>
+                                                <textarea name="admin_notes" class="form-control" rows="3" placeholder="e.g. Cut-off criteria not met or seats filled for this academic cycle."></textarea>
+                                            </div>
+                                            <div class="alert alert-warning py-2 small mb-0">
+                                                <i class="bi bi-exclamation-triangle me-1"></i>The student will be informed via email that their application was cancelled.
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer border-top-0 pt-0">
+                                            <button type="button" class="btn btn-light px-3" data-bs-dismiss="modal">Close</button>
+                                            <button type="submit" class="btn btn-danger px-4 fw-bold">
+                                                <i class="bi bi-x-circle me-1"></i>Confirm Cancellation
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Modal: Change Status / Re-evaluate Decision -->
+                        <div class="modal fade" id="statusModal-{{ app.registration_id }}" tabindex="-1" aria-labelledby="statusModalLabel-{{ app.registration_id }}" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content rounded-4 border-0 shadow">
+                                    <div class="modal-header bg-primary text-white">
+                                        <h5 class="modal-title fw-bold" id="statusModalLabel-{{ app.registration_id }}">
+                                            <i class="bi bi-arrow-repeat me-2"></i>Change Decision Status
+                                        </h5>
+                                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <form method="post" action="{% url 'university_application_status_update' app.registration_id %}">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                                        <div class="modal-body p-4">
+                                            <div class="p-3 bg-light rounded-3 border mb-3">
+                                                <div class="fw-bold text-dark fs-6">{{ app.full_name }}</div>
+                                                <div class="small text-muted mb-1">{{ app.course.name }} &bull; {{ app.college.name }}</div>
+                                                <div class="small">
+                                                    Current Status:
+                                                    {% if app.status == 'Confirmed' %}
+                                                        <span class="badge bg-success">Confirmed / Approved</span>
+                                                    {% elif app.status == 'Cancelled' %}
+                                                        <span class="badge bg-danger">Cancelled / Rejected</span>
+                                                    {% else %}
+                                                        <span class="badge bg-warning text-dark">Pending Review</span>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+
+                                            <div class="mb-3">
+                                                <label class="form-label small fw-bold text-dark">Select New Status *</label>
+                                                <div class="d-flex flex-column gap-2">
+                                                    <label class="d-flex align-items-center p-2 rounded-3 border cursor-pointer {% if app.status == 'Confirmed' %}bg-success-subtle border-success{% endif %}">
+                                                        <input type="radio" name="status" value="Confirmed" class="form-check-input me-3" {% if app.status == 'Confirmed' %}checked{% endif %}>
+                                                        <div>
+                                                            <div class="fw-bold text-success"><i class="bi bi-check-circle-fill me-1"></i>Approved / Confirmed</div>
+                                                            <div class="text-muted small">Applicant meets eligibility criteria. Confirm admission.</div>
+                                                        </div>
+                                                    </label>
+                                                    <label class="d-flex align-items-center p-2 rounded-3 border cursor-pointer {% if app.status == 'Cancelled' %}bg-danger-subtle border-danger{% endif %}">
+                                                        <input type="radio" name="status" value="Cancelled" class="form-check-input me-3" {% if app.status == 'Cancelled' %}checked{% endif %}>
+                                                        <div>
+                                                            <div class="fw-bold text-danger"><i class="bi bi-x-circle-fill me-1"></i>Rejected / Cancelled</div>
+                                                            <div class="text-muted small">Application declined or cancelled by university committee.</div>
+                                                        </div>
+                                                    </label>
+                                                    <label class="d-flex align-items-center p-2 rounded-3 border cursor-pointer {% if app.status == 'Pending' %}bg-warning-subtle border-warning{% endif %}">
+                                                        <input type="radio" name="status" value="Pending" class="form-check-input me-3" {% if app.status == 'Pending' %}checked{% endif %}>
+                                                        <div>
+                                                            <div class="fw-bold text-dark"><i class="bi bi-hourglass-split me-1"></i>Pending / Under Re-evaluation</div>
+                                                            <div class="text-muted small">Place application back under re-evaluation for marks verification.</div>
+                                                        </div>
+                                                    </label>
+                                                </div>
+                                            </div>
+
+                                            <div class="mb-3">
+                                                <label class="form-label small fw-semibold text-secondary">Admissions Committee Notes / Instructions (Optional):</label>
+                                                <textarea name="admin_notes" class="form-control" rows="3" placeholder="Provide instructions, reason for change, or details for the student...">{{ app.admin_notes|default:"" }}</textarea>
+                                            </div>
+
+                                            <div class="alert alert-info py-2 small mb-0">
+                                                <i class="bi bi-envelope-paper me-1"></i>The student will be automatically notified at <strong>{{ app.email }}</strong> with the updated status.
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer border-top-0 pt-0">
+                                            <button type="button" class="btn btn-light px-3" data-bs-dismiss="modal">Close</button>
+                                            <button type="submit" class="btn btn-primary px-4 fw-bold">
+                                                <i class="bi bi-check-lg me-1"></i>Update Decision Status
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="text-center py-5">
+                    <div class="display-5 text-muted mb-3"><i class="bi bi-inbox"></i></div>
+                    <h5 class="fw-bold text-dark">No Applications Found</h5>
+                    <p class="text-muted small mb-3">
+                        {% if search_q or status_filter or selected_college_id %}
+                            No applications match your active filter criteria. Try clearing the filter or searching another term.
+                        {% else %}
+                            There are currently no admission applications submitted by students for your institution. New applications will appear here in real time.
+                        {% endif %}
+                    </p>
+                    {% if search_q or status_filter or selected_college_id %}
+                        <a href="{% url 'university_applications' %}" class="btn btn-outline-primary px-4 btn-sm">
+                            Clear Filters &amp; View All
+                        </a>
+                    {% endif %}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

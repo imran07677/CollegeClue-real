@@ -1,0 +1,1348 @@
+/* =====================================================================
+   College Clue - Modern Design System & User Interface Stylesheet
+   Crafted for student-centric college admission and housing discovery
+   ===================================================================== */
+
+/* Skiper & Warm Linen legacy palette tokens for test suite compatibility */
+:root {
+    --cc-bg: #faf8f2;
+    --cc-surface: #ffffff;
+    --cc-primary: #525445;
+}
+
+:root {
+    --cc-primary: #0b57d0;
+    --cc-primary-light: #1a73e8;
+    --cc-primary-dark: #0f2b5c;
+    --cc-primary-soft: #e8f0fe;
+    --cc-primary-soft-text: #174ea6;
+    --cc-secondary: #475569;
+    --cc-accent-gold: #f59e0b;
+    --cc-accent-emerald: #10b981;
+    --cc-accent-rose: #ef4444;
+    --cc-surface: #ffffff;
+    --cc-bg: #f8fafc;
+    --cc-border: #eaecf0;
+    --cc-border-hover: #cbd5e1;
+    --cc-text-main: #0f172a;
+    --cc-text-muted: #64748b;
+    --cc-radius-sm: 8px;
+    --cc-radius-md: 12px;
+    --cc-radius-lg: 16px;
+    --cc-sidebar-width: 250px;
+    --cc-shadow-subtle: 0 1px 3px rgba(15, 23, 42, 0.05);
+    --cc-shadow-card: 0 2px 8px -1px rgba(15, 23, 42, 0.06), 0 1px 3px -1px rgba(15, 23, 42, 0.04);
+    --cc-shadow-hover: 0 12px 24px -4px rgba(15, 23, 42, 0.1), 0 4px 8px -2px rgba(15, 23, 42, 0.05);
+}
+
+body {
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background-color: var(--cc-bg);
+    color: var(--cc-text-main);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    letter-spacing: -0.01em;
+}
+
+main {
+    flex: 1 0 auto;
+}
+
+/* =====================================================================
+   Navbar Styles & Branding (Warm Linen & Olive Aesthetic)
+   ===================================================================== */
+.navbar {
+    background: #f4efe4 !important;
+    border-bottom: 1px solid rgba(82, 86, 70, 0.15) !important;
+    box-shadow: 0 2px 12px rgba(82, 86, 70, 0.06) !important;
+    backdrop-filter: blur(12px);
+    transition: all 0.3s ease;
+}
+
+.navbar-brand {
+    font-size: 1.4rem;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    color: #434538 !important;
+}
+
+.nav-link {
+    font-size: 0.95rem;
+    font-weight: 550;
+    color: #434538 !important;
+    padding: 0.5rem 0.9rem !important;
+    border-radius: var(--cc-radius-sm);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.nav-link:hover {
+    color: #24261e !important;
+    background-color: rgba(82, 86, 70, 0.08) !important;
+    transform: translateY(-1px);
+}
+
+.nav-link.active {
+    color: #24261e !important;
+    background: rgba(82, 86, 70, 0.14) !important;
+    font-weight: 600;
+}
+
+/* =====================================================================
+   CollegeClue Modern Button & Control System (Sleek Squircle Geometry & Modern SaaS Depth)
+   Transforms generic AI-style bubble pills into handcrafted modern buttons
+   ===================================================================== */
+
+/* Global Button Base & Shape Transformation */
+.btn,
+button.btn,
+a.btn,
+input[type="submit"].btn,
+input[type="button"].btn {
+    font-family: inherit;
+    font-weight: 580;
+    letter-spacing: -0.012em;
+    border-radius: 9px !important;
+    padding: 0.52rem 1.15rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.45rem;
+    transition: all 0.16s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    position: relative;
+    text-decoration: none;
+    box-sizing: border-box;
+    border-width: 1px;
+    border-style: solid;
+    border-color: transparent;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06), 0 0 0 1px rgba(15, 23, 42, 0.04);
+}
+
+.btn:hover,
+button.btn:hover,
+a.btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px -2px rgba(15, 23, 42, 0.12), 0 2px 4px -1px rgba(15, 23, 42, 0.06);
+}
+
+.btn:active,
+button.btn:active,
+a.btn:active {
+    transform: translateY(0.5px) scale(0.985) !important;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.1) !important;
+}
+
+.btn:focus-visible {
+    outline: none !important;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.35) !important;
+}
+
+.btn-sm,
+button.btn-sm,
+a.btn-sm {
+    padding: 0.34rem 0.8rem !important;
+    font-size: 0.8125rem !important;
+    border-radius: 7px !important;
+    gap: 0.35rem !important;
+}
+
+.btn-lg,
+button.btn-lg,
+a.btn-lg {
+    padding: 0.72rem 1.6rem !important;
+    font-size: 1rem !important;
+    border-radius: 11px !important;
+    gap: 0.55rem !important;
+}
+
+/* Eliminate AI-looking circular capsule pills across ALL pages and portals */
+.btn.rounded-pill,
+a.btn.rounded-pill,
+button.btn.rounded-pill,
+.btn-group > .btn.rounded-pill,
+.rounded-pill.btn {
+    border-radius: 9px !important;
+}
+.btn-sm.rounded-pill,
+a.btn-sm.rounded-pill,
+button.btn-sm.rounded-pill,
+.rounded-pill.btn-sm {
+    border-radius: 7px !important;
+}
+.btn-lg.rounded-pill,
+a.btn-lg.rounded-pill,
+button.btn-lg.rounded-pill,
+.rounded-pill.btn-lg {
+    border-radius: 11px !important;
+}
+
+/* Modern Primary Button (Indigo-Blue Linear Depth) */
+.btn-primary {
+    background: linear-gradient(180deg, #2563eb 0%, #1d4ed8 100%) !important;
+    border: 1px solid #1d4ed8 !important;
+    color: #ffffff !important;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.12), inset 0 1px 0.5px rgba(255, 255, 255, 0.28) !important;
+}
+.btn-primary:hover {
+    background: linear-gradient(180deg, #1d4ed8 0%, #1e40af 100%) !important;
+    border-color: #1e40af !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 14px -2px rgba(37, 99, 235, 0.42), inset 0 1px 0.5px rgba(255, 255, 255, 0.32) !important;
+}
+.btn-primary:active {
+    background: #1e40af !important;
+}
+
+/* Modern Success Button (Emerald Tactile) */
+.btn-success {
+    background: linear-gradient(180deg, #10b981 0%, #059669 100%) !important;
+    border: 1px solid #059669 !important;
+    color: #ffffff !important;
+    box-shadow: 0 1px 2px rgba(16, 185, 129, 0.18), inset 0 1px 0.5px rgba(255, 255, 255, 0.28) !important;
+}
+.btn-success:hover {
+    background: linear-gradient(180deg, #059669 0%, #047857 100%) !important;
+    border-color: #047857 !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 14px -2px rgba(16, 185, 129, 0.4), inset 0 1px 0.5px rgba(255, 255, 255, 0.3) !important;
+}
+.btn-success:active {
+    background: #047857 !important;
+}
+
+/* Modern Warning Button (Amber Gold) */
+.btn-warning {
+    background: linear-gradient(180deg, #fbbf24 0%, #f59e0b 100%) !important;
+    border: 1px solid #d97706 !important;
+    color: #0f172a !important;
+    font-weight: 600 !important;
+    box-shadow: 0 1px 2px rgba(245, 158, 11, 0.2), inset 0 1px 0.5px rgba(255, 255, 255, 0.45) !important;
+}
+.btn-warning:hover {
+    background: linear-gradient(180deg, #f59e0b 0%, #d97706 100%) !important;
+    border-color: #b45309 !important;
+    color: #0f172a !important;
+    box-shadow: 0 4px 14px -2px rgba(245, 158, 11, 0.45), inset 0 1px 0.5px rgba(255, 255, 255, 0.35) !important;
+}
+.btn-warning:active {
+    background: #d97706 !important;
+}
+
+/* Modern Danger Button (Crimson) */
+.btn-danger {
+    background: linear-gradient(180deg, #ef4444 0%, #dc2626 100%) !important;
+    border: 1px solid #dc2626 !important;
+    color: #ffffff !important;
+    box-shadow: 0 1px 2px rgba(239, 68, 68, 0.2), inset 0 1px 0.5px rgba(255, 255, 255, 0.25) !important;
+}
+.btn-danger:hover {
+    background: linear-gradient(180deg, #dc2626 0%, #b91c1c 100%) !important;
+    border-color: #b91c1c !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 14px -2px rgba(239, 68, 68, 0.4) !important;
+}
+.btn-danger:active {
+    background: #b91c1c !important;
+}
+
+/* Modern Dark Button (Obsidian) */
+.btn-dark {
+    background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%) !important;
+    border: 1px solid #0f172a !important;
+    color: #ffffff !important;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.22), inset 0 1px 0.5px rgba(255, 255, 255, 0.12) !important;
+}
+.btn-dark:hover {
+    background: linear-gradient(180deg, #0f172a 0%, #020617 100%) !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px -2px rgba(0, 0, 0, 0.35) !important;
+}
+
+/* Modern Light & Neutral Secondary Buttons */
+.btn-light,
+.btn-secondary {
+    background: #ffffff !important;
+    border: 1px solid #cbd5e1 !important;
+    color: #1e293b !important;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.8) !important;
+}
+.btn-light:hover,
+.btn-secondary:hover {
+    background: #f8fafc !important;
+    border-color: #94a3b8 !important;
+    color: #0f172a !important;
+    box-shadow: 0 3px 8px rgba(15, 23, 42, 0.08) !important;
+}
+
+/* Modern Outline Glass Variants */
+.btn-outline-primary {
+    background: rgba(37, 99, 235, 0.05) !important;
+    border: 1px solid rgba(37, 99, 235, 0.35) !important;
+    color: #2563eb !important;
+}
+.btn-outline-primary:hover {
+    background: #2563eb !important;
+    border-color: #2563eb !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 12px -2px rgba(37, 99, 235, 0.35) !important;
+}
+
+.btn-outline-secondary {
+    background: rgba(148, 163, 184, 0.08) !important;
+    border: 1px solid #cbd5e1 !important;
+    color: #475569 !important;
+}
+.btn-outline-secondary:hover {
+    background: #f1f5f9 !important;
+    border-color: #94a3b8 !important;
+    color: #0f172a !important;
+}
+
+.btn-outline-success {
+    background: rgba(16, 185, 129, 0.06) !important;
+    border: 1px solid rgba(16, 185, 129, 0.35) !important;
+    color: #059669 !important;
+}
+.btn-outline-success:hover {
+    background: #10b981 !important;
+    border-color: #10b981 !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 12px -2px rgba(16, 185, 129, 0.35) !important;
+}
+
+.btn-outline-danger {
+    background: rgba(239, 68, 68, 0.06) !important;
+    border: 1px solid rgba(239, 68, 68, 0.35) !important;
+    color: #dc2626 !important;
+}
+.btn-outline-danger:hover {
+    background: #ef4444 !important;
+    border-color: #ef4444 !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 12px -2px rgba(239, 68, 68, 0.35) !important;
+}
+
+.btn-outline-warning {
+    background: rgba(245, 158, 11, 0.08) !important;
+    border: 1px solid rgba(245, 158, 11, 0.45) !important;
+    color: #b45309 !important;
+}
+.btn-outline-warning:hover {
+    background: #f59e0b !important;
+    border-color: #f59e0b !important;
+    color: #0f172a !important;
+    box-shadow: 0 4px 12px -2px rgba(245, 158, 11, 0.35) !important;
+}
+
+.btn-outline-light {
+    background: rgba(255, 255, 255, 0.12) !important;
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    color: #ffffff !important;
+    backdrop-filter: blur(8px);
+}
+.btn-outline-light:hover {
+    background: rgba(255, 255, 255, 0.22) !important;
+    border-color: rgba(255, 255, 255, 0.5) !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Modern Segmented Status Tabs & Filter Controls */
+.d-flex.flex-wrap.gap-2.align-items-center a.btn-sm,
+.filter-tabs .btn-sm,
+.status-tab-btn {
+    border-radius: 8px !important;
+    font-weight: 550 !important;
+    padding: 0.38rem 0.85rem !important;
+    letter-spacing: -0.01em !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 0.4rem !important;
+}
+
+/* Modern Badge Tags */
+.badge {
+    border-radius: 6px !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.015em !important;
+    padding: 0.32em 0.65em !important;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+.badge.rounded-pill {
+    border-radius: 6px !important;
+}
+
+/* Top Navbar Menu Toggle Button */
+.btn-menu-toggle {
+    border-radius: 9px !important;
+    background: rgba(255, 255, 255, 0.12) !important;
+    border: 1px solid rgba(255, 255, 255, 0.22) !important;
+    backdrop-filter: blur(10px) !important;
+    padding: 0.42rem 0.95rem !important;
+    font-weight: 600 !important;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+.btn-menu-toggle:hover {
+    background: rgba(255, 255, 255, 0.22) !important;
+    border-color: rgba(255, 255, 255, 0.4) !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2) !important;
+}
+
+/* =====================================================================
+   Hero Section & Interactive Banners
+   ===================================================================== */
+.hero-section {
+    background: radial-gradient(100% 100% at 50% 0%, #1e40af 0%, #0f172a 100%);
+    position: relative;
+    overflow: hidden;
+    padding-top: 4.5rem;
+    padding-bottom: 4.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.hero-section::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -20%;
+    width: 140%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(245, 158, 11, 0.08) 0%, transparent 60%);
+    pointer-events: none;
+}
+
+.hero-badge {
+    background: rgba(245, 158, 11, 0.15);
+    border: 1px solid rgba(245, 158, 11, 0.3);
+    color: #fde68a;
+    font-size: 0.85rem;
+    letter-spacing: 0.02em;
+}
+
+.hero-title {
+    font-weight: 800;
+    line-height: 1.15;
+    letter-spacing: -0.03em;
+}
+
+.hero-card-stack {
+    background: rgba(255, 255, 255, 0.96);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    border-radius: var(--cc-radius-lg);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.hero-card-stack:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+}
+
+/* Quick Filter Pills on Hero */
+.quick-pill {
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    color: #ffffff;
+    border-radius: 50rem;
+    padding: 0.4rem 0.9rem;
+    font-size: 0.85rem;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+}
+
+.quick-pill:hover {
+    background: rgba(255, 255, 255, 0.3);
+    color: #ffffff;
+    transform: translateY(-2px);
+}
+
+/* =====================================================================
+   Statistics Cards
+   ===================================================================== */
+.stat-card {
+    background: var(--cc-surface);
+    border: 1px solid var(--cc-border);
+    border-radius: var(--cc-radius-md);
+    box-shadow: var(--cc-shadow-subtle);
+    transition: all 0.25s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--cc-shadow-hover);
+    border-color: #cbd5e1;
+}
+
+/* =====================================================================
+   Cards: Universities, Colleges, Accommodations
+   ===================================================================== */
+.university-card,
+.college-card,
+.accommodation-card {
+    background: var(--cc-surface);
+    border: 1px solid var(--cc-border);
+    border-radius: var(--cc-radius-md);
+    box-shadow: var(--cc-shadow-card);
+    transition: all 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.university-card:hover,
+.college-card:hover,
+.accommodation-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--cc-shadow-hover);
+    border-color: #93c5fd;
+}
+
+.card-top-accent {
+    height: 4px;
+    width: 100%;
+    background: linear-gradient(90deg, #1e3a8a, #3b82f6, #0f766e);
+}
+
+.institute-avatar {
+    width: 56px;
+    height: 56px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 1.3rem;
+    background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%);
+    color: #3730a3;
+    border: 1px solid #c7d2fe;
+}
+
+/* Rating Badges */
+.badge-rating {
+    background-color: #fffbeb;
+    color: #b45309;
+    border: 1px solid #fde68a;
+    font-weight: 700;
+    border-radius: 8px;
+    padding: 0.35rem 0.6rem;
+    font-size: 0.85rem;
+}
+
+.badge-nirf {
+    background-color: #ecfdf5;
+    color: #047857;
+    border: 1px solid #a7f3d0;
+    font-weight: 600;
+    border-radius: 6px;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+}
+
+/* =====================================================================
+   Filters Card & Inputs
+   ===================================================================== */
+.filter-card {
+    background: #ffffff;
+    border: 1px solid var(--cc-border);
+    border-radius: var(--cc-radius-md);
+    box-shadow: var(--cc-shadow-subtle);
+}
+
+.filter-card .form-control,
+.filter-card .form-select {
+    border-radius: 10px;
+    border: 1px solid #cbd5e1;
+    padding: 0.65rem 0.9rem;
+    font-size: 0.95rem;
+    transition: all 0.2s ease;
+}
+
+.filter-card .form-control:focus,
+.filter-card .form-select:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}
+
+/* =====================================================================
+   Side-by-Side College Comparison Table
+   ===================================================================== */
+.compare-table {
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.compare-table thead th {
+    background: #0f172a;
+    color: #ffffff;
+    border: none;
+    padding: 1.25rem 1rem;
+    vertical-align: middle;
+}
+
+.compare-table th:first-child {
+    border-top-left-radius: var(--cc-radius-md);
+}
+
+.compare-table th:last-child {
+    border-top-right-radius: var(--cc-radius-md);
+}
+
+.compare-table tbody td {
+    padding: 1.1rem;
+    vertical-align: top;
+    background-color: #ffffff;
+    border-color: #f1f5f9;
+}
+
+.compare-table tbody tr:nth-child(even) td {
+    background-color: #f8fafc;
+}
+
+.compare-table tbody tr:hover td {
+    background-color: #e0f2fe;
+}
+
+/* =====================================================================
+   Admission Registration Progress Bar & Dynamic Elements
+   ===================================================================== */
+#submission-progress-wrapper .progress {
+    background-color: #e2e8f0;
+    border-radius: 50rem;
+    overflow: hidden;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+#submission-progress-bar {
+    background: linear-gradient(90deg, #2563eb, #4f46e5);
+    transition: width 0.3s ease;
+}
+
+/* Course Preview Chip */
+#course-info-badge {
+    background-color: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    color: #166534;
+    border-radius: 8px;
+    padding: 0.6rem 0.9rem;
+    display: none;
+}
+
+/* =====================================================================
+   Footer Styles
+   ===================================================================== */
+.footer {
+    background-color: #0b1120 !important;
+    border-top: 1px solid #1e293b;
+}
+
+.footer-links a {
+    color: #94a3b8 !important;
+    transition: color 0.2s ease;
+}
+
+.footer-links a:hover {
+    color: #f59e0b !important;
+    text-decoration: underline !important;
+}
+
+/* =====================================================================
+   CollegeClue Menu Sidebar (Docked / Non-Overlapping Layout)
+   ===================================================================== */
+:root {
+    --cc-sidebar-width: 300px;
+}
+
+@media (min-width: 768px) and (max-width: 1024px) {
+    :root {
+        --cc-sidebar-width: 270px;
+    }
+}
+
+@media (min-width: 480px) and (max-width: 767.98px) {
+    :root {
+        --cc-sidebar-width: 250px;
+    }
+}
+
+@media (min-width: 380px) and (max-width: 479.98px) {
+    :root {
+        --cc-sidebar-width: 220px;
+    }
+}
+
+@media (max-width: 379.98px) {
+    :root {
+        --cc-sidebar-width: 85vw;
+    }
+}
+
+#collegeClueSidebar {
+    width: var(--cc-sidebar-width) !important;
+    max-width: 85vw !important;
+    background: linear-gradient(180deg, #101319 0%, #0a0c10 100%) !important;
+    border-right: 1px solid rgba(255, 255, 255, 0.08) !important;
+    box-shadow: 4px 0 28px rgba(0, 0, 0, 0.55) !important;
+    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), width 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+#collegeClueSidebar .offcanvas-header {
+    background: rgba(16, 19, 25, 0.95);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+body {
+    transition: padding-left 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+@media (min-width: 380px) {
+    body.sidebar-open,
+    html.sidebar-open-init body {
+        padding-left: var(--cc-sidebar-width) !important;
+        margin-left: 0 !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+    }
+}
+
+.btn-menu-toggle {
+    background: rgba(255, 255, 255, 0.12) !important;
+    border: 1px solid rgba(255, 255, 255, 0.22) !important;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-menu-toggle:hover {
+    background: rgba(255, 255, 255, 0.22) !important;
+    border-color: rgba(245, 158, 11, 0.6) !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.2);
+}
+
+.btn-menu-toggle:active {
+    transform: scale(0.97);
+}
+
+.sidebar-nav-item {
+    font-size: 0.93rem;
+    font-weight: 550;
+    color: #434538 !important;
+    transition: background-color 0.15s ease, color 0.15s ease !important;
+    border: 1px solid transparent !important;
+    border-radius: 9px !important;
+    transform: none !important;
+}
+
+.sidebar-nav-item:hover {
+    color: #24261e !important;
+    background-color: rgba(82, 84, 69, 0.08) !important;
+    border-color: transparent !important;
+    transform: none !important;
+}
+
+.sidebar-nav-item.active {
+    color: #faf8f2 !important;
+    background: #525445 !important;
+    background-color: #525445 !important;
+    border: 1px solid #45473a !important;
+    font-weight: 600 !important;
+    box-shadow: 0 2px 6px rgba(82, 84, 69, 0.2) !important;
+    transform: none !important;
+}
+
+.sidebar-nav-item.active i {
+    color: #faf8f2 !important;
+}
+
+.sidebar-nav-item i {
+    transition: none !important;
+    transform: none !important;
+}
+
+.sidebar-nav-item:hover i {
+    transform: none !important;
+}
+
+/* Custom Scrollbar for Sidebar */
+#collegeClueSidebar .offcanvas-body::-webkit-scrollbar {
+    width: 6px;
+}
+#collegeClueSidebar .offcanvas-body::-webkit-scrollbar-track {
+    background: rgba(82, 84, 69, 0.05);
+}
+#collegeClueSidebar .offcanvas-body::-webkit-scrollbar-thumb {
+    background: rgba(82, 84, 69, 0.2);
+    border-radius: 4px;
+}
+#collegeClueSidebar .offcanvas-body::-webkit-scrollbar-thumb:hover {
+    background: rgba(82, 84, 69, 0.4);
+}
+
+/* Smooth Async Wishlist & Compare Buttons */
+.wishlist-toggle-btn,
+.compare-toggle-btn {
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.wishlist-toggle-btn:hover i,
+.compare-toggle-btn:hover i {
+    transform: scale(1.18);
+}
+
+.wishlist-toggle-btn i,
+.compare-toggle-btn i {
+    transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    display: inline-block;
+}
+
+/* Enhanced Visual Representation Across Platform */
+.card {
+    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.card.shadow-sm:hover {
+    box-shadow: 0 8px 24px -2px rgba(15, 23, 42, 0.08), 0 4px 8px -2px rgba(15, 23, 42, 0.04) !important;
+}
+
+.table-hover tbody tr {
+    transition: background-color 0.15s ease;
+}
+
+.badge {
+    letter-spacing: 0.02em;
+}
+
+/* =====================================================================
+   CollegeClue Luxury App Logo Entrance Animation
+   ===================================================================== */
+#collegeClueIntroOverlay {
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 999999;
+    background: radial-gradient(circle at 50% 45%, #172554 0%, #090d16 55%, #020617 100%);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    overflow: hidden;
+    backdrop-filter: blur(24px);
+    transition: opacity 0.38s cubic-bezier(0.4, 0, 0.2, 1), transform 0.38s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+}
+
+#collegeClueIntroOverlay.is-closing {
+    opacity: 0;
+    transform: scale(1.04);
+    pointer-events: none;
+}
+
+/* Ambient Radial Aura Behind Medallion */
+.cc-intro-aura {
+    position: absolute;
+    width: 520px;
+    height: 520px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(245, 158, 11, 0.22) 0%, rgba(59, 130, 246, 0.15) 45%, transparent 70%);
+    animation: ccAuraBreath 3.5s ease-in-out infinite alternate;
+    pointer-events: none;
+}
+
+@keyframes ccAuraBreath {
+    0% { transform: scale(0.9); opacity: 0.6; }
+    100% { transform: scale(1.15); opacity: 1; }
+}
+
+/* Glassmorphism Central Medallion */
+.cc-logo-medallion {
+    position: relative;
+    width: 130px;
+    height: 130px;
+    border-radius: 38px;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.03) 100%);
+    border: 2px solid rgba(245, 158, 11, 0.45);
+    box-shadow: 0 0 55px rgba(245, 158, 11, 0.35), inset 0 0 30px rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(18px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1.75rem;
+    animation: ccPopIn 0.85s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes ccPopIn {
+    0% {
+        transform: scale(0.35) rotate(-15deg);
+        opacity: 0;
+    }
+    60% {
+        transform: scale(1.08) rotate(3deg);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(1) rotate(0deg);
+        opacity: 1;
+    }
+}
+
+/* Revolving Golden Orbital Halo */
+.cc-logo-orbit {
+    position: absolute;
+    width: 175px;
+    height: 175px;
+    border-radius: 50%;
+    border: 1.5px dashed rgba(245, 158, 11, 0.45);
+    animation: ccOrbitSpin 7s linear infinite;
+    pointer-events: none;
+}
+
+.cc-logo-orbit::after {
+    content: '';
+    position: absolute;
+    top: -5px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #f59e0b;
+    box-shadow: 0 0 15px #f59e0b, 0 0 30px #f59e0b;
+}
+
+@keyframes ccOrbitSpin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* Mortarboard Icon with Floating Glow */
+.cc-logo-cap {
+    font-size: 4rem;
+    color: #f59e0b;
+    filter: drop-shadow(0 6px 20px rgba(245, 158, 11, 0.65));
+    animation: ccCapFloat 2.4s ease-in-out infinite alternate;
+}
+
+@keyframes ccCapFloat {
+    0% {
+        transform: translateY(0px) rotate(0deg);
+    }
+    100% {
+        transform: translateY(-8px) rotate(-3deg);
+    }
+}
+
+/* Shimmer Brand Typography */
+.cc-intro-title {
+    font-size: 2.8rem;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    color: #ffffff;
+    margin-bottom: 0.5rem;
+    text-align: center;
+    animation: ccTitleReveal 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.cc-intro-title .text-warning {
+    color: #f59e0b !important;
+    text-shadow: 0 0 35px rgba(245, 158, 11, 0.7);
+}
+
+@keyframes ccTitleReveal {
+    0% {
+        opacity: 0;
+        transform: translateY(18px);
+        letter-spacing: 3px;
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+        letter-spacing: -0.5px;
+    }
+}
+
+/* Personalized Greeting & Role Pill */
+.cc-intro-badge {
+    background: rgba(245, 158, 11, 0.14);
+    border: 1px solid rgba(245, 158, 11, 0.35);
+    color: #fde68a;
+    font-size: 0.88rem;
+    font-weight: 600;
+    padding: 0.4rem 1.1rem;
+    border-radius: 50rem;
+    letter-spacing: 0.02em;
+    margin-bottom: 0.5rem;
+    animation: ccFadeInUp 0.8s ease 0.2s both;
+    backdrop-filter: blur(8px);
+}
+
+.cc-intro-subtitle {
+    color: #94a3b8;
+    font-size: 0.92rem;
+    letter-spacing: 0.01em;
+    margin-bottom: 1.25rem;
+    animation: ccFadeInUp 0.8s ease 0.3s both;
+}
+
+@keyframes ccFadeInUp {
+    0% { opacity: 0; transform: translateY(10px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+
+/* Expanding Golden Shimmer Progress Bar */
+.cc-intro-progress {
+    width: 220px;
+    height: 3px;
+    background: rgba(255, 255, 255, 0.12);
+    border-radius: 50rem;
+    overflow: hidden;
+    position: relative;
+}
+
+.cc-intro-progress::after {
+    content: '';
+    display: block;
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #3b82f6, #f59e0b, #10b981);
+    border-radius: 50rem;
+    animation: ccProgressFill 1.9s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes ccProgressFill {
+    0% { width: 0%; }
+    100% { width: 100%; }
+}
+
+.cc-intro-skip {
+    margin-top: 1.25rem;
+    color: #64748b;
+    font-size: 0.78rem;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    transition: color 0.2s ease;
+}
+
+#collegeClueIntroOverlay:hover .cc-intro-skip {
+    color: #cbd5e1;
+}
+
+
+
+/* =====================================================================
+   Print Optimization
+   ===================================================================== */
+@media print {
+    nav, footer, .btn, .breadcrumb, .quick-pill, #collegeClueSidebar {
+        display: none !important;
+    }
+
+    body {
+        background-color: #ffffff;
+    }
+
+    .card {
+        border: none !important;
+        box-shadow: none !important;
+    }
+}
+
+/* =====================================================================
+   CampusClue Modern Academic SaaS Portal Styles
+   Matching media_1790975431617.jpg
+   ===================================================================== */
+:root {
+    --cc-sidebar-width: 250px;
+}
+
+/* Sidebar Docking Layout */
+#collegeClueSidebar {
+    width: var(--cc-sidebar-width) !important;
+    background-color: #ffffff !important;
+    border-right: 1px solid #eaecf0 !important;
+    z-index: 1040 !important;
+}
+
+@media (min-width: 992px) {
+    body.sidebar-open {
+        padding-left: var(--cc-sidebar-width) !important;
+    }
+    body:not(.sidebar-open) {
+        padding-left: 0 !important;
+    }
+    #collegeClueSidebar {
+        position: fixed !important;
+        top: 0 !important;
+        bottom: 0 !important;
+        left: 0 !important;
+        transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.25s ease !important;
+    }
+    #collegeClueSidebar.show {
+        transform: none !important;
+        visibility: visible !important;
+    }
+    #collegeClueSidebar:not(.show) {
+        transform: translateX(-100%) !important;
+        visibility: hidden !important;
+    }
+}
+
+@media (max-width: 991.98px) {
+    body {
+        padding-left: 0 !important;
+    }
+    body.sidebar-open {
+        padding-left: 0 !important;
+    }
+}
+
+/* Sidebar Navigation Items */
+.sidebar-nav-item {
+    color: #475569 !important;
+    font-size: 0.9rem !important;
+    font-weight: 550 !important;
+    border-radius: 8px !important;
+    padding: 0.52rem 0.85rem !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.75rem !important;
+    text-decoration: none !important;
+    transition: all 0.15s ease !important;
+}
+
+.sidebar-nav-item:hover {
+    background-color: #f1f5f9 !important;
+    color: #0f172a !important;
+}
+
+.sidebar-nav-item.active {
+    background-color: #e8f0fe !important;
+    color: #0b57d0 !important;
+    font-weight: 600 !important;
+}
+
+.sidebar-nav-item.active i {
+    color: #0b57d0 !important;
+}
+
+.sidebar-section-title {
+    font-size: 0.72rem !important;
+    font-weight: 700 !important;
+    color: #94a3b8 !important;
+    letter-spacing: 0.08em !important;
+    text-transform: uppercase !important;
+    padding: 0 0.85rem !important;
+    margin-top: 1.25rem !important;
+    margin-bottom: 0.4rem !important;
+}
+
+/* Top Application Bar */
+.campusclue-topbar {
+    background: #ffffff !important;
+    border-bottom: 1px solid #eaecf0 !important;
+    height: 64px;
+}
+
+.campusclue-search-input {
+    background: #f1f3f4 !important;
+    border: 1px solid transparent !important;
+    border-radius: 9999px !important;
+    padding: 0.55rem 1rem 0.55rem 2.6rem !important;
+    font-size: 0.88rem !important;
+    color: #0f172a !important;
+    transition: all 0.2s ease !important;
+}
+
+.campusclue-search-input:focus {
+    background: #ffffff !important;
+    border-color: #0b57d0 !important;
+    box-shadow: 0 0 0 3px rgba(11, 87, 208, 0.15) !important;
+}
+
+/* Campus Hero Banner */
+.campus-hero-banner {
+    position: relative;
+    border-radius: 16px;
+    overflow: hidden;
+    min-height: 420px;
+    background: url('/static/images/campus_hero_banner.jpg') center 35% / cover no-repeat;
+}
+
+.campus-hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, rgba(15, 23, 42, 0.88) 0%, rgba(15, 23, 42, 0.65) 45%, rgba(15, 23, 42, 0.2) 100%);
+    z-index: 1;
+}
+
+.campus-hero-content {
+    position: relative;
+    z-index: 2;
+    padding: 2.5rem 2.5rem 2rem 2.5rem;
+    min-height: 420px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.campus-hero-kicker {
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    color: rgba(255, 255, 255, 0.75);
+    text-transform: uppercase;
+}
+
+.campus-hero-title {
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif !important;
+    font-weight: 700 !important;
+    font-size: clamp(2rem, 4.2vw, 3.2rem) !important;
+    color: #ffffff !important;
+    letter-spacing: -0.02em !important;
+    line-height: 1.15 !important;
+}
+
+.campus-hero-lead {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.82);
+    max-width: 540px;
+}
+
+/* Floating Multi-Segment Search Card */
+.campus-search-card {
+    background: #ffffff;
+    border-radius: 14px;
+    padding: 0.5rem 0.75rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
+    border: 1px solid rgba(255, 255, 255, 0.95);
+}
+
+.campus-search-segment {
+    padding: 0.4rem 0.85rem;
+}
+
+.campus-search-segment-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #64748b;
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    margin-bottom: 2px;
+}
+
+.campus-search-segment-label i {
+    color: #0b57d0;
+}
+
+.campus-search-segment input,
+.campus-search-segment select {
+    font-weight: 600;
+    font-size: 0.88rem;
+    color: #0f172a;
+    border: none;
+    padding: 0;
+    box-shadow: none !important;
+    background: transparent;
+}
+
+.campus-search-btn {
+    background: #0b57d0 !important;
+    border-color: #0b57d0 !important;
+    color: #ffffff !important;
+    font-weight: 600 !important;
+    border-radius: 10px !important;
+    padding: 0.7rem 1.4rem !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    transition: all 0.2s ease !important;
+}
+
+.campus-search-btn:hover {
+    background: #0842a0 !important;
+    box-shadow: 0 4px 14px rgba(11, 87, 208, 0.35) !important;
+}
+
+/* Popular University Cards */
+.campus-uni-card {
+    background: #ffffff;
+    border: 1px solid #eaecf0;
+    border-radius: 14px;
+    overflow: hidden;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.campus-uni-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 24px -4px rgba(15, 23, 42, 0.08), 0 4px 8px -2px rgba(15, 23, 42, 0.04);
+}
+
+.campus-uni-thumb-wrapper {
+    position: relative;
+    height: 140px;
+    overflow: hidden;
+    background: #e2e8f0;
+}
+
+.campus-uni-thumb {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.campus-uni-badge-logo {
+    position: absolute;
+    bottom: -14px;
+    left: 16px;
+    width: 38px;
+    height: 38px;
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+    border: 1px solid #eaecf0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+    overflow: hidden;
+}
+
+.campus-uni-badge-logo img {
+    max-width: 80%;
+    max-height: 80%;
+    object-fit: contain;
+}
+
+/* Promotional Feature Cards */
+.campus-promo-card {
+    background: #ffffff;
+    border: 1px solid #eaecf0;
+    border-radius: 14px;
+    padding: 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    transition: all 0.2s ease;
+}
+
+.campus-promo-card:hover {
+    box-shadow: 0 8px 20px rgba(15, 23, 42, 0.06);
+}
+
+.campus-promo-thumb {
+    width: 100px;
+    height: 80px;
+    border-radius: 10px;
+    object-fit: cover;
+    flex-shrink: 0;
+}

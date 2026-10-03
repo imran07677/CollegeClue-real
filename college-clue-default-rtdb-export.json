@@ -1,0 +1,510 @@
+{
+  "universities": [
+    {
+      "name": "University of Delhi (DU)",
+      "city": "New Delhi",
+      "state": "Delhi",
+      "description": "Collegiate central research university recognized as an Institute of Eminence by UGC. Renowned for academic excellence in arts, commerce, and scientific research.",
+      "website": "https://du.ac.in",
+      "established_year": 1922,
+      "rating": 4.8,
+      "colleges": [
+        {
+          "name": "St. Stephen's College",
+          "city": "New Delhi",
+          "description": "Premier constituent college of DU known for liberal arts, physical sciences, and historic alumni leadership.",
+          "fees": 42000,
+          "rating": 4.9,
+          "facilities": "Heritage Chapel, Modern Science Laboratories, Air-conditioned Library, Olympic Tennis Courts, Multi-cuisine Cafeteria, Residential Halls",
+          "courses": [
+            {
+              "name": "B.Sc (Hons) Computer Science",
+              "duration_years": 3,
+              "fee": 45000,
+              "seats": 60
+            },
+            {
+              "name": "B.A. (Hons) Economics",
+              "duration_years": 3,
+              "fee": 42000,
+              "seats": 50
+            },
+            {
+              "name": "B.Sc (Hons) Physics",
+              "duration_years": 3,
+              "fee": 44000,
+              "seats": 55
+            }
+          ]
+        },
+        {
+          "name": "Shri Ram College of Commerce (SRCC)",
+          "city": "New Delhi",
+          "description": "India's highest-ranked institution for undergraduate commerce and economics education with top global campus recruitments.",
+          "fees": 38000,
+          "rating": 4.9,
+          "facilities": "Central Air-Conditioning, Bloomberg Financial Terminals, Indoor Sports Complex, Digital Resource Center, Placement Hub",
+          "courses": [
+            {
+              "name": "B.Com (Hons)",
+              "duration_years": 3,
+              "fee": 38000,
+              "seats": 250
+            },
+            {
+              "name": "B.A. (Hons) Economics",
+              "duration_years": 3,
+              "fee": 38000,
+              "seats": 130
+            },
+            {
+              "name": "Master of Commerce (M.Com)",
+              "duration_years": 2,
+              "fee": 42000,
+              "seats": 60
+            }
+          ]
+        },
+        {
+          "name": "Hindu College",
+          "city": "New Delhi",
+          "description": "Consistently ranked #1 college in India by NIRF. Offers celebrated programs across sciences, social sciences, and humanities.",
+          "fees": 27000,
+          "rating": 4.8,
+          "facilities": "Research Centre, Amphitheater, State-of-the-art Auditorium, High-speed Wi-Fi Campus, Sports Pavillion, Girls & Boys Hostels",
+          "courses": [
+            {
+              "name": "B.Sc (Hons) Statistics",
+              "duration_years": 3,
+              "fee": 29000,
+              "seats": 40
+            },
+            {
+              "name": "B.A. (Hons) Political Science",
+              "duration_years": 3,
+              "fee": 26000,
+              "seats": 50
+            },
+            {
+              "name": "B.Sc (Hons) Chemistry",
+              "duration_years": 3,
+              "fee": 28000,
+              "seats": 60
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Indian Institute of Technology Delhi (IIT Delhi)",
+      "city": "New Delhi",
+      "state": "Delhi",
+      "description": "Autonomous public institute of technology declared an Institute of National Importance. Globally celebrated for engineering innovation, start-up incubation, and computing research.",
+      "website": "https://home.iitd.ac.in",
+      "established_year": 1961,
+      "rating": 4.9,
+      "colleges": [
+        {
+          "name": "IIT Delhi School of Engineering & Technology",
+          "city": "New Delhi",
+          "description": "Leading faculty producing world-class engineers, computer scientists, and technologists.",
+          "fees": 220000,
+          "rating": 4.9,
+          "facilities": "Supercomputing Facility, Nanotechnology Center, Advanced Robotics Lab, 24/7 Library, Swimming Pool, 13 Hostels",
+          "courses": [
+            {
+              "name": "B.Tech Computer Science & Engineering",
+              "duration_years": 4,
+              "fee": 225000,
+              "seats": 99
+            },
+            {
+              "name": "B.Tech Electrical Engineering",
+              "duration_years": 4,
+              "fee": 220000,
+              "seats": 120
+            },
+            {
+              "name": "B.Tech Mathematics and Computing",
+              "duration_years": 4,
+              "fee": 225000,
+              "seats": 65
+            },
+            {
+              "name": "M.Tech Artificial Intelligence",
+              "duration_years": 2,
+              "fee": 160000,
+              "seats": 40
+            }
+          ]
+        },
+        {
+          "name": "Department of Management Studies (DMS IITD)",
+          "city": "New Delhi",
+          "description": "Top-ranked management school bridging technological depth with strategic global management leadership.",
+          "fees": 450000,
+          "rating": 4.7,
+          "facilities": "Management Simulation Lab, Corporate Boardrooms, Research Repository, Executive Suites",
+          "courses": [
+            {
+              "name": "MBA Telecom Systems Management",
+              "duration_years": 2,
+              "fee": 480000,
+              "seats": 60
+            },
+            {
+              "name": "MBA General Management",
+              "duration_years": 2,
+              "fee": 450000,
+              "seats": 90
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Indian Institute of Science (IISc Bangalore)",
+      "city": "Bengaluru",
+      "state": "Karnataka",
+      "description": "India's highest-ranked university in global QS & Times Higher Education rankings. Pioneer in scientific discovery, deep tech research, and aerospace engineering.",
+      "website": "https://iisc.ac.in",
+      "established_year": 1909,
+      "rating": 4.9,
+      "colleges": [
+        {
+          "name": "IISc Division of Electrical, Electronics & Computer Sciences (EECS)",
+          "city": "Bengaluru",
+          "description": "The nation's apex division for computing, artificial intelligence, quantum computing, and communication systems.",
+          "fees": 120000,
+          "rating": 5.0,
+          "facilities": "Param Pravega Supercomputer, Quantum Hardware Labs, Clean Rooms, Green Campus, Lush Botanical Gardens",
+          "courses": [
+            {
+              "name": "B.Tech Mathematics and Computing",
+              "duration_years": 4,
+              "fee": 135000,
+              "seats": 52
+            },
+            {
+              "name": "M.Tech Artificial Intelligence",
+              "duration_years": 2,
+              "fee": 110000,
+              "seats": 45
+            },
+            {
+              "name": "M.Tech Computational and Data Science",
+              "duration_years": 2,
+              "fee": 115000,
+              "seats": 35
+            }
+          ]
+        },
+        {
+          "name": "IISc Division of Chemical & Biological Sciences",
+          "city": "Bengaluru",
+          "description": "Premier interdisciplinary research division dedicated to molecular biophysics, genomics, and chemical ecology.",
+          "fees": 95000,
+          "rating": 4.8,
+          "facilities": "Cryo-EM Facility, Mass Spectrometry Center, NMR Spectroscopy Lab, Bioreactor Suites",
+          "courses": [
+            {
+              "name": "Bachelor of Science (Research) in Biology",
+              "duration_years": 4,
+              "fee": 95000,
+              "seats": 40
+            },
+            {
+              "name": "Bachelor of Science (Research) in Chemistry",
+              "duration_years": 4,
+              "fee": 95000,
+              "seats": 40
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Birla Institute of Technology and Science (BITS Pilani)",
+      "city": "Pilani",
+      "state": "Rajasthan",
+      "description": "Eminent deemed university with campuses in Pilani, Goa, Hyderabad, and Dubai. Known for zero attendance policy, student autonomy, and stellar tech unicorn founders.",
+      "website": "https://www.bits-pilani.ac.in",
+      "established_year": 1964,
+      "rating": 4.8,
+      "colleges": [
+        {
+          "name": "BITS Pilani K.K. Birla Goa Campus",
+          "city": "Goa",
+          "description": "Scenic campus by the Zuari river delivering cutting-edge engineering curriculum and premier campus placement track records.",
+          "fees": 520000,
+          "rating": 4.8,
+          "facilities": "Modern Tech Sandbox, High-speed Gigabit Wi-Fi, Student Innovation Center, Medical Clinic, Football Turf",
+          "courses": [
+            {
+              "name": "B.E. Computer Science",
+              "duration_years": 4,
+              "fee": 540000,
+              "seats": 120
+            },
+            {
+              "name": "B.E. Electronics & Communication",
+              "duration_years": 4,
+              "fee": 520000,
+              "seats": 100
+            },
+            {
+              "name": "M.Sc (Hons) Economics + B.E. Dual Degree",
+              "duration_years": 5,
+              "fee": 510000,
+              "seats": 60
+            }
+          ]
+        },
+        {
+          "name": "BITS Pilani Hyderabad Campus",
+          "city": "Hyderabad",
+          "description": "Modern 200-acre smart campus in Telangana with state-of-the-art semiconductor and pharmaceutical research centers.",
+          "fees": 510000,
+          "rating": 4.7,
+          "facilities": "Microelectronics Cleanrooms, Incubation & Entrepreneurship Cell, Air-Conditioned Auditoriums, Modern Hostels",
+          "courses": [
+            {
+              "name": "B.E. Computer Science & Information Systems",
+              "duration_years": 4,
+              "fee": 535000,
+              "seats": 140
+            },
+            {
+              "name": "B.Pharm (Hons)",
+              "duration_years": 4,
+              "fee": 420000,
+              "seats": 60
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Anna University",
+      "city": "Chennai",
+      "state": "Tamil Nadu",
+      "description": "Affiliating university for engineering, technology, and applied sciences in Tamil Nadu, hosting the historic College of Engineering Guindy.",
+      "website": "https://www.annauniv.edu",
+      "established_year": 1978,
+      "rating": 4.6,
+      "colleges": [
+        {
+          "name": "College of Engineering, Guindy (CEG)",
+          "city": "Chennai",
+          "description": "Founded in 1794, CEG is the oldest technical institution in Asia, renowned for core engineering disciplines and industry ties.",
+          "fees": 55000,
+          "rating": 4.8,
+          "facilities": "Ramanujan Computing Centre, Central Workshop, Historic Red Stone Building, 16 Student Hostels, Modern Gym",
+          "courses": [
+            {
+              "name": "B.E. Computer Science and Engineering",
+              "duration_years": 4,
+              "fee": 60000,
+              "seats": 180
+            },
+            {
+              "name": "B.Tech Information Technology",
+              "duration_years": 4,
+              "fee": 58000,
+              "seats": 120
+            },
+            {
+              "name": "B.E. Mechanical Engineering",
+              "duration_years": 4,
+              "fee": 52000,
+              "seats": 150
+            }
+          ]
+        },
+        {
+          "name": "Madras Institute of Technology (MIT Chromepet)",
+          "city": "Chennai",
+          "description": "Alma mater of Dr. A.P.J. Abdul Kalam, famous for aeronautical engineering, automobile technology, and instrumentation.",
+          "fees": 52000,
+          "rating": 4.6,
+          "facilities": "Flight Simulator, Aircraft Hangar, Automotive Testing Track, CAD/CAM Labs",
+          "courses": [
+            {
+              "name": "B.Tech Aeronautical Engineering",
+              "duration_years": 4,
+              "fee": 55000,
+              "seats": 60
+            },
+            {
+              "name": "B.Tech Automobile Engineering",
+              "duration_years": 4,
+              "fee": 52000,
+              "seats": 60
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Jadavpur University",
+      "city": "Kolkata",
+      "state": "West Bengal",
+      "description": "Eminent public university celebrated for world-class technical education at remarkably affordable public fee structures.",
+      "website": "http://www.jaduniv.edu.in",
+      "established_year": 1955,
+      "rating": 4.7,
+      "colleges": [
+        {
+          "name": "Faculty of Engineering & Technology (FET Jadavpur)",
+          "city": "Kolkata",
+          "description": "Top-tier engineering faculty ranked among India's elite for computer science, robotics, and patent publications.",
+          "fees": 12000,
+          "rating": 4.8,
+          "facilities": "Blue Heron Lake, High Performance Computing Center, Digital Library, Salt Lake Campus Hostels, Placement Cell",
+          "courses": [
+            {
+              "name": "B.E. Computer Science & Engineering",
+              "duration_years": 4,
+              "fee": 12500,
+              "seats": 70
+            },
+            {
+              "name": "B.E. Electronics & Telecommunication",
+              "duration_years": 4,
+              "fee": 12000,
+              "seats": 65
+            },
+            {
+              "name": "B.E. Power Engineering",
+              "duration_years": 4,
+              "fee": 11500,
+              "seats": 40
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "University of Mumbai",
+      "city": "Mumbai",
+      "state": "Maharashtra",
+      "description": "One of India's oldest and premier collegiate state universities, offering accredited degrees to hundreds of thousands of students across the Mumbai Metropolitan Region.",
+      "website": "https://mu.ac.in",
+      "established_year": 1857,
+      "rating": 4.5,
+      "colleges": [
+        {
+          "name": "Veermata Jijabai Technological Institute (VJTI)",
+          "city": "Mumbai",
+          "description": "Autonomous public engineering institute located in Matunga, Mumbai. Renowned for civil, electrical, and computer engineering.",
+          "fees": 84000,
+          "rating": 4.7,
+          "facilities": "IoT Innovation Lab, Historic Clock Tower Campus, Textile Technology Plant, 4 Hostels, Central Library",
+          "courses": [
+            {
+              "name": "B.Tech Information Technology",
+              "duration_years": 4,
+              "fee": 86000,
+              "seats": 90
+            },
+            {
+              "name": "B.Tech Computer Engineering",
+              "duration_years": 4,
+              "fee": 86000,
+              "seats": 90
+            },
+            {
+              "name": "M.Tech Software Engineering",
+              "duration_years": 2,
+              "fee": 92000,
+              "seats": 30
+            }
+          ]
+        },
+        {
+          "name": "St. Xavier's College (Autonomous)",
+          "city": "Mumbai",
+          "description": "Prestigious autonomous institution housed in magnificent Indo-Gothic architecture in South Mumbai, renowned for arts, science, and management.",
+          "fees": 38000,
+          "rating": 4.8,
+          "facilities": "Caius Research Lab, The Woods Amphitheater, Historic Reference Library, Malhar Festival Ground, Heritage Hall",
+          "courses": [
+            {
+              "name": "B.Sc Information Technology",
+              "duration_years": 3,
+              "fee": 45000,
+              "seats": 60
+            },
+            {
+              "name": "Bachelor of Mass Media (BMM)",
+              "duration_years": 3,
+              "fee": 38000,
+              "seats": 60
+            },
+            {
+              "name": "B.Com Accounting & Finance",
+              "duration_years": 3,
+              "fee": 32000,
+              "seats": 80
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Symbiosis International University",
+      "city": "Pune",
+      "state": "Maharashtra",
+      "description": "Multi-campus deemed university renowned for management, computer applications, law, and international student diversity.",
+      "website": "https://siu.edu.in",
+      "established_year": 2002,
+      "rating": 4.6,
+      "colleges": [
+        {
+          "name": "Symbiosis Institute of Business Management (SIBM)",
+          "city": "Pune",
+          "description": "Flagship B-school situated atop the picturesque Lavale Hills, consistently ranked among India's top 10 MBA institutions.",
+          "fees": 1150000,
+          "rating": 4.8,
+          "facilities": "Hilltop Residential Campus, Swimming Pool, Bloomberg Finance Terminal, Amphitheater, Executive Dining",
+          "courses": [
+            {
+              "name": "MBA Marketing",
+              "duration_years": 2,
+              "fee": 1150000,
+              "seats": 90
+            },
+            {
+              "name": "MBA Innovation and Entrepreneurship",
+              "duration_years": 2,
+              "fee": 1050000,
+              "seats": 60
+            }
+          ]
+        },
+        {
+          "name": "Symbiosis Institute of Technology (SIT)",
+          "city": "Pune",
+          "description": "Modern technical school emphasizing project-oriented learning, robotics, and cloud computing partnerships.",
+          "fees": 280000,
+          "rating": 4.4,
+          "facilities": "Smart Robotics Laboratory, Apple iOS Developer Center, High-speed Campus Wi-Fi, Modern Gym, Hostels",
+          "courses": [
+            {
+              "name": "B.Tech Computer Science and Engineering",
+              "duration_years": 4,
+              "fee": 290000,
+              "seats": 180
+            },
+            {
+              "name": "B.Tech Robotics and Automation",
+              "duration_years": 4,
+              "fee": 270000,
+              "seats": 60
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

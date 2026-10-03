@@ -1,0 +1,696 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% block title %}Create Account - College Clue{% endblock %}
+
+{% block content %}
+<div class="container py-4 py-md-5 position-relative">
+    <div class="row justify-content-center">
+        <div class="col-md-9 col-lg-7 position-relative">
+
+            <!-- Editorial Centered Headline & Floating Photo Mosaic (Unified Theme) -->
+            <div class="position-relative pt-2 pb-3">
+                <!-- Floating Photos on wide screens -->
+                <div class="d-none d-xl-block position-absolute" style="top: 0; left: -140px; width: 135px; z-index: 1;">
+                    <div class="theme-floating-photo shadow-sm">
+                        <img src="https://images.unsplash.com/photo-1544717305-2782549b5136?auto=format&fit=crop&w=320&q=80" alt="Student with book" class="w-100" style="height: 160px; object-fit: cover;" onerror="this.parentElement.style.display='none';">
+                    </div>
+                </div>
+                <div class="d-none d-xl-block position-absolute" style="top: 15px; right: -150px; width: 145px; z-index: 1;">
+                    <div class="theme-floating-photo shadow-sm">
+                        <img src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=340&q=80" alt="Campus hall" class="w-100" style="height: 145px; object-fit: cover;" onerror="this.parentElement.style.display='none';">
+                    </div>
+                </div>
+
+                <div class="text-center mb-4">
+                    {% if selected_role == 'university' %}
+                        <h1 class="theme-editorial-heading display-5 mb-3" style="letter-spacing: 0.05em; font-size: clamp(1.9rem, 4.2vw, 2.7rem);">
+                            SHAPING FUTURES<br>WITH ACADEMIC EXCELLENCE
+                        </h1>
+                        <p class="theme-editorial-subtitle mb-0 mx-auto" style="max-width: 540px;">
+                            Join our prestigious university partner community. List degree courses and connect with verified student candidates.
+                        </p>
+                    {% elif selected_role == 'accommodation' %}
+                        <h1 class="theme-editorial-heading display-5 mb-3" style="letter-spacing: 0.05em; font-size: clamp(1.9rem, 4.2vw, 2.7rem);">
+                            SHAPING FUTURES<br>WITH SECURE CAMPUS LIVING
+                        </h1>
+                        <p class="theme-editorial-subtitle mb-0 mx-auto" style="max-width: 540px;">
+                            Join our trusted housing partner network. List verified hostels &amp; PGs and connect directly with university students.
+                        </p>
+                    {% else %}
+                        <h1 class="theme-editorial-heading display-5 mb-3" style="letter-spacing: 0.05em; font-size: clamp(1.9rem, 4.2vw, 2.7rem);">
+                            SHAPING FUTURES<br>WITH FAITH
+                        </h1>
+                        <p class="theme-editorial-subtitle mb-0 mx-auto" style="max-width: 520px;">
+                            Join us for an uplifting experience discovering top accredited universities &amp; verified campus housing.
+                        </p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- CollegeClue Brand Subtitle / Home Navigation -->
+            <div class="text-center mb-3">
+                <a href="{% url 'home' %}" class="d-inline-flex align-items-center gap-2 text-decoration-none" title="CollegeClue Home">
+                    <span class="cc-navbar-logo-badge">
+                        <svg viewBox="0 0 40 40" width="30" height="30" class="cc-navbar-svg shadow-sm rounded-circle">
+                            <defs>
+                                <linearGradient id="regGoldSmall" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="#fef08a"/>
+                                    <stop offset="100%" stop-color="#f59e0b"/>
+                                </linearGradient>
+                                <linearGradient id="regBlueSmall" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="#3b82f6"/>
+                                    <stop offset="100%" stop-color="#0f172a"/>
+                                </linearGradient>
+                            </defs>
+                            <circle cx="20" cy="20" r="18" fill="url(#regBlueSmall)" stroke="url(#regGoldSmall)" stroke-width="1.8" class="cc-nb-orbit"/>
+                            <polygon points="20,9 32,15 20,21 8,15" fill="url(#regGoldSmall)"/>
+                            <path d="M13,17 L13,23 C13,27 27,27 27,23 L27,17" fill="none" stroke="url(#regGoldSmall)" stroke-width="1.5"/>
+                            <circle cx="20" cy="15" r="1.5" fill="#ffffff"/>
+                            <path d="M20,15 Q26,17 28,23" fill="none" stroke="#fef08a" stroke-width="1.2"/>
+                            <circle cx="28" cy="23" r="1.5" fill="#fef08a"/>
+                        </svg>
+                    </span>
+                    <span class="fw-bold fs-6">College<span class="text-warning">Clue</span> Registration</span>
+                </a>
+            </div>
+
+            <!-- Role Selector Cards -->
+            <div class="card border-0 shadow-sm rounded-4 mb-4 bg-light p-2">
+                <div class="text-center py-2">
+                    <span class="text-muted small fw-semibold text-uppercase">Choose Account Type</span>
+                </div>
+                <div class="row g-2 text-center">
+                    <div class="col-4">
+                        <a href="{% url 'register' %}?role=student{% if request.GET.next %}&next={{ request.GET.next|urlencode }}{% endif %}" class="btn w-100 rounded-3 py-2 text-nowrap {% if selected_role == 'student' %}btn-primary shadow-sm fw-bold{% else %}btn-outline-secondary bg-white{% endif %}">
+                            <i class="bi bi-mortarboard me-1"></i>Student
+                        </a>
+                    </div>
+                    <div class="col-4">
+                        <a href="{% url 'register' %}?role=university{% if request.GET.next %}&next={{ request.GET.next|urlencode }}{% endif %}" class="btn w-100 rounded-3 py-2 text-nowrap {% if selected_role == 'university' %}btn-primary shadow-sm fw-bold{% else %}btn-outline-secondary bg-white{% endif %}">
+                            <i class="bi bi-building me-1"></i>University
+                        </a>
+                    </div>
+                    <div class="col-4">
+                        <a href="{% url 'register' %}?role=accommodation{% if request.GET.next %}&next={{ request.GET.next|urlencode }}{% endif %}" class="btn w-100 rounded-3 py-2 text-nowrap {% if selected_role == 'accommodation' %}btn-primary shadow-sm fw-bold{% else %}btn-outline-secondary bg-white{% endif %}">
+                            <i class="bi bi-house-door me-1"></i>Housing / PG
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card shadow-lg border-0 rounded-4">
+                <div class="card-body p-4 p-md-5">
+                    <div class="text-center mb-4">
+                        {% if selected_role == 'university' %}
+                            <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3 shadow" style="width: 60px; height: 60px;">
+                                <i class="bi bi-building fs-2"></i>
+                            </div>
+                            <h3 class="fw-bold text-dark">University Partner Registration</h3>
+                            <p class="text-muted small">Register to list campuses, submit course intakes, and reach prospective applicants.</p>
+                        {% elif selected_role == 'accommodation' %}
+                            <div class="bg-info text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3 shadow" style="width: 60px; height: 60px;">
+                                <i class="bi bi-house-door fs-2"></i>
+                            </div>
+                            <h3 class="fw-bold text-dark">Accommodation Provider Registration</h3>
+                            <p class="text-muted small">Register to list student hostels and PGs, connect with students, and manage listings.</p>
+                        {% else %}
+                            <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3 shadow" style="width: 60px; height: 60px;">
+                                <i class="bi bi-person-plus-fill fs-2"></i>
+                            </div>
+                            <h3 class="fw-bold text-dark">Student Registration</h3>
+                            <p class="text-muted small">Join College Clue to explore campuses, compare programs, track admissions, and find housing.</p>
+                        {% endif %}
+                    </div>
+
+                    <form method="post" id="registrationForm" novalidate>
+                        {% csrf_token %}
+                        {% if request.GET.next %}
+                            <input type="hidden" name="next" value="{{ request.GET.next }}">
+                        {% endif %}
+
+                        {% if selected_role == 'student' %}
+                            <!-- ============================================== -->
+                            <!-- STUDENT REGISTRATION FORM (OTP VERIFIED)        -->
+                            <!-- ============================================== -->
+                            <input type="hidden" name="role" value="student">
+
+                            <!-- 1. Username Field -->
+                            <div class="mb-3">
+                                <label for="id_username" class="form-label small fw-semibold text-secondary">
+                                    <i class="bi bi-person me-1 text-primary"></i>Username <span class="text-danger">*</span>
+                                </label>
+                                <input type="text" name="username" id="id_username" class="form-control form-control-lg rounded-3 fs-6 {% if form.username.errors %}is-invalid{% endif %}" placeholder="e.g. rohan_sharma" value="{{ form.username.value|default:'' }}" required autocomplete="username">
+                                <div class="form-text small">Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.</div>
+                                {% if form.username.errors %}
+                                    <div class="invalid-feedback d-block">{{ form.username.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+
+                            <!-- 2. Password Field -->
+                            <div class="mb-3">
+                                <label for="id_password1" class="form-label small fw-semibold text-secondary">
+                                    <i class="bi bi-lock me-1 text-primary"></i>Password <span class="text-danger">*</span>
+                                </label>
+                                <div class="input-group">
+                                    <input type="password" name="password1" id="id_password1" class="form-control form-control-lg rounded-start-3 fs-6 {% if form.password1.errors %}is-invalid{% endif %}" placeholder="Enter strong password (min 8 chars)" required autocomplete="new-password">
+                                    <button class="btn btn-outline-secondary rounded-end-3 toggle-pwd-btn" type="button" data-target="id_password1" title="Toggle password visibility">
+                                        <i class="bi bi-eye"></i>
+                                    </button>
+                                </div>
+                                <div class="form-text small">Must be at least 8 characters long.</div>
+                                {% if form.password1.errors %}
+                                    <div class="invalid-feedback d-block">{{ form.password1.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+
+                            <!-- 3. Confirm Password Field (Password 2 times) -->
+                            <div class="mb-3">
+                                <label for="id_password2" class="form-label small fw-semibold text-secondary">
+                                    <i class="bi bi-shield-lock me-1 text-primary"></i>Confirm Password <span class="text-danger">*</span>
+                                </label>
+                                <div class="input-group">
+                                    <input type="password" name="password2" id="id_password2" class="form-control form-control-lg rounded-start-3 fs-6 {% if form.password2.errors %}is-invalid{% endif %}" placeholder="Re-enter password to confirm" required autocomplete="new-password">
+                                    <button class="btn btn-outline-secondary rounded-end-3 toggle-pwd-btn" type="button" data-target="id_password2" title="Toggle password visibility">
+                                        <i class="bi bi-eye"></i>
+                                    </button>
+                                </div>
+                                <div id="pwdMatchNotice" class="small mt-1 d-none"></div>
+                                {% if form.password2.errors %}
+                                    <div class="invalid-feedback d-block">{{ form.password2.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+
+                            <!-- 4. Email Address Field with Integrated "Send OTP" Button -->
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between align-items-center mb-1">
+                                    <label for="id_email" class="form-label small fw-semibold text-secondary mb-0">
+                                        <i class="bi bi-envelope-at me-1 text-primary"></i>Student Email Address <span class="text-danger">*</span>
+                                    </label>
+                                    <button type="button" id="btnChangeEmail" class="btn btn-link btn-sm text-decoration-none text-danger p-0 fw-semibold d-none" style="font-size: 0.8rem;">
+                                        <i class="bi bi-pencil-square me-1"></i>Change Email
+                                    </button>
+                                </div>
+                                <div class="input-group">
+                                    <input type="email" name="email" id="id_email" class="form-control form-control-lg rounded-start-3 fs-6 {% if form.email.errors %}is-invalid{% endif %}" placeholder="e.g. rohan@example.com" value="{{ form.email.value|default:'' }}" required autocomplete="email">
+                                    <button type="button" id="btnSendOtp" class="btn btn-primary px-3 fw-semibold rounded-end-3 d-flex align-items-center gap-1 shadow-sm">
+                                        <i class="bi bi-send-fill me-1"></i>
+                                        <span id="btnSendOtpText">Send OTP</span>
+                                    </button>
+                                </div>
+                                <div id="emailHelpText" class="form-text small text-muted">Enter your email and click "Send OTP" to receive your 6-digit temporary verification code.</div>
+                                <div id="emailVerifiedSuccessText" class="text-success small fw-semibold mt-1 d-none">
+                                    <i class="bi bi-patch-check-fill me-1"></i>Email successfully verified! Click "Create Student Account" below to complete registration.
+                                </div>
+                                {% if form.email.errors %}
+                                    <div class="invalid-feedback d-block">{{ form.email.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+
+                            <!-- 5. Temporary 6-Digit OTP Verification Container -->
+                            <div id="otpVerificationSection" class="card border-0 bg-light rounded-4 p-3 mb-3 d-none shadow-sm" style="border: 2px dashed #cbd5e1 !important;">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <span class="small fw-bold text-dark">
+                                        <i class="bi bi-shield-check text-warning me-1"></i>Enter 6-Digit Verification Code
+                                    </span>
+                                    <span id="otpCountdownBadge" class="badge bg-secondary-subtle text-secondary small">Expires in 10:00</span>
+                                </div>
+                                <div class="input-group mb-2">
+                                    <input type="text" id="regOtpInput" maxlength="6" class="form-control form-control-lg text-center fw-bold fs-4" placeholder="• • • • • •" autocomplete="one-time-code" inputmode="numeric" style="letter-spacing: 6px;">
+                                    <button type="button" id="btnVerifyOtp" class="btn btn-warning text-dark fw-bold px-4 rounded-end-3 shadow-sm d-flex align-items-center gap-1">
+                                        <i class="bi bi-check2-circle"></i>
+                                        <span>Verify OTP</span>
+                                    </button>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <small class="text-muted" style="font-size: 0.78rem;">Check your inbox and spam folder for the code.</small>
+                                    <button type="button" id="btnResendOtp" class="btn btn-link btn-sm text-decoration-none p-0 small text-primary" disabled>
+                                        Resend in <span id="resendCountdownNum">60</span>s
+                                    </button>
+                                </div>
+                                <div id="otpErrorAlert" class="alert alert-danger py-2 px-3 small mt-2 mb-0 d-none rounded-3"></div>
+                            </div>
+
+                            <!-- 6. Gated "Create Account" Button (Appears ONLY after OTP verification) -->
+                            <div id="studentCreateBtnContainer" class="d-grid mt-4 d-none">
+                                <button type="submit" id="btnSubmitStudent" class="btn btn-success btn-lg fw-bold shadow py-3 rounded-pill d-flex align-items-center justify-content-center gap-2">
+                                    <i class="bi bi-person-check-fill fs-5"></i>
+                                    <span>Create Student Account &amp; Proceed to Login</span>
+                                </button>
+                            </div>
+
+                            <div id="verifyNoticePlaceholder" class="alert alert-warning border-0 rounded-4 p-3 text-center small mb-0 mt-3 shadow-sm">
+                                <i class="bi bi-info-circle-fill text-warning me-1 fs-6"></i>
+                                Complete the steps above and verify your email with the <strong>6-digit OTP</strong> to unlock the <strong>Create Account</strong> button.
+                            </div>
+
+                        {% else %}
+                            <!-- ============================================== -->
+                            <!-- PARTNER REGISTRATION FORM (UNIVERSITY / HOUSING)-->
+                            <!-- ============================================== -->
+                            {% if selected_role == 'university' and approved_colleges %}
+                                <!-- College Domain & Official Email Generator Helper -->
+                                <div class="card border-0 bg-primary-subtle rounded-3 p-3 mb-4 text-start shadow-sm">
+                                    <label class="form-label small fw-bold text-primary mb-1">
+                                        <i class="bi bi-patch-check-fill me-1"></i>Official College Institutional Email Helper:
+                                    </label>
+                                    <p class="text-secondary small mb-2">
+                                        Select your institution to auto-derive your official college email domain:
+                                    </p>
+                                    <select id="regCollegeDomainSelect" class="form-select form-select-sm mb-2 border-primary-subtle">
+                                        <option value="">-- Choose your college to preview official domain --</option>
+                                        {% for col in approved_colleges %}
+                                            <option value="{{ col.email_domain }}" data-name="{{ col.name }}">{{ col.name }} (@{{ col.email_domain }})</option>
+                                        {% endfor %}
+                                    </select>
+                                    <div id="regEmailSuggestionGroup" class="d-none mt-1">
+                                        <div class="small fw-semibold text-secondary mb-1">1-Click Official Email Suggestions:</div>
+                                        <div class="d-flex flex-wrap gap-1">
+                                            <button type="button" class="btn btn-sm btn-outline-primary bg-white rounded-pill reg-suggest-btn" data-prefix="admissions">admissions@<span class="domain-text"></span></button>
+                                            <button type="button" class="btn btn-sm btn-outline-primary bg-white rounded-pill reg-suggest-btn" data-prefix="dean">dean@<span class="domain-text"></span></button>
+                                            <button type="button" class="btn btn-sm btn-outline-primary bg-white rounded-pill reg-suggest-btn" data-prefix="registrar">registrar@<span class="domain-text"></span></button>
+                                            <button type="button" class="btn btn-sm btn-outline-primary bg-white rounded-pill reg-suggest-btn" data-prefix="contact">contact@<span class="domain-text"></span></button>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endif %}
+
+                            {{ form|crispy }}
+                            <div class="d-grid mt-4">
+                                <button type="submit" class="btn btn-primary btn-lg fw-semibold shadow-sm">
+                                    <i class="bi bi-person-check-fill me-2"></i>Create {{ selected_role|title }} Account
+                                </button>
+                            </div>
+                        {% endif %}
+                    </form>
+
+                    <div class="mt-4 pt-3 text-center border-top">
+                        <p class="text-muted small mb-0">Already have an account? 
+                            <a href="{% url 'login' %}?role={{ selected_role }}{% if request.GET.next %}&next={{ request.GET.next|urlencode }}{% endif %}" class="fw-semibold text-primary text-decoration-none">Log In</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // -------------------------------------------------------------
+        // 1. Password Visibility Toggle
+        // -------------------------------------------------------------
+        document.querySelectorAll('.toggle-pwd-btn').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                const targetId = this.getAttribute('data-target');
+                const input = document.getElementById(targetId);
+                const icon = this.querySelector('i');
+                if (input) {
+                    if (input.type === 'password') {
+                        input.type = 'text';
+                        if (icon) icon.className = 'bi bi-eye-slash';
+                    } else {
+                        input.type = 'password';
+                        if (icon) icon.className = 'bi bi-eye';
+                    }
+                }
+            });
+        });
+
+        // -------------------------------------------------------------
+        // 2. Student Email OTP Verification Workflow
+        // -------------------------------------------------------------
+        const btnSendOtp = document.getElementById('btnSendOtp');
+        const btnSendOtpText = document.getElementById('btnSendOtpText');
+        const btnVerifyOtp = document.getElementById('btnVerifyOtp');
+        const btnResendOtp = document.getElementById('btnResendOtp');
+        const resendCountdownNum = document.getElementById('resendCountdownNum');
+        const emailInput = document.getElementById('id_email');
+        const usernameInput = document.getElementById('id_username');
+        const password1Input = document.getElementById('id_password1');
+        const password2Input = document.getElementById('id_password2');
+        const otpInput = document.getElementById('regOtpInput');
+        const otpSection = document.getElementById('otpVerificationSection');
+        const otpErrorAlert = document.getElementById('otpErrorAlert');
+        const emailVerifiedBadge = document.getElementById('emailVerifiedBadge');
+        const verifiedEmailDisplay = document.getElementById('verifiedEmailDisplay');
+        const btnChangeEmail = document.getElementById('btnChangeEmail');
+        const studentCreateBtnContainer = document.getElementById('studentCreateBtnContainer');
+        const verifyNoticePlaceholder = document.getElementById('verifyNoticePlaceholder');
+        const pwdMatchNotice = document.getElementById('pwdMatchNotice');
+
+        let resendTimer = null;
+        let isEmailVerified = false;
+
+        // CSRF Token Helper
+        function getCsrfToken() {
+            const input = document.querySelector('input[name="csrfmiddlewaretoken"]');
+            return input ? input.value : '';
+        }
+
+        // Live Password Match Check
+        function checkPasswordMatch() {
+            if (!password1Input || !password2Input || !pwdMatchNotice) return true;
+            const p1 = password1Input.value;
+            const p2 = password2Input.value;
+            if (!p2) {
+                pwdMatchNotice.classList.add('d-none');
+                return false;
+            }
+            pwdMatchNotice.classList.remove('d-none');
+            if (p1 === p2) {
+                pwdMatchNotice.className = 'small mt-1 text-success';
+                pwdMatchNotice.innerHTML = '<i class="bi bi-check-circle me-1"></i>Passwords match.';
+                return true;
+            } else {
+                pwdMatchNotice.className = 'small mt-1 text-danger';
+                pwdMatchNotice.innerHTML = '<i class="bi bi-x-circle me-1"></i>Passwords do not match.';
+                return false;
+            }
+        }
+
+        if (password1Input && password2Input) {
+            password1Input.addEventListener('input', checkPasswordMatch);
+            password2Input.addEventListener('input', checkPasswordMatch);
+        }
+
+        // Countdown Timer for Resend OTP
+        function startResendCooldown(seconds = 60) {
+            if (resendTimer) clearInterval(resendTimer);
+            if (btnResendOtp) {
+                btnResendOtp.disabled = true;
+                let remaining = seconds;
+                if (resendCountdownNum) resendCountdownNum.textContent = remaining;
+                resendTimer = setInterval(function () {
+                    remaining -= 1;
+                    if (resendCountdownNum) resendCountdownNum.textContent = remaining;
+                    if (remaining <= 0) {
+                        clearInterval(resendTimer);
+                        btnResendOtp.disabled = false;
+                        btnResendOtp.textContent = 'Resend OTP Now';
+                    }
+                }, 1000);
+            }
+        }
+
+        // Function to Trigger Sending OTP
+        function triggerSendOtp() {
+            const email = emailInput ? emailInput.value.trim() : '';
+            const username = usernameInput ? usernameInput.value.trim() : '';
+            const p1 = password1Input ? password1Input.value : '';
+            const p2 = password2Input ? password2Input.value : '';
+
+            if (!username) {
+                if (typeof window.showCcToast === 'function') {
+                    window.showCcToast('Please enter your username first.', 'danger');
+                } else {
+                    alert('Please enter your username first.');
+                }
+                if (usernameInput) usernameInput.focus();
+                return;
+            }
+
+            if (!p1 || p1.length < 8) {
+                if (typeof window.showCcToast === 'function') {
+                    window.showCcToast('Password must be at least 8 characters long.', 'danger');
+                } else {
+                    alert('Password must be at least 8 characters long.');
+                }
+                if (password1Input) password1Input.focus();
+                return;
+            }
+
+            if (p1 !== p2) {
+                if (typeof window.showCcToast === 'function') {
+                    window.showCcToast('Passwords do not match. Please confirm your password.', 'danger');
+                } else {
+                    alert('Passwords do not match. Please confirm your password.');
+                }
+                if (password2Input) password2Input.focus();
+                return;
+            }
+
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!email || !emailRegex.test(email)) {
+                if (typeof window.showCcToast === 'function') {
+                    window.showCcToast('Please enter a correct and valid email address.', 'danger');
+                } else {
+                    alert('Please enter a correct and valid email address.');
+                }
+                if (emailInput) {
+                    emailInput.classList.add('is-invalid');
+                    emailInput.focus();
+                }
+                return;
+            } else {
+                if (emailInput) emailInput.classList.remove('is-invalid');
+            }
+
+            // Visual feedback on Send button
+            if (btnSendOtp) {
+                btnSendOtp.disabled = true;
+                if (btnSendOtpText) btnSendOtpText.textContent = 'Sending...';
+            }
+
+            fetch("{% url 'send_registration_otp' %}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCsrfToken(),
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: JSON.stringify({ email: email, username: username })
+            })
+            .then(function (res) {
+                return res.json().then(function (data) {
+                    return { status: res.status, data: data };
+                });
+            })
+            .then(function (result) {
+                if (btnSendOtp) {
+                    btnSendOtp.disabled = false;
+                    if (btnSendOtpText) btnSendOtpText.textContent = 'Resend OTP';
+                }
+
+                if (result.data.success) {
+                    if (typeof window.showCcToast === 'function') {
+                        window.showCcToast(result.data.message || 'OTP sent successfully!', 'success');
+                    }
+                    if (otpSection) otpSection.classList.remove('d-none');
+                    if (otpErrorAlert) otpErrorAlert.classList.add('d-none');
+                    if (otpInput) {
+                        otpInput.value = '';
+                        otpInput.focus();
+                    }
+
+                    startResendCooldown(60);
+                } else {
+                    const msg = result.data.message || 'Failed to send OTP code. Please enter a correct email.';
+                    if (typeof window.showCcToast === 'function') {
+                        window.showCcToast(msg, 'danger');
+                    } else {
+                        alert(msg);
+                    }
+                    if (emailInput) {
+                        emailInput.classList.add('is-invalid');
+                        emailInput.focus();
+                    }
+                }
+            })
+            .catch(function (err) {
+                if (btnSendOtp) {
+                    btnSendOtp.disabled = false;
+                    if (btnSendOtpText) btnSendOtpText.textContent = 'Send OTP';
+                }
+                console.error('Send OTP error:', err);
+                if (typeof window.showCcToast === 'function') {
+                    window.showCcToast('Server communication error. Please try again.', 'danger');
+                }
+            });
+        }
+
+        if (btnSendOtp) {
+            btnSendOtp.addEventListener('click', triggerSendOtp);
+        }
+
+        if (btnResendOtp) {
+            btnResendOtp.addEventListener('click', function () {
+                if (!this.disabled) triggerSendOtp();
+            });
+        }
+
+        // Function to Trigger Verifying OTP
+        if (btnVerifyOtp) {
+            btnVerifyOtp.addEventListener('click', function () {
+                const email = emailInput ? emailInput.value.trim() : '';
+                const otp = otpInput ? otpInput.value.trim() : '';
+
+                if (!otp || otp.length !== 6) {
+                    if (otpErrorAlert) {
+                        otpErrorAlert.textContent = 'Please enter the complete 6-digit OTP code.';
+                        otpErrorAlert.classList.remove('d-none');
+                    }
+                    if (otpInput) otpInput.focus();
+                    return;
+                }
+
+                btnVerifyOtp.disabled = true;
+                btnVerifyOtp.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span>Verifying...';
+
+                fetch("{% url 'verify_registration_otp' %}", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCsrfToken(),
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: JSON.stringify({ email: email, otp: otp })
+                })
+                .then(function (res) {
+                    return res.json().then(function (data) {
+                        return { status: res.status, data: data };
+                    });
+                })
+                .then(function (result) {
+                    btnVerifyOtp.disabled = false;
+                    btnVerifyOtp.innerHTML = '<i class="bi bi-check2-circle me-1"></i>Verify OTP';
+
+                    if (result.data.success) {
+                        isEmailVerified = true;
+
+                        // 1. Hide OTP Section & Error
+                        if (otpSection) otpSection.classList.add('d-none');
+                        if (otpErrorAlert) otpErrorAlert.classList.add('d-none');
+
+                        // 2. Lock email input and mark valid
+                        if (emailInput) {
+                            emailInput.readOnly = true;
+                            emailInput.classList.remove('is-invalid');
+                            emailInput.classList.add('is-valid');
+                        }
+
+                        // 3. Hide helper text and show verified success message
+                        const emailHelpText = document.getElementById('emailHelpText');
+                        if (emailHelpText) emailHelpText.classList.add('d-none');
+                        const emailVerifiedSuccessText = document.getElementById('emailVerifiedSuccessText');
+                        if (emailVerifiedSuccessText) emailVerifiedSuccessText.classList.remove('d-none');
+
+                        // 4. Update Send OTP button to green Verified indicator and show Change Email button
+                        if (btnSendOtp) {
+                            btnSendOtp.className = 'btn btn-success px-3 fw-semibold rounded-end-3 d-flex align-items-center gap-1 shadow-sm disabled';
+                            btnSendOtp.disabled = true;
+                            btnSendOtp.innerHTML = '<i class="bi bi-check-circle-fill me-1"></i>Verified';
+                        }
+                        if (btnChangeEmail) {
+                            btnChangeEmail.classList.remove('d-none');
+                        }
+
+                        // 5. Unlock "Create Student Account" button
+                        if (verifyNoticePlaceholder) verifyNoticePlaceholder.classList.add('d-none');
+                        if (studentCreateBtnContainer) studentCreateBtnContainer.classList.remove('d-none');
+
+                        if (typeof window.showCcToast === 'function') {
+                            window.showCcToast('Email verified! Click "Create Student Account" below to complete.', 'success');
+                        }
+                    } else {
+                        const msg = result.data.message || 'Invalid or expired OTP code.';
+                        if (otpErrorAlert) {
+                            otpErrorAlert.textContent = msg;
+                            otpErrorAlert.classList.remove('d-none');
+                        }
+                    }
+                })
+                .catch(function (err) {
+                    btnVerifyOtp.disabled = false;
+                    btnVerifyOtp.innerHTML = '<i class="bi bi-check2-circle me-1"></i>Verify OTP';
+                    console.error('Verify OTP error:', err);
+                    if (otpErrorAlert) {
+                        otpErrorAlert.textContent = 'Server communication error. Please try again.';
+                        otpErrorAlert.classList.remove('d-none');
+                    }
+                });
+            });
+        }
+
+        // Change Email Handler (resets verification state if student mistyped email)
+        if (btnChangeEmail) {
+            btnChangeEmail.addEventListener('click', function () {
+                isEmailVerified = false;
+                if (emailInput) {
+                    emailInput.readOnly = false;
+                    emailInput.classList.remove('is-valid');
+                    emailInput.focus();
+                }
+                const emailHelpText = document.getElementById('emailHelpText');
+                if (emailHelpText) emailHelpText.classList.remove('d-none');
+                const emailVerifiedSuccessText = document.getElementById('emailVerifiedSuccessText');
+                if (emailVerifiedSuccessText) emailVerifiedSuccessText.classList.add('d-none');
+
+                if (btnSendOtp) {
+                    btnSendOtp.className = 'btn btn-primary px-3 fw-semibold rounded-end-3 d-flex align-items-center gap-1 shadow-sm';
+                    btnSendOtp.disabled = false;
+                    btnSendOtp.innerHTML = '<i class="bi bi-send-fill me-1"></i><span id="btnSendOtpText">Send OTP</span>';
+                }
+                btnChangeEmail.classList.add('d-none');
+                if (studentCreateBtnContainer) studentCreateBtnContainer.classList.add('d-none');
+                if (verifyNoticePlaceholder) verifyNoticePlaceholder.classList.remove('d-none');
+            });
+        }
+
+        // Prevent form submission if email not verified for Student
+        const registrationForm = document.getElementById('registrationForm');
+        if (registrationForm && '{{ selected_role }}' === 'student') {
+            registrationForm.addEventListener('submit', function (e) {
+                if (!isEmailVerified) {
+                    e.preventDefault();
+                    if (typeof window.showCcToast === 'function') {
+                        window.showCcToast('Please verify your email address with the OTP before submitting.', 'danger');
+                    } else {
+                        alert('Please verify your email address with the OTP before submitting.');
+                    }
+                    if (emailInput) emailInput.focus();
+                }
+            });
+        }
+
+        // -------------------------------------------------------------
+        // 3. University Partner Domain Helper (Preserved)
+        // -------------------------------------------------------------
+        const domainSelect = document.getElementById('regCollegeDomainSelect');
+        const suggestionGroup = document.getElementById('regEmailSuggestionGroup');
+        const orgInput = document.getElementById('id_organization_name');
+
+        if (domainSelect && suggestionGroup) {
+            domainSelect.addEventListener('change', function () {
+                const domain = this.value;
+                const colName = this.options[this.selectedIndex].getAttribute('data-name');
+                if (domain) {
+                    suggestionGroup.classList.remove('d-none');
+                    document.querySelectorAll('.domain-text').forEach(function (el) {
+                        el.textContent = domain;
+                    });
+                    if (orgInput && (!orgInput.value || orgInput.value.trim() === '')) {
+                        orgInput.value = colName;
+                    }
+                } else {
+                    suggestionGroup.classList.add('d-none');
+                }
+            });
+
+            document.querySelectorAll('.reg-suggest-btn').forEach(function (btn) {
+                btn.addEventListener('click', function () {
+                    const prefix = this.getAttribute('data-prefix');
+                    const domain = domainSelect.value;
+                    const partnerEmailInput = document.getElementById('id_email');
+                    if (partnerEmailInput && prefix && domain) {
+                        partnerEmailInput.value = prefix + '@' + domain;
+                        partnerEmailInput.focus();
+                    }
+                });
+            });
+        }
+    });
+</script>
+{% endblock %}

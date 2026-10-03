@@ -1,0 +1,341 @@
+{% extends "base.html" %}
+{% load core_extras %}
+
+{% block title %}Explore Universities - College Clue{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Page Header -->
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 pb-2 border-bottom">
+        <div>
+            <div class="d-flex align-items-center gap-2 mb-1">
+                <div class="bg-primary-subtle text-primary p-2 rounded-3 d-inline-flex align-items-center justify-content-center" style="width: 42px; height: 42px;">
+                    <i class="bi bi-bank fs-4 text-primary"></i>
+                </div>
+                <h2 class="fw-bold mb-0">Explore Universities</h2>
+            </div>
+            <p class="text-muted small mb-0 ms-md-1">
+                Discover accredited higher education institutions, review campuses, rankings, and affiliated colleges across India.
+            </p>
+        </div>
+        <div class="mt-3 mt-md-0 d-flex align-items-center gap-2">
+            <span class="badge bg-primary-subtle text-primary border border-primary-subtle fs-6 px-3 py-2 rounded-pill shadow-sm">
+                <i class="bi bi-mortarboard-fill me-1"></i>{{ universities|length }} Institutes Available
+            </span>
+        </div>
+    </div>
+
+    <!-- YouTube-Style Unified Search Bar & Beside Filter Button -->
+    <div class="card border-0 shadow-sm rounded-4 mb-4 bg-white p-3 p-md-4" style="border: 1px solid rgba(0,0,0,0.06) !important;">
+        <form method="get" action="{% url 'university_list' %}" id="universitySearchForm">
+            <!-- Row: Search Bar (pill input + attached search button) + Filter Button Beside -->
+            <div class="d-flex align-items-center gap-2">
+                <!-- Search Bar Container with Attached Search Button -->
+                <div class="input-group flex-grow-1 shadow-sm rounded-pill overflow-hidden border border-secondary border-opacity-25 bg-white">
+                    <span class="input-group-text bg-transparent border-0 ps-3 pe-2 text-secondary">
+                        <i class="bi bi-search text-warning fs-5"></i>
+                    </span>
+                    <input type="text" name="search" value="{{ search_query|default:'' }}" class="form-control border-0 bg-transparent py-2 py-md-3 fs-6 shadow-none" placeholder="Search universities, courses, campuses, or locations..." aria-label="Search universities" autocomplete="off">
+                    {% if search_query %}
+                        <a href="{% url 'university_list' %}" class="btn btn-transparent border-0 text-muted d-flex align-items-center px-2" title="Clear Search Query">
+                            <i class="bi bi-x-circle fs-5"></i>
+                        </a>
+                    {% endif %}
+                    <button type="submit" class="btn btn-warning px-3 px-md-4 fw-bold text-dark border-0 d-flex align-items-center gap-1 shadow-none" title="Execute Search">
+                        <i class="bi bi-search"></i>
+                        <span class="d-none d-sm-inline">Search</span>
+                    </button>
+                </div>
+
+                <!-- Beside Filter Button with Badge -->
+                <button type="button" class="btn btn-outline-dark rounded-pill px-3 py-2 py-md-3 fw-bold d-flex align-items-center gap-2 shadow-sm flex-shrink-0" data-bs-toggle="modal" data-bs-target="#universityFilterModal" title="Filter by Location, Course Type, Budget">
+                    <i class="bi bi-sliders2 text-primary fs-5"></i>
+                    <span class="d-none d-sm-inline">Filter</span>
+                    {% if active_filters_count > 0 %}
+                        <span class="badge bg-primary text-white rounded-pill">{{ active_filters_count }}</span>
+                    {% endif %}
+                </button>
+            </div>
+
+            <!-- Hidden Fields to Preserve Current Filters During Keyword Search -->
+            {% if location %}<input type="hidden" name="location" value="{{ location }}">{% endif %}
+            {% if course_type %}<input type="hidden" name="course_type" value="{{ course_type }}">{% endif %}
+            {% if budget %}<input type="hidden" name="budget" value="{{ budget }}">{% endif %}
+            {% if request.GET.min_rating %}<input type="hidden" name="min_rating" value="{{ request.GET.min_rating }}">{% endif %}
+        </form>
+
+        <!-- Horizontal Scrollable Category Pills Row (YouTube-Style) -->
+        <div class="d-flex align-items-center gap-2 mt-3 pt-3 border-top overflow-x-auto text-nowrap pb-1" style="scrollbar-width: thin; -webkit-overflow-scrolling: touch;">
+            <a href="{% url 'university_list' %}" class="badge text-decoration-none rounded-pill py-2 px-3 fw-semibold {% if not location and not course_type and not budget and not request.GET.min_rating %}bg-dark text-white shadow-sm{% else %}bg-light text-dark border{% endif %}">
+                All
+            </a>
+            <a href="{% url 'university_list' %}?course_type=engineering" class="badge text-decoration-none rounded-pill py-2 px-3 fw-semibold {% if course_type == 'engineering' %}bg-primary text-white shadow-sm{% else %}bg-light text-dark border{% endif %}">
+                <i class="bi bi-gear-fill me-1 text-primary"></i>Engineering &amp; B.Tech
+            </a>
+            <a href="{% url 'university_list' %}?course_type=management" class="badge text-decoration-none rounded-pill py-2 px-3 fw-semibold {% if course_type == 'management' %}bg-primary text-white shadow-sm{% else %}bg-light text-dark border{% endif %}">
+                <i class="bi bi-briefcase-fill me-1 text-success"></i>Management &amp; MBA
+            </a>
+            <a href="{% url 'university_list' %}?course_type=computer_it" class="badge text-decoration-none rounded-pill py-2 px-3 fw-semibold {% if course_type == 'computer_it' %}bg-primary text-white shadow-sm{% else %}bg-light text-dark border{% endif %}">
+                <i class="bi bi-cpu-fill me-1 text-info"></i>Computer &amp; AI
+            </a>
+            <a href="{% url 'university_list' %}?course_type=sciences" class="badge text-decoration-none rounded-pill py-2 px-3 fw-semibold {% if course_type == 'sciences' %}bg-primary text-white shadow-sm{% else %}bg-light text-dark border{% endif %}">
+                <i class="bi bi-flask-fill me-1 text-danger"></i>Sciences &amp; Research
+            </a>
+            <a href="{% url 'university_list' %}?course_type=commerce" class="badge text-decoration-none rounded-pill py-2 px-3 fw-semibold {% if course_type == 'commerce' %}bg-primary text-white shadow-sm{% else %}bg-light text-dark border{% endif %}">
+                <i class="bi bi-cash-stack me-1 text-warning"></i>Commerce &amp; Finance
+            </a>
+            <a href="{% url 'university_list' %}?course_type=arts" class="badge text-decoration-none rounded-pill py-2 px-3 fw-semibold {% if course_type == 'arts' %}bg-primary text-white shadow-sm{% else %}bg-light text-dark border{% endif %}">
+                <i class="bi bi-palette-fill me-1 text-secondary"></i>Arts &amp; Design
+            </a>
+            <a href="{% url 'university_list' %}?budget=under_100k" class="badge text-decoration-none rounded-pill py-2 px-3 fw-semibold {% if budget == 'under_100k' %}bg-primary text-white shadow-sm{% else %}bg-light text-dark border{% endif %}">
+                Under ₹1 Lakh/yr
+            </a>
+            <a href="{% url 'university_list' %}?location=Bengaluru" class="badge text-decoration-none rounded-pill py-2 px-3 fw-semibold {% if location == 'Bengaluru' %}bg-primary text-white shadow-sm{% else %}bg-light text-dark border{% endif %}">
+                <i class="bi bi-geo-alt-fill text-danger me-1"></i>Bengaluru
+            </a>
+            <a href="{% url 'university_list' %}?location=New+Delhi" class="badge text-decoration-none rounded-pill py-2 px-3 fw-semibold {% if location == 'New Delhi' %}bg-primary text-white shadow-sm{% else %}bg-light text-dark border{% endif %}">
+                <i class="bi bi-geo-alt-fill text-danger me-1"></i>New Delhi
+            </a>
+            <a href="{% url 'university_list' %}?location=Mumbai" class="badge text-decoration-none rounded-pill py-2 px-3 fw-semibold {% if location == 'Mumbai' %}bg-primary text-white shadow-sm{% else %}bg-light text-dark border{% endif %}">
+                <i class="bi bi-geo-alt-fill text-danger me-1"></i>Mumbai
+            </a>
+            <a href="{% url 'university_list' %}?location=Pune" class="badge text-decoration-none rounded-pill py-2 px-3 fw-semibold {% if location == 'Pune' %}bg-primary text-white shadow-sm{% else %}bg-light text-dark border{% endif %}">
+                <i class="bi bi-geo-alt-fill text-danger me-1"></i>Pune
+            </a>
+
+            {% if active_filters_count > 0 or search_query %}
+                <a href="{% url 'university_list' %}" class="badge bg-danger-subtle text-danger border border-danger-subtle py-2 px-3 text-decoration-none rounded-pill ms-auto fw-bold flex-shrink-0">
+                    <i class="bi bi-x-circle me-1"></i>Clear Filters
+                </a>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Active Filter Indicators -->
+    {% if active_filters_count > 0 or search_query %}
+        <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
+            <span class="small text-secondary fw-semibold">Filtered by:</span>
+            {% if search_query %}
+                <span class="badge bg-warning-subtle text-warning-emphasis border border-warning px-3 py-2 rounded-pill">
+                    <i class="bi bi-search me-1"></i>"{{ search_query }}"
+                </span>
+            {% endif %}
+            {% if location %}
+                <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-3 py-2 rounded-pill">
+                    <i class="bi bi-geo-alt-fill me-1"></i>Location: {{ location }}
+                </span>
+            {% endif %}
+            {% if course_type %}
+                <span class="badge bg-info-subtle text-info-emphasis border border-info-subtle px-3 py-2 rounded-pill">
+                    <i class="bi bi-mortarboard-fill me-1"></i>Course: {{ course_type|title }}
+                </span>
+            {% endif %}
+            {% if budget %}
+                <span class="badge bg-success-subtle text-success-emphasis border border-success-subtle px-3 py-2 rounded-pill">
+                    <i class="bi bi-currency-rupee me-1"></i>Budget: {{ budget|title }}
+                </span>
+            {% endif %}
+            {% if request.GET.min_rating %}
+                <span class="badge bg-warning-subtle text-dark border border-warning px-3 py-2 rounded-pill">
+                    <i class="bi bi-star-fill text-warning me-1"></i>Rating &ge; {{ request.GET.min_rating }}
+                </span>
+            {% endif %}
+            <a href="{% url 'university_list' %}" class="btn btn-outline-danger btn-sm rounded-pill ms-auto px-3 py-1 fw-semibold" style="font-size: 0.78rem;">
+                <i class="bi bi-x-circle me-1"></i>Clear All
+            </a>
+        </div>
+    {% endif %}
+
+    <!-- Universities Grid -->
+    <div class="row g-4">
+        {% for uni in universities %}
+            <div class="col-md-6 col-lg-4">
+                <div class="card h-100 border-0 shadow-sm rounded-4 university-card position-relative overflow-hidden" style="transition: transform 0.2s, box-shadow 0.2s;">
+                    <div class="card-body p-4 d-flex flex-column">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            {% if uni.logo %}
+                                <img src="{{ uni.logo.url }}" alt="{{ uni.name }}" class="rounded-3 shadow-sm" style="width: 58px; height: 58px; object-fit: contain;">
+                            {% else %}
+                                <div class="bg-primary-subtle text-primary rounded-3 d-flex align-items-center justify-content-center fw-bold fs-3" style="width: 58px; height: 58px;">
+                                    {{ uni.name|slice:":1" }}
+                                </div>
+                            {% endif %}
+                            <div class="d-flex align-items-center gap-2">
+                                <span class="badge bg-warning text-dark px-2 py-1"><i class="bi bi-star-fill me-1"></i>{{ uni.rating }}</span>
+                                {% if request.user.is_authenticated %}
+                                    <a href="{% url 'wishlist_toggle' uni.id %}?next={{ request.get_full_path }}" class="btn btn-sm {% if uni.id in user_wishlist_ids %}btn-danger text-white{% else %}btn-outline-danger{% endif %} rounded-circle p-2 wishlist-toggle-btn" data-university-id="{{ uni.id }}" style="line-height: 1;" title="{% if uni.id in user_wishlist_ids %}Saved to wishlist (click to remove){% else %}Add to wishlist{% endif %}">
+                                        <i class="bi {% if uni.id in user_wishlist_ids %}bi-heart-fill{% else %}bi-heart{% endif %}"></i>
+                                    </a>
+                                {% else %}
+                                    <a href="{% url 'login' %}?next={{ request.get_full_path }}" class="btn btn-sm btn-outline-secondary rounded-circle p-2" style="line-height: 1;" title="Login to Wishlist">
+                                        <i class="bi bi-heart"></i>
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <h5 class="fw-bold text-dark mb-1">
+                            {% with first_col=uni.colleges.first %}
+                                {% if first_col %}
+                                    <a href="{% url 'college_detail' slug=first_col.slug %}" class="text-decoration-none text-dark">
+                                        {{ uni.name }}
+                                    </a>
+                                {% else %}
+                                    <a href="{% url 'university_detail' slug=uni.slug %}" class="text-decoration-none text-dark">
+                                        {{ uni.name }}
+                                    </a>
+                                {% endif %}
+                            {% endwith %}
+                        </h5>
+                        <p class="text-muted small mb-2"><i class="bi bi-geo-alt-fill text-danger me-1"></i>{{ uni.city }}, {{ uni.state }}</p>
+                        <p class="text-secondary small mb-3 flex-grow-1">{{ uni.description|truncatewords:22 }}</p>
+
+                        <!-- Colleges Count & Details -->
+                        <div class="d-flex align-items-center gap-2 mb-3">
+                            <span class="badge bg-light text-dark border px-2 py-1 small">
+                                <i class="bi bi-building me-1 text-primary"></i>{{ uni.colleges.count }} Campus Programs
+                            </span>
+                            {% if uni.gmap_location %}
+                                <span class="badge bg-success-subtle text-success border border-success-subtle px-2 py-1 small">
+                                    <i class="bi bi-pin-map-fill me-1"></i>Map Pin Verified
+                                </span>
+                            {% endif %}
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center pt-3 border-top mt-auto">
+                            <span class="small text-muted"><i class="bi bi-clock-history me-1"></i>Est. {{ uni.established_year }}</span>
+                            {% with first_col=uni.colleges.first %}
+                                {% if first_col %}
+                                    <a href="{% url 'college_detail' slug=first_col.slug %}" class="btn btn-primary btn-sm fw-bold rounded-pill px-3 shadow-sm">
+                                        View College Profile <i class="bi bi-arrow-right ms-1"></i>
+                                    </a>
+                                {% else %}
+                                    <a href="{% url 'university_detail' slug=uni.slug %}" class="btn btn-outline-primary btn-sm fw-bold rounded-pill px-3">
+                                        View Campus <i class="bi bi-arrow-right ms-1"></i>
+                                    </a>
+                                {% endif %}
+                            {% endwith %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <div class="col-12 text-center py-5">
+                <div class="bg-light rounded-circle d-inline-flex align-items-center justify-content-center p-4 mb-3" style="width: 80px; height: 80px;">
+                    <i class="bi bi-bank fs-1 text-muted"></i>
+                </div>
+                <h5 class="fw-bold text-dark">No Universities Match Your Criteria</h5>
+                <p class="text-muted small mb-3">Try clearing some search parameters or adjusting your rating and location filters.</p>
+                <a href="{% url 'university_list' %}" class="btn btn-primary rounded-pill px-4 fw-semibold">
+                    <i class="bi bi-arrow-counterclockwise me-1"></i>Reset All Filters
+                </a>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- ============================================================================== -->
+<!-- UNIVERSITY FILTER MODAL                                                        -->
+<!-- ============================================================================== -->
+<div class="modal fade" id="universityFilterModal" tabindex="-1" aria-labelledby="universityFilterModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content rounded-4 border-0 shadow-lg">
+            <div class="modal-header border-bottom p-4">
+                <div class="d-flex align-items-center gap-2">
+                    <div class="bg-primary-subtle text-primary p-2 rounded-3 d-inline-flex align-items-center justify-content-center" style="width: 38px; height: 38px;">
+                        <i class="bi bi-sliders2 fs-5"></i>
+                    </div>
+                    <div>
+                        <h5 class="modal-title fw-bold text-dark mb-0" id="universityFilterModalLabel">Filter Institutions</h5>
+                        <p class="text-muted small mb-0">Select your preferred location, course type, and tuition fee budget.</p>
+                    </div>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <form method="get" action="{% url 'university_list' %}">
+                <div class="modal-body p-4">
+                    <!-- Preserve search query if active -->
+                    {% if search_query %}
+                        <input type="hidden" name="search" value="{{ search_query }}">
+                    {% endif %}
+
+                    <div class="row g-3">
+                        <!-- 1. Location Dropdown -->
+                        <div class="col-md-6">
+                            <label for="modalUniLocation" class="form-label fw-bold text-dark small mb-1">
+                                <i class="bi bi-geo-alt-fill text-danger me-1"></i>Location
+                            </label>
+                            <select name="location" id="modalUniLocation" class="form-select form-select-lg fs-6 rounded-3 shadow-none border-secondary border-opacity-25">
+                                <option value="">-- All Locations Across India --</option>
+                                {% for loc in available_locations %}
+                                    <option value="{{ loc }}" {% if location == loc %}selected{% endif %}>{{ loc }}</option>
+                                {% endfor %}
+                            </select>
+                            <div class="form-text small text-muted">Filter by campus city or hub location.</div>
+                        </div>
+
+                        <!-- 2. Course Type Dropdown -->
+                        <div class="col-md-6">
+                            <label for="modalUniCourseType" class="form-label fw-bold text-dark small mb-1">
+                                <i class="bi bi-mortarboard-fill text-primary me-1"></i>Course Type
+                            </label>
+                            <select name="course_type" id="modalUniCourseType" class="form-select form-select-lg fs-6 rounded-3 shadow-none border-secondary border-opacity-25">
+                                <option value="">-- All Course Types &amp; Streams --</option>
+                                <option value="engineering" {% if course_type == 'engineering' %}selected{% endif %}>Engineering &amp; B.Tech</option>
+                                <option value="management" {% if course_type == 'management' %}selected{% endif %}>Management &amp; MBA</option>
+                                <option value="computer_it" {% if course_type == 'computer_it' %}selected{% endif %}>Computer Science, IT &amp; AI</option>
+                                <option value="sciences" {% if course_type == 'sciences' %}selected{% endif %}>Natural Sciences &amp; Research</option>
+                                <option value="commerce" {% if course_type == 'commerce' %}selected{% endif %}>Commerce, Banking &amp; Finance</option>
+                                <option value="arts" {% if course_type == 'arts' %}selected{% endif %}>Arts, Humanities &amp; Design</option>
+                            </select>
+                            <div class="form-text small text-muted">Find institutions by academic field or degree type.</div>
+                        </div>
+
+                        <!-- 3. Tuition Fee Budget Dropdown -->
+                        <div class="col-md-6">
+                            <label for="modalUniBudget" class="form-label fw-bold text-dark small mb-1">
+                                <i class="bi bi-wallet2 text-success me-1"></i>Tuition Fee Budget
+                            </label>
+                            <select name="budget" id="modalUniBudget" class="form-select form-select-lg fs-6 rounded-3 shadow-none border-secondary border-opacity-25">
+                                <option value="">-- All Fee Budgets (Any Amount) --</option>
+                                <option value="under_100k" {% if budget == 'under_100k' %}selected{% endif %}>Under ₹1,00,000 / year (Affordable)</option>
+                                <option value="100k_200k" {% if budget == '100k_200k' %}selected{% endif %}>₹1,00,000 - ₹2,00,000 / year (Moderate)</option>
+                                <option value="200k_350k" {% if budget == '200k_350k' %}selected{% endif %}>₹2,00,000 - ₹3,50,000 / year (Standard)</option>
+                                <option value="above_350k" {% if budget == 'above_350k' %}selected{% endif %}>Above ₹3,50,000 / year (Premium)</option>
+                            </select>
+                            <div class="form-text small text-muted">Filter based on annual tuition costs.</div>
+                        </div>
+
+                        <!-- 4. Minimum Rating (Quality Filter) -->
+                        <div class="col-md-6">
+                            <label for="modalUniRating" class="form-label fw-bold text-dark small mb-1">
+                                <i class="bi bi-star-fill text-warning me-1"></i>Minimum Rating
+                            </label>
+                            <select name="min_rating" id="modalUniRating" class="form-select form-select-lg fs-6 rounded-3 shadow-none border-secondary border-opacity-25">
+                                <option value="">-- All Ratings --</option>
+                                <option value="4.5" {% if request.GET.min_rating == '4.5' %}selected{% endif %}>4.5+ Stars (Top Ranked)</option>
+                                <option value="4.0" {% if request.GET.min_rating == '4.0' %}selected{% endif %}>4.0+ Stars (Excellent)</option>
+                                <option value="3.5" {% if request.GET.min_rating == '3.5' %}selected{% endif %}>3.5+ Stars (Good)</option>
+                            </select>
+                            <div class="form-text small text-muted">Filter by student rating benchmarks.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer border-top p-3 px-4 d-flex justify-content-between">
+                    <a href="{% url 'university_list' %}" class="btn btn-light rounded-pill px-3 fw-semibold">
+                        <i class="bi bi-arrow-counterclockwise me-1"></i>Reset All
+                    </a>
+                    <div class="d-flex gap-2">
+                        <button type="button" class="btn btn-secondary rounded-pill px-3" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-warning text-dark rounded-pill px-4 fw-bold shadow-sm">
+                            <i class="bi bi-funnel-fill me-1"></i>Apply Filters
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

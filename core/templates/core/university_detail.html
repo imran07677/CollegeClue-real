@@ -1,0 +1,177 @@
+{% extends "base.html" %}
+{% load core_extras %}
+
+{% block title %}{{ university.name }} - College Clue{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'university_list' %}">Universities</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{ university.name }}</li>
+        </ol>
+    </nav>
+
+    <!-- University Hero Card -->
+    <div class="card border-0 shadow-sm rounded-4 mb-4 overflow-hidden">
+        <div class="card-body p-4 p-md-5">
+            <div class="row align-items-center g-4">
+                <div class="col-md-auto text-center">
+                    {% if university.logo %}
+                        <img src="{{ university.logo.url }}" alt="{{ university.name }}" class="rounded-4 shadow" style="width: 100px; height: 100px; object-fit: contain;">
+                    {% else %}
+                        <div class="bg-primary text-white rounded-4 d-flex align-items-center justify-content-center fw-bold display-5 mx-auto" style="width: 100px; height: 100px;">
+                            {{ university.name|slice:":1" }}
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="col-md">
+                    <div class="d-flex flex-wrap align-items-center gap-2 mb-2">
+                        <span class="badge bg-warning text-dark"><i class="bi bi-star-fill me-1"></i>{{ university.rating }} Rating</span>
+                        <span class="badge bg-light text-secondary border">Established {{ university.established_year }}</span>
+                        <span class="badge bg-light text-secondary border"><i class="bi bi-geo-alt-fill text-danger me-1"></i>{{ university.city }}, {{ university.state }}</span>
+                        {% if university.gmap_location %}
+                            <span class="badge bg-success-subtle text-success border border-success-subtle">
+                                <i class="bi bi-pin-map-fill me-1"></i>Verified Map Location
+                            </span>
+                        {% endif %}
+                    </div>
+                    <h2 class="fw-bold mb-2">{{ university.name }}</h2>
+                    <p class="text-secondary mb-3">{{ university.description }}</p>
+                    <div class="d-flex flex-wrap gap-2">
+                        {% if university.website %}
+                            <a href="{{ university.website }}" target="_blank" rel="noopener noreferrer" class="btn btn-outline-secondary btn-sm rounded-pill px-3">
+                                <i class="bi bi-globe me-1"></i>Official Website <i class="bi bi-box-arrow-up-right ms-1"></i>
+                            </a>
+                        {% endif %}
+                        <a href="https://maps.google.com/?q={% if university.gmap_location %}{{ university.gmap_location|urlencode }}{% else %}{{ university.name|urlencode }}+{{ university.city|urlencode }}{% endif %}" target="_blank" rel="noopener noreferrer" class="btn btn-outline-success btn-sm rounded-pill px-3">
+                            <i class="bi bi-geo-alt-fill me-1"></i>View on Google Maps <i class="bi bi-box-arrow-up-right ms-1"></i>
+                        </a>
+                        {% if request.user.is_authenticated %}
+                            <a href="{% url 'wishlist_toggle' university.id %}?next={{ request.get_full_path }}" class="btn btn-sm {% if is_wishlisted %}btn-danger text-white{% else %}btn-outline-danger{% endif %} rounded-pill px-3 wishlist-toggle-btn" data-university-id="{{ university.id }}" title="{% if is_wishlisted %}Saved to wishlist (click to remove){% else %}Add to wishlist{% endif %}">
+                                <i class="bi {% if is_wishlisted %}bi-heart-fill{% else %}bi-heart{% endif %} me-1"></i>{% if is_wishlisted %}In Wishlist{% else %}Add to Wishlist{% endif %}
+                            </a>
+                        {% else %}
+                            <a href="{% url 'login' %}?next={{ request.get_full_path }}" class="btn btn-outline-danger btn-sm rounded-pill px-3">
+                                <i class="bi bi-heart me-1"></i>Log in to Wishlist
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <!-- ============================================================== -->
+    <!-- RECOMMENDED HOUSING STRICTLY NEAR THIS UNIVERSITY'S CAMPUSES   -->
+    <!-- ============================================================== -->
+    <div id="nearbyAccommodationsSection" class="mb-5">
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-3 pb-2 border-bottom">
+            <div>
+                <div class="d-flex align-items-center gap-2 mb-1">
+                    <div class="bg-success-subtle text-success p-2 rounded-3 d-inline-flex align-items-center justify-content-center" style="width: 36px; height: 36px;">
+                        <i class="bi bi-houses-fill fs-5"></i>
+                    </div>
+                    <h4 class="fw-bold mb-0">Recommended Near By PG/Flats &amp; Hostels</h4>
+                </div>
+                <p class="text-muted small mb-0">
+                    Showing verified student accommodations specifically located near <strong>{{ university.name }}</strong>'s affiliated colleges.
+                </p>
+            </div>
+            <div class="mt-2 mt-md-0">
+                <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-3 py-2">
+                    <i class="bi bi-shield-check me-1"></i>{{ accommodations|length }} Verified Near Campuses
+                </span>
+            </div>
+        </div>
+
+        {% if accommodations %}
+            <div class="row g-4">
+                {% for acc in accommodations %}
+                    <div class="col-md-6 col-lg-4">
+                        <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden accommodation-card" style="transition: transform 0.2s, box-shadow 0.2s;">
+                            <!-- Property Image / Header -->
+                            <div class="position-relative" style="height: 180px; background-color: #0f172a;">
+                                {% if acc.image %}
+                                    <img src="{{ acc.image.url }}" alt="{{ acc.name }}" class="w-100 h-100" style="object-fit: cover;">
+                                {% else %}
+                                    <div class="w-100 h-100 d-flex align-items-center justify-content-center text-white-50" style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);">
+                                        <i class="bi bi-houses fs-1 text-warning"></i>
+                                    </div>
+                                {% endif %}
+                                <div class="position-absolute top-0 start-0 m-3">
+                                    <span class="badge {% if acc.type == 'PG' %}bg-warning text-dark{% elif acc.type == 'Flat' %}bg-info text-white{% else %}bg-primary text-white{% endif %} fw-bold px-3 py-2 rounded-pill shadow-sm">
+                                        {{ acc.type }}
+                                    </span>
+                                </div>
+                                <div class="position-absolute bottom-0 end-0 m-3">
+                                    <span class="badge bg-dark bg-opacity-75 text-white px-3 py-2 rounded-pill shadow-sm">
+                                        <i class="bi bi-door-open me-1 text-warning"></i>{{ acc.room_type }}
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="card-body p-4 d-flex flex-column">
+                                <h5 class="fw-bold text-dark mb-1">{{ acc.name }}</h5>
+                                <div class="small text-primary fw-semibold mb-2">
+                                    <i class="bi bi-mortarboard-fill me-1"></i>Near: {{ acc.college.name|truncatechars:35 }}
+                                </div>
+                                <p class="text-muted small mb-3">
+                                    <i class="bi bi-geo-alt-fill text-danger me-1"></i>{{ acc.address|default:acc.city }}
+                                </p>
+
+                                {% if acc.facilities %}
+                                    <div class="mb-3">
+                                        <div class="d-flex flex-wrap gap-1">
+                                            {% for facility in acc.facilities.split|slice:":3" %}
+                                                <span class="badge bg-light text-secondary border small">{{ facility }}</span>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                {% endif %}
+
+                                <div class="d-flex justify-content-between align-items-center pt-3 border-top mt-auto">
+                                    <div>
+                                        <span class="text-muted small d-block">Monthly Rent</span>
+                                        <span class="fw-bold text-success fs-5">₹{{ acc.rent }}<small class="text-muted fw-normal" style="font-size: 0.75rem;">/mo</small></span>
+                                    </div>
+                                    <div>
+                                        {% if acc.contact_phone %}
+                                            <a href="tel:{{ acc.contact_phone }}" class="btn btn-outline-success btn-sm rounded-pill px-3 fw-bold" title="Call Property Manager">
+                                                <i class="bi bi-telephone-fill me-1"></i>Contact
+                                            </a>
+                                        {% else %}
+                                            <a href="{% url 'accommodation_list' %}?college={{ acc.college.id }}" class="btn btn-outline-primary btn-sm rounded-pill px-3">
+                                                Details
+                                            </a>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="card border-0 shadow-sm rounded-4 p-5 text-center bg-light">
+                <div class="bg-white rounded-circle d-inline-flex align-items-center justify-content-center p-4 mb-3 shadow-sm mx-auto" style="width: 76px; height: 76px;">
+                    <i class="bi bi-house-x fs-1 text-muted"></i>
+                </div>
+                <h5 class="fw-bold text-dark mb-1">No Accommodations Listed Directly Near These Campuses</h5>
+                <p class="text-muted small mb-3" style="max-width: 520px; margin: 0 auto;">
+                    We could not find any verified PGs or hostels registered directly for {{ university.name }}'s colleges yet. Explore the campus housing directory to find residences in nearby sectors.
+                </p>
+                <div>
+                    <a href="{% url 'accommodation_list' %}" class="btn btn-warning text-dark fw-bold rounded-pill px-4 shadow-sm">
+                        <i class="bi bi-search me-1"></i>Browse All Near by PG/Flats
+                    </a>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,199 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% block title %}Sign In - College Clue{% endblock %}
+
+{% block content %}
+<div class="container py-4 py-md-5 position-relative">
+    <div class="row justify-content-center">
+        <div class="col-md-9 col-lg-7 position-relative">
+
+            <!-- Editorial Centered Headline & Floating Photo Mosaic (Unified Theme) -->
+            <div class="position-relative pt-2 pb-3">
+                <!-- Top Floating Photo Left (Pic 2: Student with book) -->
+                <div class="d-none d-xl-block position-absolute" style="top: 0; left: -140px; width: 135px; z-index: 1;">
+                    <div class="theme-floating-photo shadow-sm">
+                        <img src="https://images.unsplash.com/photo-1544717305-2782549b5136?auto=format&fit=crop&w=320&q=80" alt="Student with book" class="w-100" style="height: 160px; object-fit: cover;" onerror="this.parentElement.style.display='none';">
+                    </div>
+                </div>
+
+                <!-- Top Floating Photo Right (Pic 2: Sunlit Hall) -->
+                <div class="d-none d-xl-block position-absolute" style="top: 15px; right: -150px; width: 145px; z-index: 1;">
+                    <div class="theme-floating-photo shadow-sm">
+                        <img src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=340&q=80" alt="Campus hall" class="w-100" style="height: 145px; object-fit: cover;" onerror="this.parentElement.style.display='none';">
+                    </div>
+                </div>
+
+                <!-- Bottom Floating Photo Left (Pic 2: Professor in auditorium) -->
+                <div class="d-none d-xl-block position-absolute" style="bottom: 20px; left: -150px; width: 145px; z-index: 1;">
+                    <div class="theme-floating-photo shadow-sm">
+                        <img src="https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=340&q=80" alt="Faculty lecture" class="w-100" style="height: 180px; object-fit: cover;" onerror="this.parentElement.style.display='none';">
+                    </div>
+                </div>
+
+                <!-- Bottom Floating Photo Right (Pic 2: Students dining/collaborating) -->
+                <div class="d-none d-xl-block position-absolute" style="bottom: 10px; right: -155px; width: 150px; z-index: 1;">
+                    <div class="theme-floating-photo shadow-sm">
+                        <img src="https://images.unsplash.com/photo-1517486808906-6ca8b3f04846?auto=format&fit=crop&w=340&q=80" alt="Students collaborating" class="w-100" style="height: 160px; object-fit: cover;" onerror="this.parentElement.style.display='none';">
+                    </div>
+                </div>
+
+                <!-- Editorial Centered Headline matching Pic 2 (Tailored for every portal) -->
+                <div class="text-center mb-4">
+                    {% if selected_role == 'university' %}
+                        <h1 class="theme-editorial-heading display-5 mb-3" style="letter-spacing: 0.05em; font-size: clamp(1.9rem, 4.2vw, 2.7rem);">
+                            SHAPING FUTURES<br>WITH ACADEMIC EXCELLENCE
+                        </h1>
+                        <p class="theme-editorial-subtitle mb-0 mx-auto" style="max-width: 540px;">
+                            University Partner Portal &bull; Join us to administer accredited degree programs, verify eligibility criteria, and review prospective student applications.
+                        </p>
+                    {% elif selected_role == 'accommodation' %}
+                        <h1 class="theme-editorial-heading display-5 mb-3" style="letter-spacing: 0.05em; font-size: clamp(1.9rem, 4.2vw, 2.7rem);">
+                            SHAPING FUTURES<br>WITH SECURE CAMPUS LIVING
+                        </h1>
+                        <p class="theme-editorial-subtitle mb-0 mx-auto" style="max-width: 540px;">
+                            Student Housing Partner Portal &bull; Join us to list verified campus hostels &amp; PGs, manage student room vacancies, and process residential inquiries.
+                        </p>
+                    {% else %}
+                        <h1 class="theme-editorial-heading display-5 mb-3" style="letter-spacing: 0.05em; font-size: clamp(1.9rem, 4.2vw, 2.7rem);">
+                            SHAPING FUTURES<br>WITH FAITH
+                        </h1>
+                        <p class="theme-editorial-subtitle mb-0 mx-auto" style="max-width: 520px;">
+                            Join us for an uplifting experience discovering top accredited universities &amp; verified campus housing.
+                        </p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- CollegeClue Brand Subtitle / Home Navigation -->
+            <div class="text-center mb-3">
+                <a href="{% url 'home' %}" class="d-inline-flex align-items-center gap-2 text-decoration-none" title="CollegeClue Home">
+                    <span class="cc-navbar-logo-badge">
+                        <svg viewBox="0 0 40 40" width="30" height="30" class="cc-navbar-svg shadow-sm rounded-circle">
+                            <defs>
+                                <linearGradient id="loginGoldSmall" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="#fef08a"/>
+                                    <stop offset="100%" stop-color="#f59e0b"/>
+                                </linearGradient>
+                                <linearGradient id="loginBlueSmall" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="#3b82f6"/>
+                                    <stop offset="100%" stop-color="#0f172a"/>
+                                </linearGradient>
+                            </defs>
+                            <circle cx="20" cy="20" r="18" fill="url(#loginBlueSmall)" stroke="url(#loginGoldSmall)" stroke-width="1.8" class="cc-nb-orbit"/>
+                            <polygon points="20,9 32,15 20,21 8,15" fill="url(#loginGoldSmall)"/>
+                            <path d="M13,17 L13,23 C13,27 27,27 27,23 L27,17" fill="none" stroke="url(#loginGoldSmall)" stroke-width="1.5"/>
+                            <circle cx="20" cy="15" r="1.5" fill="#ffffff"/>
+                            <path d="M20,15 Q26,17 28,23" fill="none" stroke="#fef08a" stroke-width="1.2"/>
+                            <circle cx="28" cy="23" r="1.5" fill="#fef08a"/>
+                        </svg>
+                    </span>
+                    <span class="fw-bold fs-6">College<span class="text-warning">Clue</span> Portal</span>
+                </a>
+            </div>
+
+            <!-- Role Selector Tabs / Cards -->
+            <div class="card border-0 shadow-sm rounded-4 mb-4 bg-light p-2" id="roleSelectorCard">
+                <div class="text-center py-1">
+                    <span class="text-muted small fw-semibold text-uppercase" style="letter-spacing: 0.05em; font-size: 0.72rem;">Choose Login Portal</span>
+                </div>
+                <div class="row g-2 text-center" id="roleSelectorPills">
+                    <div class="col-4">
+                        <a href="{% url 'login' %}?role=student{% if request.GET.next %}&next={{ request.GET.next|urlencode }}{% endif %}" class="btn w-100 rounded-3 py-2 text-nowrap {% if selected_role == 'student' %}btn-primary shadow-sm fw-bold{% else %}btn-outline-secondary bg-white text-dark{% endif %}">
+                            <i class="bi bi-mortarboard me-1"></i>Student
+                        </a>
+                    </div>
+                    <div class="col-4">
+                        <a href="{% url 'login' %}?role=university{% if request.GET.next %}&next={{ request.GET.next|urlencode }}{% endif %}" class="btn w-100 rounded-3 py-2 text-nowrap {% if selected_role == 'university' %}btn-primary shadow-sm fw-bold{% else %}btn-outline-secondary bg-white text-dark{% endif %}">
+                            <i class="bi bi-building me-1"></i>University
+                        </a>
+                    </div>
+                    <div class="col-4">
+                        <a href="{% url 'login' %}?role=accommodation{% if request.GET.next %}&next={{ request.GET.next|urlencode }}{% endif %}" class="btn w-100 rounded-3 py-2 text-nowrap {% if selected_role == 'accommodation' %}btn-primary shadow-sm fw-bold{% else %}btn-outline-secondary bg-white text-dark{% endif %}">
+                            <i class="bi bi-house-door me-1"></i>Housing
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Login Authentication Card -->
+            <div class="card shadow-lg border-0 rounded-4">
+                <div class="card-body p-4 p-md-5">
+                    <div class="text-center mb-4">
+                        {% if selected_role == 'university' %}
+                            <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3 shadow" style="width: 54px; height: 54px;">
+                                <i class="bi bi-building fs-3"></i>
+                            </div>
+                            <h3 class="fw-bold">University Partner Login</h3>
+                            <p class="text-muted small">Log in to manage campus submissions, update course intakes, and track approval status.</p>
+                        {% elif selected_role == 'accommodation' %}
+                            <div class="bg-info text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3 shadow" style="width: 54px; height: 54px;">
+                                <i class="bi bi-house-door fs-3"></i>
+                            </div>
+                            <h3 class="fw-bold">Accommodation Partner Login</h3>
+                            <p class="text-muted small">Log in to submit student PGs and hostels, track verification, and manage availability.</p>
+                        {% else %}
+                            <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3 shadow" style="width: 54px; height: 54px;">
+                                <i class="bi bi-person-lock fs-3"></i>
+                            </div>
+                            <h3 class="fw-bold">Student &amp; User Login</h3>
+                            <p class="text-muted small">Log in to view application status, manage saved colleges, and explore housing.</p>
+                        {% endif %}
+                    </div>
+
+                    <form method="post" novalidate>
+                        {% csrf_token %}
+                        <input type="hidden" name="portal_role" value="{{ selected_role }}">
+                        {% if request.GET.next %}
+                            <input type="hidden" name="next" value="{{ request.GET.next }}">
+                        {% endif %}
+
+                        <!-- Username Field -->
+                        <div class="mb-3">
+                            <label for="id_username" class="form-label requiredField fw-semibold">
+                                Username or Email<span class="asteriskField text-danger">*</span>
+                            </label>
+                            {{ form.username }}
+                            {% if form.username.errors %}
+                                <div class="text-danger small mt-1">{{ form.username.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Password Field -->
+                        <div class="mb-3">
+                            <label for="id_password" class="form-label requiredField fw-semibold">
+                                Password<span class="asteriskField text-danger">*</span>
+                            </label>
+                            {{ form.password }}
+                            {% if form.password.errors %}
+                                <div class="text-danger small mt-1">{{ form.password.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Non-field Errors -->
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger py-2 px-3 small rounded-3 mb-3">
+                                {{ form.non_field_errors.0 }}
+                            </div>
+                        {% endif %}
+
+                        <div class="d-grid mt-4">
+                            <button type="submit" class="btn btn-primary btn-lg fw-semibold shadow-sm py-2">
+                                <i class="bi bi-box-arrow-in-right me-2"></i>Sign In as {{ selected_role|title }}
+                            </button>
+                        </div>
+                    </form>
+
+                    <div class="mt-4 pt-3 text-center border-top">
+                        <p class="text-muted small mb-0">Don't have an account yet? 
+                            <a href="{% url 'register' %}?role={{ selected_role }}{% if request.GET.next %}&next={{ request.GET.next|urlencode }}{% endif %}" class="fw-semibold text-decoration-none">
+                                Register as {{ selected_role|title }}
+                            </a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

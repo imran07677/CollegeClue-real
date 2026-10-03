@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <defs>
+    <linearGradient id="grad_74800" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0f2027;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#203a43;stop-opacity:1" />
+    </linearGradient>
+    <filter id="shadow_grad_74800" x="-10%" y="-10%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="4" stdDeviation="5" flood-opacity="0.25" />
+    </filter>
+  </defs>
+  <rect width="190" height="190" x="5" y="5" rx="36" fill="url(#grad_74800)" filter="url(#shadow_grad_74800)" />
+  <circle cx="100" cy="100" r="76" fill="none" stroke="#00d2ff" stroke-width="2.5" stroke-dasharray="6 4" opacity="0.6" />
+  <g transform="translate(88, 38) scale(1.1)" fill="#00d2ff">
+    <path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 14.5h-2v-5h2v5zm0-7h-2V7h2v2.5z" />
+  </g>
+  <text x="100" y="126" font-family="'Segoe UI', -apple-system, system-ui, sans-serif" font-size="24" font-weight="800" fill="#ffffff" text-anchor="middle" letter-spacing="1.5">IIOT</text>
+  <text x="100" y="152" font-family="'Segoe UI', -apple-system, system-ui, sans-serif" font-size="10" font-weight="600" fill="#00d2ff" text-anchor="middle" letter-spacing="1">CAMPUS DIRECTORY</text>
+</svg>

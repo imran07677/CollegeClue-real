@@ -1,0 +1,830 @@
+{% extends "base.html" %}
+{% load core_extras %}
+
+{% block title %}{{ college.name }} - Overview, Courses, Placements & Recruiters | College Clue{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Breadcrumb Navigation -->
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'university_list' %}">Universities</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'college_list' %}">Colleges</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{ college.name }}</li>
+        </ol>
+    </nav>
+
+    <!-- ============================================================== -->
+    <!-- COLLEGE HERO HEADER SHOWCASE CARD                              -->
+    <!-- ============================================================== -->
+    <div class="card border-0 shadow-sm rounded-4 mb-4 overflow-hidden" style="border: 1px solid rgba(0,0,0,0.06) !important;">
+        <div class="card-body p-4 p-md-5">
+            <div class="row g-4 align-items-center">
+                <div class="col-md-auto text-center">
+                    {% if college.logo %}
+                        <img src="{{ college.logo.url }}" alt="{{ college.name }}" class="rounded-4 shadow" style="width: 110px; height: 110px; object-fit: contain;">
+                    {% else %}
+                        <div class="bg-primary text-white rounded-4 d-flex align-items-center justify-content-center fw-bold display-5 mx-auto shadow-sm" style="width: 110px; height: 110px;">
+                            {{ college.name|slice:":1" }}
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="col-md">
+                    <div class="d-flex flex-wrap align-items-center gap-2 mb-2">
+                        <span class="badge bg-primary text-white px-3 py-1">
+                            <i class="bi bi-building me-1"></i>{{ college.university.name }}
+                        </span>
+                        <span class="badge bg-success text-white px-3 py-1">
+                            <i class="bi bi-star-fill text-warning me-1"></i>{{ college.rating }} Rating
+                        </span>
+                        <span class="badge bg-light text-secondary border px-3 py-1">
+                            <i class="bi bi-geo-alt-fill text-danger me-1"></i>{{ college.city }}
+                        </span>
+                        {% if college.gmap_location %}
+                            <a href="https://maps.google.com/?q={{ college.gmap_location|urlencode }}" target="_blank" rel="noopener noreferrer" class="badge bg-success-subtle text-success border border-success-subtle px-3 py-1 text-decoration-none">
+                                <i class="bi bi-geo-alt-fill me-1"></i>Google Maps Pin
+                            </a>
+                        {% endif %}
+                        {% if college.is_registered %}
+                            <span class="badge bg-success text-white px-3 py-1">
+                                <i class="bi bi-patch-check-fill me-1"></i>Registered Official Partner
+                            </span>
+                        {% endif %}
+                        {% if college.is_admission_open %}
+                            <span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-1">
+                                <i class="bi bi-calendar-check-fill me-1"></i>{{ college.admission_dates_display }}
+                            </span>
+                        {% else %}
+                            <span class="badge bg-danger-subtle text-danger border border-danger-subtle px-3 py-1">
+                                <i class="bi bi-calendar-x-fill me-1"></i>{{ college.admission_dates_display }}
+                            </span>
+                        {% endif %}
+                    </div>
+
+                    <h1 class="fw-bold mb-2 h2 text-dark">{{ college.name }}</h1>
+                    <p class="text-secondary mb-3 fs-6" style="max-width: 860px; line-height: 1.5;">
+                        {{ college.description }}
+                    </p>
+
+                    <!-- Quick Highlight Metrics Strip -->
+                    <div class="d-flex flex-wrap align-items-center gap-3 pt-2 border-top">
+                        <div class="border-end pe-3">
+                            <small class="text-muted d-block" style="font-size: 0.75rem;">Base Annual Tuition</small>
+                            <span class="fs-4 fw-bold text-dark">{{ college.fees|inr }}</span>
+                        </div>
+                        <div class="border-end pe-3">
+                            <small class="text-muted d-block" style="font-size: 0.75rem;">Class X Cutoff</small>
+                            <span class="fs-4 fw-bold text-primary">{{ college.min_10th_percentage }}%</span>
+                        </div>
+                        <div class="border-end pe-3">
+                            <small class="text-muted d-block" style="font-size: 0.75rem;">Class XII Cutoff</small>
+                            <span class="fs-4 fw-bold text-primary">{{ college.min_12th_percentage }}%</span>
+                        </div>
+                        <div class="border-end pe-3">
+                            <small class="text-muted d-block" style="font-size: 0.75rem;">Highest CTC</small>
+                            <span class="fs-4 fw-bold text-success">{{ placement_info.highest_ctc }}</span>
+                        </div>
+                        <div class="pe-3">
+                            <small class="text-muted d-block" style="font-size: 0.75rem;">Placement Rate</small>
+                            <span class="fs-4 fw-bold text-warning-emphasis">{{ placement_info.placement_rate }}</span>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="d-flex flex-wrap gap-2 ms-auto">
+                            {% if request.user.is_authenticated and request.user.profile.role == 'university' %}
+                                {% if is_college_admin %}
+                                    <a href="{% url 'university_applications' %}?college={{ college.id }}" class="btn btn-warning fw-bold text-dark px-3 shadow-sm rounded-pill">
+                                        <i class="bi bi-inbox-fill me-1"></i>Review Applications
+                                    </a>
+                                    <a href="{% url 'college_edit' college.id %}" class="btn btn-primary fw-semibold px-3 rounded-pill">
+                                        <i class="bi bi-pencil-square me-1"></i>Manage Campus
+                                    </a>
+                                    <a href="{% url 'college_team' college.id %}" class="btn btn-outline-secondary fw-semibold px-3 rounded-pill">
+                                        <i class="bi bi-people-fill me-1"></i>Admin Team
+                                    </a>
+                                {% else %}
+                                    <span class="badge bg-secondary-subtle text-secondary border px-3 py-2 rounded-pill">
+                                        <i class="bi bi-building me-1"></i>Institutional Partner Preview
+                                    </span>
+                                {% endif %}
+                            {% elif request.user.is_authenticated and request.user.profile.role == 'accommodation' %}
+                                <span class="badge bg-secondary-subtle text-secondary border px-3 py-2 rounded-pill">
+                                    <i class="bi bi-house-door me-1"></i>Housing Partner Preview
+                                </span>
+                            {% else %}
+                                <!-- Student & Public Admission Actions -->
+                                {% if college.is_registered %}
+                                    {% if college.is_admission_open %}
+                                        <a href="{% url 'registration_form' %}?college={{ college.id }}" class="btn btn-warning fw-bold text-dark px-4 shadow-sm rounded-pill">
+                                            <i class="bi bi-pencil-square me-1"></i>Apply for Admission
+                                        </a>
+                                        <a href="https://maps.google.com/?q={% if college.university.gmap_location %}{{ college.university.gmap_location|urlencode }}{% elif college.gmap_location %}{{ college.gmap_location|urlencode }}{% else %}{{ college.university.name|urlencode }}+{{ college.city|urlencode }}{% endif %}" target="_blank" rel="noopener noreferrer" class="btn btn-outline-primary fw-semibold rounded-pill px-3 shadow-sm" title="View University Location on Google Maps">
+                                            <i class="bi bi-geo-alt-fill text-danger me-1"></i>View University Location <i class="bi bi-box-arrow-up-right ms-1"></i>
+                                        </a>
+                                    {% else %}
+                                        <button class="btn btn-secondary px-3 fw-semibold opacity-75 rounded-pill" disabled title="Online application is currently closed for this institution">
+                                            <i class="bi bi-slash-circle me-1"></i>Application Unavailable
+                                        </button>
+                                        <a href="https://maps.google.com/?q={% if college.university.gmap_location %}{{ college.university.gmap_location|urlencode }}{% elif college.gmap_location %}{{ college.gmap_location|urlencode }}{% else %}{{ college.university.name|urlencode }}+{{ college.city|urlencode }}{% endif %}" target="_blank" rel="noopener noreferrer" class="btn btn-outline-primary fw-semibold rounded-pill px-3 shadow-sm" title="View University Location on Google Maps">
+                                            <i class="bi bi-geo-alt-fill text-danger me-1"></i>View University Location <i class="bi bi-box-arrow-up-right ms-1"></i>
+                                        </a>
+                                    {% endif %}
+                                {% else %}
+                                    <button class="btn btn-secondary px-3 fw-semibold opacity-75 rounded-pill" disabled title="Online application is unavailable for unregistered institutions">
+                                        <i class="bi bi-slash-circle me-1"></i>Application Unavailable
+                                    </button>
+                                    <a href="https://maps.google.com/?q={% if college.university.gmap_location %}{{ college.university.gmap_location|urlencode }}{% elif college.gmap_location %}{{ college.gmap_location|urlencode }}{% else %}{{ college.university.name|urlencode }}+{{ college.city|urlencode }}{% endif %}" target="_blank" rel="noopener noreferrer" class="btn btn-outline-primary fw-semibold rounded-pill px-3 shadow-sm" title="View on Google Maps">
+                                        <i class="bi bi-geo-alt-fill text-danger me-1"></i>View University Location <span class="visually-hidden">View on Google Maps</span><i class="bi bi-box-arrow-up-right ms-1"></i>
+                                    </a>
+                                {% endif %}
+
+                                {% if is_in_compare %}
+                                    <a href="{% url 'compare_toggle' college.id %}?next={{ request.get_full_path }}" class="btn btn-success compare-toggle-btn compare-detail-btn fw-semibold shadow-sm rounded-pill px-3" data-college-id="{{ college.id }}" data-detail="true" title="Click to remove from comparison">
+                                        <i class="bi bi-check-lg me-1"></i>In Comparison
+                                    </a>
+                                {% else %}
+                                    <a href="{% url 'compare_toggle' college.id %}?next={{ request.get_full_path }}" class="btn btn-outline-secondary compare-toggle-btn compare-detail-btn fw-semibold rounded-pill px-3" data-college-id="{{ college.id }}" data-detail="true" title="Add to comparison">
+                                        <i class="bi bi-arrow-left-right me-1"></i>Add to Compare
+                                    </a>
+                                {% endif %}
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {% if not college.is_registered %}
+                <div class="alert alert-warning border-warning-subtle d-flex align-items-center gap-2 p-3 rounded-4 shadow-sm mt-3 mb-0" role="alert">
+                    <i class="bi bi-info-circle-fill fs-5 text-warning flex-shrink-0"></i>
+                    <div class="fw-semibold text-dark">
+                        This particular college is not registered here, so application to apply is not available. Application will be open Soon.
+                    </div>
+                </div>
+            {% elif not college.is_admission_open %}
+                <div class="alert alert-info border-info-subtle d-flex align-items-center gap-2 p-3 rounded-4 shadow-sm mt-3 mb-0" role="alert">
+                    <i class="bi bi-clock-history fs-5 text-primary flex-shrink-0"></i>
+                    <div class="fw-semibold text-dark">
+                        Application will be open Soon
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- INTERACTIVE SECTION NAVIGATION TABS                             -->
+    <!-- ============================================================== -->
+    <style>
+        /* High-contrast, sharp text styling for college detail tabs */
+        #collegeDetailTabs .nav-link {
+            color: #0f172a !important; /* Deep dark slate for maximum readability */
+            font-weight: 700 !important;
+            font-size: 0.92rem;
+            background-color: #f8fafc;
+            border: 1px solid #cbd5e1;
+            transition: all 0.2s ease-in-out;
+        }
+        #collegeDetailTabs .nav-link span {
+            color: #0f172a !important;
+            font-weight: 700 !important;
+        }
+        #collegeDetailTabs .nav-link:hover {
+            color: #000000 !important;
+            background-color: #e2e8f0;
+            border-color: #94a3b8;
+        }
+        #collegeDetailTabs .nav-link:hover span {
+            color: #000000 !important;
+        }
+        #collegeDetailTabs .nav-link.active {
+            color: #ffffff !important;
+            background-color: #0d6efd !important;
+            border-color: #0d6efd !important;
+            box-shadow: 0 4px 12px rgba(13, 110, 253, 0.28) !important;
+        }
+        #collegeDetailTabs .nav-link.active span,
+        #collegeDetailTabs .nav-link.active i {
+            color: #ffffff !important;
+        }
+        #collegeDetailTabs .nav-link .badge {
+            font-weight: 700 !important;
+        }
+        #collegeDetailTabs .nav-link.active .badge {
+            background-color: #ffffff !important;
+            color: #0d6efd !important;
+            border: none !important;
+        }
+        #collegeDetailTabs .nav-link:not(.active) .badge {
+            background-color: #e2e8f0 !important;
+            color: #1e293b !important;
+            border: 1px solid #cbd5e1 !important;
+        }
+        [data-bs-theme="dark"] #collegeDetailTabs .nav-link {
+            color: #cbd5e1 !important;
+            background-color: #14171d;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        [data-bs-theme="dark"] #collegeDetailTabs .nav-link span {
+            color: #cbd5e1 !important;
+        }
+        [data-bs-theme="dark"] #collegeDetailTabs .nav-link:hover {
+            color: #ffffff !important;
+            background-color: #1a1e26;
+            border-color: rgba(56, 189, 248, 0.3);
+        }
+        [data-bs-theme="dark"] #collegeDetailTabs .nav-link.active {
+            color: #ffffff !important;
+            background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%) !important;
+            border: 1px solid rgba(56, 189, 248, 0.4) !important;
+            box-shadow: 0 0 16px rgba(14, 165, 233, 0.35) !important;
+        }
+        [data-bs-theme="dark"] #collegeDetailTabs .nav-link.active span,
+        [data-bs-theme="dark"] #collegeDetailTabs .nav-link.active i {
+            color: #ffffff !important;
+        }
+        [data-bs-theme="dark"] #collegeDetailTabs .nav-link:not(.active) .badge {
+            background-color: rgba(255, 255, 255, 0.08) !important;
+            color: #e2e8f0 !important;
+            border: 1px solid rgba(255, 255, 255, 0.12) !important;
+        }
+    </style>
+    <div class="card border-0 shadow-sm rounded-4 mb-4 p-2" style="background: #ffffff; border: 1px solid #ede8dc !important;">
+        <ul class="nav nav-pills nav-fill flex-column flex-md-row gap-2" id="collegeDetailTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active fw-bold py-2 px-3 rounded-pill d-flex align-items-center justify-content-center gap-2" id="tab-about-college-btn" data-bs-toggle="pill" data-bs-target="#tab-about-college" type="button" role="tab" aria-controls="tab-about-college" aria-selected="true">
+                    <i class="bi bi-bank fs-5" style="color: #faf8f2;"></i>
+                    <span>About College</span>
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link fw-bold py-2 px-3 rounded-pill d-flex align-items-center justify-content-center gap-2" id="tab-about-courses-btn" data-bs-toggle="pill" data-bs-target="#tab-about-courses" type="button" role="tab" aria-controls="tab-about-courses" aria-selected="false">
+                    <i class="bi bi-mortarboard-fill fs-5" style="color: #525445;"></i>
+                    <span>About Courses</span>
+                    <span class="badge ms-1" style="background: #ede8dc; color: #434538;">{{ courses|length }}</span>
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link fw-bold py-2 px-3 rounded-pill d-flex align-items-center justify-content-center gap-2" id="tab-about-placements-btn" data-bs-toggle="pill" data-bs-target="#tab-about-placements" type="button" role="tab" aria-controls="tab-about-placements" aria-selected="false">
+                    <i class="bi bi-graph-up-arrow fs-5 text-success"></i>
+                    <span>About Placements</span>
+                    <span class="badge bg-success-subtle text-success border border-success-subtle ms-1">{{ placement_info.placement_rate }}</span>
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link fw-bold py-2 px-3 rounded-pill d-flex align-items-center justify-content-center gap-2" id="tab-companies-came-btn" data-bs-toggle="pill" data-bs-target="#tab-companies-came" type="button" role="tab" aria-controls="tab-companies-came" aria-selected="false">
+                    <i class="bi bi-building-check fs-5" style="color: #525445;"></i>
+                    <span>About Companies Came</span>
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link fw-bold py-2 px-3 rounded-pill d-flex align-items-center justify-content-center gap-2" id="tab-nearby-housing-btn" data-bs-toggle="pill" data-bs-target="#tab-nearby-housing" type="button" role="tab" aria-controls="tab-nearby-housing" aria-selected="false">
+                    <i class="bi bi-houses-fill fs-5" style="color: #525445;"></i>
+                    <span>Nearby PG / Flats</span>
+                    <span class="badge ms-1" style="background: #ede8dc; color: #434538;">{{ accommodations|length }}</span>
+                </button>
+            </li>
+        </ul>
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- TABBED CONTENT PANES                                            -->
+    <!-- ============================================================== -->
+    <div class="tab-content" id="collegeDetailTabContent">
+
+        <!-- ========================================================== -->
+        <!-- TAB 1: ABOUT COLLEGE                                        -->
+        <!-- ========================================================== -->
+        <div class="tab-pane fade show active" id="tab-about-college" role="tabpanel" aria-labelledby="tab-about-college-btn">
+            <div class="row g-4">
+                <!-- Institutional Overview Narrative -->
+                <div class="col-lg-8">
+                    <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5 bg-white h-100">
+                        <div class="d-flex align-items-center gap-2 mb-3">
+                            <div class="bg-primary-subtle text-primary p-2 rounded-3">
+                                <i class="bi bi-info-circle-fill fs-4"></i>
+                            </div>
+                            <div>
+                                <h3 class="fw-bold mb-0 text-dark">About {{ college.name }}</h3>
+                                <p class="text-muted small mb-0">{{ about_info.discipline }}</p>
+                            </div>
+                        </div>
+
+                        {% for paragraph in about_info.overview_paragraphs %}
+                            <p class="text-secondary fs-6 mb-3" style="line-height: 1.65;">
+                                {{ paragraph }}
+                            </p>
+                        {% endfor %}
+
+                        <!-- Key Institutional Highlights Box -->
+                        <div class="bg-light rounded-4 p-4 mt-3 border">
+                            <h5 class="fw-bold text-dark mb-3"><i class="bi bi-stars text-warning me-2"></i>Campus &amp; Academic Focus Highlights</h5>
+                            <div class="row g-3">
+                                {% for area in about_info.focus_areas %}
+                                    <div class="col-md-6">
+                                        <div class="d-flex align-items-center gap-2">
+                                            <i class="bi bi-check2-circle text-primary fs-5"></i>
+                                            <span class="small fw-semibold text-dark">{{ area }}</span>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Fast Facts & Institutional Badges Sidebar -->
+                <div class="col-lg-4">
+                    <div class="card border-0 shadow-sm rounded-4 p-4 bg-white mb-4">
+                        <h5 class="fw-bold text-dark mb-3"><i class="bi bi-patch-check-fill text-success me-2"></i>Accreditations &amp; Recognition</h5>
+                        <ul class="list-unstyled mb-0 d-flex flex-column gap-2">
+                            {% for acc in about_info.accreditations %}
+                                <li class="p-2 px-3 rounded-3 bg-light border d-flex align-items-center gap-2 small fw-semibold text-dark">
+                                    <i class="bi bi-award-fill text-warning fs-5"></i>
+                                    <span>{{ acc }}</span>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+
+                    <div class="card border-0 shadow-sm rounded-4 p-4 bg-white">
+                        <h5 class="fw-bold text-dark mb-3"><i class="bi bi-compass-fill text-primary me-2"></i>Campus Snapshot</h5>
+                        <div class="d-flex flex-column gap-3">
+                            <div class="d-flex justify-content-between align-items-center pb-2 border-bottom">
+                                <span class="small text-muted">Affiliated University:</span>
+                                <span class="small fw-bold text-dark text-truncate ms-2" style="max-width: 170px;" title="{{ college.university.name }}">{{ college.university.name }}</span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center pb-2 border-bottom">
+                                <span class="small text-muted">Campus Area:</span>
+                                <span class="small fw-bold text-dark">{{ about_info.campus_acres }}</span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center pb-2 border-bottom">
+                                <span class="small text-muted">Faculty Ratio:</span>
+                                <span class="small fw-bold text-primary">{{ about_info.faculty_ratio }}</span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center pb-2 border-bottom">
+                                <span class="small text-muted">Location &amp; City:</span>
+                                <span class="small fw-bold text-dark">{{ college.city }}</span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="small text-muted">Institutional Rating:</span>
+                                <span class="badge bg-success text-white fw-bold"><i class="bi bi-star-fill text-warning me-1"></i>{{ college.rating }} / 5.0</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Academic Cutoff Eligibility Requirements -->
+                <div class="col-12">
+                    <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5" style="background: linear-gradient(135deg, #f8fafc 0%, #edf2f7 100%); border-left: 5px solid #2563eb !important;">
+                        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-3">
+                            <div>
+                                <span class="badge bg-primary text-white mb-2"><i class="bi bi-patch-check-fill me-1"></i>Official Admission Criteria</span>
+                                <h4 class="fw-bold text-dark mb-1">Academic Percentage Cutoff Requirements</h4>
+                                <p class="text-secondary small mb-0">Students must satisfy these qualifying percentage cutoffs to be eligible for admission registration.</p>
+                            </div>
+                            <div class="d-flex align-items-center gap-2 flex-wrap">
+                                {% if college.is_registered and college.is_admission_open %}
+                                    <span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-2 rounded-pill fw-bold">
+                                        <i class="bi bi-calendar-check-fill me-1"></i>{{ college.admission_dates_display }}
+                                    </span>
+                                    {% if not request.user.profile.role == 'university' and not request.user.profile.role == 'accommodation' %}
+                                        <a href="{% url 'registration_form' %}?college={{ college.id }}" class="btn btn-warning fw-bold text-dark px-4 py-2 rounded-pill shadow-sm">
+                                            <i class="bi bi-pencil-square me-1"></i>Apply for Admission &rarr;
+                                        </a>
+                                    {% endif %}
+                                {% elif not college.is_registered %}
+                                    <span class="badge bg-light text-muted border px-3 py-2 rounded-pill fw-bold" title="Online application is unavailable for unregistered institutions">
+                                        <i class="bi bi-slash-circle me-1"></i>Application Unavailable
+                                    </span>
+                                {% else %}
+                                    <span class="badge bg-danger-subtle text-danger border border-danger-subtle px-3 py-2 rounded-pill fw-bold">
+                                        <i class="bi bi-calendar-x-fill me-1"></i>{{ college.admission_dates_display }}
+                                    </span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <div class="card bg-white border-0 rounded-3 p-3 shadow-xs h-100">
+                                    <div class="d-flex align-items-center justify-content-between">
+                                        <div>
+                                            <small class="text-uppercase text-muted fw-bold d-block" style="font-size: 0.72rem;">Class X (10th Standard / Matriculation)</small>
+                                            <h5 class="fw-bold text-dark mb-0">Minimum Required Cutoff</h5>
+                                        </div>
+                                        <span class="badge bg-primary-subtle text-primary border border-primary-subtle fs-5 fw-bold px-3 py-2 rounded-3">
+                                            {{ college.min_10th_percentage }}%
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card bg-white border-0 rounded-3 p-3 shadow-xs h-100">
+                                    <div class="d-flex align-items-center justify-content-between">
+                                        <div>
+                                            <small class="text-uppercase text-muted fw-bold d-block" style="font-size: 0.72rem;">Class XII (12th / +2 / Intermediate)</small>
+                                            <h5 class="fw-bold text-dark mb-0">Minimum Required Cutoff</h5>
+                                        </div>
+                                        <span class="badge bg-primary-subtle text-primary border border-primary-subtle fs-5 fw-bold px-3 py-2 rounded-3">
+                                            {{ college.min_12th_percentage }}%
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Modern Campus Facilities & Amenities Grid -->
+                <div class="col-12">
+                    <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5 bg-white">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <div>
+                                <h4 class="fw-bold mb-1 text-dark"><i class="bi bi-buildings-fill text-primary me-2"></i>Campus Facilities &amp; Amenities</h4>
+                                <p class="text-muted small mb-0">World-class infrastructure supporting holistic learning, research, and campus community life.</p>
+                            </div>
+                        </div>
+
+                        <div class="row g-3">
+                            {% for facility in about_info.facilities %}
+                                <div class="col-md-6 col-lg-4">
+                                    <div class="card h-100 p-3 rounded-4 border bg-light shadow-xs">
+                                        <div class="d-flex align-items-center gap-3 mb-2">
+                                            <div class="rounded-circle bg-white p-2 shadow-xs d-flex align-items-center justify-content-center text-primary" style="width: 42px; height: 42px;">
+                                                <i class="bi {{ facility.icon }} fs-5"></i>
+                                            </div>
+                                            <h6 class="fw-bold mb-0 text-dark">{{ facility.title }}</h6>
+                                        </div>
+                                        <p class="text-secondary small mb-0" style="line-height: 1.45;">
+                                            {{ facility.desc }}
+                                        </p>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+
+                        {% if college.facilities %}
+                            <div class="mt-4 p-3 rounded-3 bg-primary-subtle border border-primary-subtle">
+                                <span class="fw-bold text-primary small d-block mb-1"><i class="bi bi-info-circle me-1"></i>Official Additional Campus Facilities:</span>
+                                <span class="text-secondary small">{{ college.facilities }}</span>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================================== -->
+        <!-- TAB 2: ABOUT COURSES                                        -->
+        <!-- ========================================================== -->
+        <div class="tab-pane fade" id="tab-about-courses" role="tabpanel" aria-labelledby="tab-about-courses-btn">
+            <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5 bg-white mb-4">
+                <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4 pb-2 border-bottom">
+                    <div>
+                        <h3 class="fw-bold mb-1 text-dark"><i class="bi bi-mortarboard-fill text-warning me-2"></i>About Courses &amp; Specializations</h3>
+                        <p class="text-muted small mb-0">Comprehensive academic degree programs accredited for industry excellence and global employment.</p>
+                    </div>
+                    <span class="badge bg-primary-subtle text-primary border border-primary-subtle fs-6 px-3 py-2 rounded-pill">
+                        {{ courses|length }} Degree Programs Recorded
+                    </span>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th class="py-3">Course / Degree Program</th>
+                                <th class="py-3">Duration</th>
+                                <th class="py-3">Approved Intake</th>
+                                <th class="py-3">Annual Tuition Fee</th>
+                                <th class="py-3 text-end">Admission Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for course in courses %}
+                                <tr>
+                                    <td class="py-3">
+                                        <div class="fw-bold text-dark fs-6">{{ course.name }}</div>
+                                        <small class="text-muted"><i class="bi bi-patch-check text-success me-1"></i>Full-time On-Campus Regular Program</small>
+                                        {% if course.course_url %}
+                                            <div class="mt-1">
+                                                <a href="{{ course.course_url }}" target="_blank" rel="noopener noreferrer" class="badge bg-primary-subtle text-primary border border-primary-subtle text-decoration-none">
+                                                    <i class="bi bi-box-arrow-up-right me-1"></i>Syllabus &amp; Curriculum Link
+                                                </a>
+                                            </div>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-light text-secondary border px-3 py-2 rounded-pill">
+                                            <i class="bi bi-clock-history me-1"></i>{{ course.duration_years }} Year{{ course.duration_years|pluralize }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        {% if course.available_seats > 0 %}
+                                            <span class="badge bg-light text-dark border px-3 py-2 rounded-pill">
+                                                <i class="bi bi-people me-1 text-primary"></i><strong class="text-success">{{ course.available_seats }}</strong> / {{ course.seats }} Seats Available
+                                            </span>
+                                        {% else %}
+                                            <span class="badge bg-danger-subtle text-danger border border-danger-subtle px-3 py-2 rounded-pill">
+                                                <i class="bi bi-exclamation-circle me-1"></i>Seats Full ({{ course.seats }} Admitted)
+                                            </span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <div class="fw-bold text-primary fs-5">{{ course.fee|inr }}</div>
+                                        <small class="text-muted" style="font-size: 0.72rem;">per academic year</small>
+                                    </td>
+                                    <td class="text-end">
+                                        {% if college.is_registered and college.is_admission_open %}
+                                            {% if not request.user.is_authenticated or request.user.profile.role == 'student' %}
+                                                <a href="{% url 'registration_form' %}?college={{ college.id }}&course={{ course.id }}" class="btn btn-sm btn-warning text-dark fw-bold px-3 py-2 rounded-pill shadow-sm">
+                                                    Enroll Now <i class="bi bi-arrow-right ms-1"></i>
+                                                </a>
+                                            {% else %}
+                                                <span class="badge bg-light text-muted border small">Course Intake</span>
+                                            {% endif %}
+                                        {% elif not college.is_registered %}
+                                            <span class="badge bg-light text-muted border small" title="Online application is unavailable for unregistered institutions">
+                                                <i class="bi bi-slash-circle me-1"></i>Apply Unavailable
+                                            </span>
+                                        {% else %}
+                                            <span class="badge bg-light text-muted border small" title="Online application is currently closed for this institution">
+                                                <i class="bi bi-slash-circle me-1"></i>Apply Unavailable
+                                            </span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% empty %}
+                                <tr>
+                                    <td colspan="5" class="text-center py-5 text-muted">
+                                        <i class="bi bi-book fs-1 text-muted d-block mb-2"></i>
+                                        <h6 class="fw-bold text-dark">No Specific Courses Listed Yet</h6>
+                                        <p class="small text-muted mb-0">Courses for this campus are being reviewed and will be published shortly.</p>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Fee Guidance & Transparency Note -->
+                <div class="row g-3 mt-4 pt-3 border-top">
+                    <div class="col-md-4">
+                        <div class="p-3 rounded-3 bg-light border">
+                            <h6 class="fw-bold text-dark small mb-1"><i class="bi bi-cash-coin text-success me-1"></i>Transparent Fees</h6>
+                            <p class="text-secondary small mb-0">No hidden capitation fees. Tuition covers academic instruction, lab access, and library digital portal.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="p-3 rounded-3 bg-light border">
+                            <h6 class="fw-bold text-dark small mb-1"><i class="bi bi-mortarboard text-primary me-1"></i>Merit Scholarships</h6>
+                            <p class="text-secondary small mb-0">Scholarships available for high academic percentile achievers, sports achievers, and economically weaker sections.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="p-3 rounded-3 bg-light border">
+                            <h6 class="fw-bold text-dark small mb-1"><i class="bi bi-bank text-warning me-1"></i>Education Loan Support</h6>
+                            <p class="text-secondary small mb-0">Pre-approved institutional partnerships with leading public & private banks for rapid student loan processing.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================================== -->
+        <!-- TAB 3: ABOUT PLACEMENTS                                     -->
+        <!-- ========================================================== -->
+        <div class="tab-pane fade" id="tab-about-placements" role="tabpanel" aria-labelledby="tab-about-placements-btn">
+            <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5 bg-white mb-4">
+                <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2 mb-4 pb-2 border-bottom">
+                    <div>
+                        <h3 class="fw-bold mb-1 text-dark"><i class="bi bi-graph-up-arrow text-success me-2"></i>About Placements &amp; Career Records</h3>
+                        <p class="text-muted small mb-0">Annual campus placement audit, salary package benchmarks, and industry sector distribution.</p>
+                    </div>
+                    <span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-2 rounded-pill fs-6">
+                        <i class="bi bi-check-circle-fill me-1"></i>{{ placement_info.placement_rate }} Placement Success
+                    </span>
+                </div>
+
+                <!-- 4 KPI Stat Cards -->
+                <div class="row g-3 mb-4">
+                    <div class="col-6 col-md-3">
+                        <div class="card border-0 rounded-4 p-3 text-center shadow-xs" style="background: linear-gradient(135deg, rgba(34, 197, 94, 0.1), rgba(22, 163, 74, 0.05)); border: 1px solid rgba(34, 197, 94, 0.25) !important;">
+                            <small class="text-muted fw-bold d-block text-uppercase" style="font-size: 0.72rem;">Highest Package (CTC)</small>
+                            <h3 class="fw-bold text-success mb-1 mt-1">{{ placement_info.highest_ctc }}</h3>
+                            <span class="badge bg-success text-white rounded-pill small" style="font-size: 0.65rem;">Top Offer</span>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="card border-0 rounded-4 p-3 text-center shadow-xs" style="background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(37, 99, 235, 0.05)); border: 1px solid rgba(59, 130, 246, 0.25) !important;">
+                            <small class="text-muted fw-bold d-block text-uppercase" style="font-size: 0.72rem;">Average Package (CTC)</small>
+                            <h3 class="fw-bold text-primary mb-1 mt-1">{{ placement_info.average_ctc }}</h3>
+                            <span class="badge bg-primary text-white rounded-pill small" style="font-size: 0.65rem;">Campus Average</span>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="card border-0 rounded-4 p-3 text-center shadow-xs" style="background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(217, 119, 6, 0.05)); border: 1px solid rgba(245, 158, 11, 0.25) !important;">
+                            <small class="text-muted fw-bold d-block text-uppercase" style="font-size: 0.72rem;">Median Package</small>
+                            <h3 class="fw-bold text-warning-emphasis mb-1 mt-1">{{ placement_info.median_ctc }}</h3>
+                            <span class="badge bg-warning text-dark rounded-pill small" style="font-size: 0.65rem;">Median Benchmark</span>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="card border-0 rounded-4 p-3 text-center shadow-xs" style="background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(79, 70, 229, 0.05)); border: 1px solid rgba(99, 102, 241, 0.25) !important;">
+                            <small class="text-muted fw-bold d-block text-uppercase" style="font-size: 0.72rem;">Total Job Offers</small>
+                            <h3 class="fw-bold text-dark mb-1 mt-1">{{ placement_info.total_offers }}</h3>
+                            <span class="badge bg-dark text-white rounded-pill small" style="font-size: 0.65rem;">Generated Offers</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sector Breakdown & Training Initiatives -->
+                <div class="row g-4 mb-4">
+                    <div class="col-lg-6">
+                        <div class="card p-4 rounded-4 border bg-light h-100">
+                            <h5 class="fw-bold text-dark mb-3"><i class="bi bi-pie-chart-fill text-primary me-2"></i>Sector-Wise Placement Distribution</h5>
+                            <div class="d-flex flex-column gap-3">
+                                {% for sec in placement_info.sectors %}
+                                    <div>
+                                        <div class="d-flex justify-content-between align-items-center mb-1 small fw-semibold">
+                                            <span class="text-dark">{{ sec.name }}</span>
+                                            <span class="text-muted">{{ sec.percentage }}%</span>
+                                        </div>
+                                        <div class="progress" style="height: 8px;">
+                                            <div class="progress-bar {{ sec.color }}" role="progressbar" style="width: {{ sec.percentage }}%;" aria-valuenow="{{ sec.percentage }}" aria-valuemin="0" aria-valuemax="100"></div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-6">
+                        <div class="card p-4 rounded-4 border bg-light h-100">
+                            <h5 class="fw-bold text-dark mb-3"><i class="bi bi-briefcase text-success me-2"></i>Corporate Relations &amp; Placement Cell</h5>
+                            <ul class="list-unstyled mb-0 d-flex flex-column gap-3">
+                                {% for highlight in placement_info.highlights %}
+                                    <li class="d-flex align-items-start gap-2 small text-secondary">
+                                        <i class="bi bi-check-circle-fill text-success fs-5 flex-shrink-0 mt-n1"></i>
+                                        <span style="line-height: 1.5;">{{ highlight }}</span>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                            <div class="mt-auto pt-3 border-top d-flex justify-content-between align-items-center">
+                                <span class="small text-muted">Highest Summer Internship Stipend:</span>
+                                <span class="badge bg-primary text-white fs-6 px-3 py-1 rounded-pill">{{ placement_info.highest_stipend }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================================== -->
+        <!-- TAB 4: ABOUT COMPANIES CAME (RECRUITERS)                    -->
+        <!-- ========================================================== -->
+        <div class="tab-pane fade" id="tab-companies-came" role="tabpanel" aria-labelledby="tab-companies-came-btn">
+            <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5 bg-white mb-4">
+                <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2 mb-4 pb-2 border-bottom">
+                    <div>
+                        <h3 class="fw-bold mb-1 text-dark"><i class="bi bi-building-check text-info me-2"></i>About Companies Came (Visiting Recruiters)</h3>
+                        <p class="text-muted small mb-0">Top Fortune 500 corporations, consulting leaders, product tech giants, and financial institutions that recruit on campus.</p>
+                    </div>
+                    <span class="badge bg-warning-subtle text-dark border border-warning px-3 py-2 rounded-pill fs-6 fw-bold">
+                        <i class="bi bi-trophy-fill text-warning me-1"></i>180+ Active Campus Recruiters
+                    </span>
+                </div>
+
+                <!-- Recruiter Categories -->
+                <div class="d-flex flex-column gap-4">
+                    {% for cat in companies_info %}
+                        <div class="card border rounded-4 p-4 bg-light shadow-xs">
+                            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-3">
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="rounded-3 p-2 text-white {{ cat.badge_color }} d-flex align-items-center justify-content-center" style="width: 36px; height: 36px;">
+                                        <i class="bi {{ cat.icon }} fs-5"></i>
+                                    </div>
+                                    <div>
+                                        <h5 class="fw-bold text-dark mb-0">{{ cat.category_name }}</h5>
+                                        <small class="text-muted">{{ cat.description }}</small>
+                                    </div>
+                                </div>
+                                <span class="badge {{ cat.badge_color }} rounded-pill px-3 py-1 small mt-2 mt-md-0">
+                                    {{ cat.companies|length }} Marquee Employers
+                                </span>
+                            </div>
+
+                            <div class="row g-3">
+                                {% for company in cat.companies %}
+                                    <div class="col-md-6 col-lg-4">
+                                        <div class="card h-100 bg-white border rounded-3 p-3 shadow-xs">
+                                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                                <div class="d-flex align-items-center gap-2">
+                                                    <div class="rounded-circle bg-primary-subtle text-primary fw-bold d-flex align-items-center justify-content-center border border-primary-subtle" style="width: 36px; height: 36px; font-size: 0.9rem;">
+                                                        {{ company.initial }}
+                                                    </div>
+                                                    <div>
+                                                        <h6 class="fw-bold text-dark mb-0">{{ company.name }}</h6>
+                                                        <small class="text-muted" style="font-size: 0.72rem;">{{ company.domain }}</small>
+                                                    </div>
+                                                </div>
+                                                <span class="badge {{ company.tier_badge }} text-white small" style="font-size: 0.65rem;">
+                                                    {{ company.package_tier }}
+                                                </span>
+                                            </div>
+
+                                            <div class="pt-2 border-top mt-2">
+                                                <small class="text-muted d-block fw-semibold" style="font-size: 0.72rem;">Typical Roles Offered:</small>
+                                                <span class="small text-secondary fw-semibold" style="font-size: 0.82rem;">{{ company.roles }}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================================== -->
+        <!-- TAB 5: CAMPUS HOUSING (NEARBY PGS & FLATS)                 -->
+        <!-- ========================================================== -->
+        <div class="tab-pane fade" id="tab-nearby-housing" role="tabpanel" aria-labelledby="tab-nearby-housing-btn">
+            <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5 bg-white mb-4">
+                <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4">
+                    <div>
+                        <h3 class="fw-bold mb-1 text-dark"><i class="bi bi-houses-fill text-warning me-2"></i>Recommended Student PGs &amp; Flats Near {{ college.name }}</h3>
+                        <p class="text-muted small mb-0">Verified student living within walking or easy transit distance in {{ college.city }}.</p>
+                    </div>
+                    <div class="d-flex flex-wrap gap-2 align-items-center mt-2 mt-md-0">
+                        <span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-2 rounded-pill fs-6">
+                            {{ accommodations|length }} Verified Housing Options
+                        </span>
+                        <a href="{% url 'college_accommodations' slug=college.slug %}" class="btn btn-outline-primary btn-sm fw-semibold rounded-pill px-3 shadow-sm">
+                            Dedicated Housing Page <i class="bi bi-arrow-right ms-1"></i>
+                        </a>
+                    </div>
+                </div>
+
+                {% if accommodations %}
+                    <div class="row g-4">
+                        {% for acc in accommodations %}
+                            <div class="col-md-6 col-lg-4">
+                                <div class="card h-100 accommodation-card border rounded-4 shadow-sm p-3 d-flex flex-column">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <span class="badge bg-primary-subtle text-primary border border-primary-subtle fw-semibold">{{ acc.type }}</span>
+                                        {% if acc.college_id == college.id %}
+                                            <span class="badge bg-warning-subtle text-dark border border-warning-subtle"><i class="bi bi-geo-alt-fill text-danger me-1"></i>Campus Residence</span>
+                                        {% else %}
+                                            <span class="badge bg-success-subtle text-success border border-success-subtle"><i class="bi bi-check-circle-fill me-1"></i>Nearby Vicinity</span>
+                                        {% endif %}
+                                    </div>
+                                    <h5 class="fw-bold text-dark mb-1">
+                                        <a href="{% url 'accommodation_detail' pk=acc.pk %}" class="text-decoration-none text-dark hover-primary">
+                                            {{ acc.name }}
+                                        </a>
+                                    </h5>
+                                    <p class="text-muted small mb-2"><i class="bi bi-geo-alt me-1 text-danger"></i>{{ acc.address }}</p>
+                                    <div class="mb-2">
+                                        <span class="badge bg-light text-secondary border me-1">{{ acc.room_type }} Room</span>
+                                        <span class="badge bg-light text-secondary border"><i class="bi bi-wifi me-1"></i>Wi-Fi</span>
+                                    </div>
+                                    <p class="text-secondary small mb-3 flex-grow-1" style="font-size: 0.84rem; line-height: 1.45;">{{ acc.facilities|truncatewords:14 }}</p>
+
+                                    <div class="d-flex justify-content-between align-items-center pt-3 border-top mt-auto">
+                                        <div>
+                                            <small class="text-muted d-block" style="font-size: 0.72rem;">Monthly Rent</small>
+                                            <span class="fw-bold text-primary fs-5">{{ acc.rent|inr }}</span>
+                                            <small class="text-muted" style="font-size: 0.72rem;">/mo</small>
+                                        </div>
+                                        <div class="d-flex gap-2">
+                                            <a href="tel:{{ acc.contact_phone }}" class="btn btn-sm btn-outline-success rounded-pill px-3" title="Call Landlord">
+                                                <i class="bi bi-telephone-fill"></i>
+                                            </a>
+                                            <a href="{% url 'accommodation_detail' pk=acc.pk %}" class="btn btn-sm btn-primary fw-semibold rounded-pill px-3">
+                                                View Housing
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="text-center py-5 text-muted">
+                        <i class="bi bi-houses fs-1 d-block mb-3 text-warning"></i>
+                        <h5 class="fw-bold text-dark">No Housing Options Found</h5>
+                        <p class="text-muted small mb-3">No accommodations recorded specifically for this college yet.</p>
+                        <a href="{% url 'accommodation_list' %}?city={{ college.city }}" class="btn btn-outline-primary btn-sm rounded-pill px-4">
+                            Browse All Housing in {{ college.city }}
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,22 @@
+Dear {{ student_name }},
+
+This is an official update regarding your admission application (ID: {{ registration_id }}) for {{ course_name }} at {{ college_name }}.
+
+Your application has been placed back under admissions committee re-evaluation and verification.
+
+=======================================================
+APPLICATION DETAILS
+=======================================================
+Tracking UUID   : {{ registration_id }}
+College Name    : {{ college_name }}
+Degree / Course : {{ course_name }}
+Status          : PENDING RE-EVALUATION
+{% if admin_notes %}Admissions Notes: {{ admin_notes }}{% endif %}
+=======================================================
+
+The college admissions team will review your application and communicate any updates directly. You may track your application status at any time from your College Clue student dashboard.
+
+Best regards,
+Admissions Committee
+{{ college_name }}
+Via College Clue Platform

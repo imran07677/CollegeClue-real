@@ -1,0 +1,22 @@
+Dear {{ student_name }},
+
+Congratulations! Your admission registration for {{ college_name }} has been successfully received and recorded in our portal.
+
+=======================================================
+REGISTRATION SUMMARY
+=======================================================
+Registration ID : {{ registration_id }}
+College Name    : {{ college_name }}
+Course Applied  : {{ course_name }}
+Status          : {{ status }}
+=======================================================
+
+NEXT STEPS:
+1. Keep this Registration ID safe for all future correspondence.
+2. The college admissions desk will review your details and contact you via email or phone regarding document verification.
+3. If you have any questions or require campus accommodation assistance, please visit the College Clue portal or reply directly to this email.
+
+Best regards,
+Admissions Support Team
+College Clue Platform
+https://collegeclue.local

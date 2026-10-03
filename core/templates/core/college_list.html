@@ -1,0 +1,187 @@
+{% extends "base.html" %}
+{% load core_extras %}
+
+{% block title %}Colleges & Courses Directory - College Clue{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Header -->
+    <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3 mb-4 pb-3 border-bottom">
+        <div>
+            <h2 class="fw-bold mb-1"><i class="bi bi-mortarboard text-primary me-2"></i>Premier Colleges &amp; Faculties</h2>
+            <p class="text-muted small mb-0">Explore departments, annual tuition fees, NIRF ratings, and accredited degree programs.</p>
+        </div>
+        <div class="d-flex flex-wrap align-items-center gap-2">
+            <!-- Search Bar beside Filter -->
+            <form action="{% url 'college_list' %}" method="get" class="d-flex align-items-center m-0" role="search" id="collegeListSearchForm">
+                {% if active_city %}<input type="hidden" name="city" value="{{ active_city }}">{% endif %}
+                {% if active_course %}<input type="hidden" name="course" value="{{ active_course }}">{% endif %}
+                {% if active_max_fee %}<input type="hidden" name="max_fee" value="{{ active_max_fee }}">{% endif %}
+                <div class="input-group shadow-sm" style="min-width: 250px; max-width: 380px;">
+                    <span class="input-group-text bg-body border rounded-start-pill ps-3 text-secondary">
+                        <i class="bi bi-search text-warning"></i>
+                    </span>
+                    <input type="text" name="search" class="form-control border-start-0 border-end-0 ps-1 bg-body text-body py-2" placeholder="Search colleges, degrees..." value="{{ active_search|default:'' }}" aria-label="Search colleges" autocomplete="off" style="font-size: 0.88rem;">
+                    {% if active_search %}
+                        <a href="{% url 'college_list' %}{% if active_city or active_course or active_max_fee %}?{% if active_city %}city={{ active_city }}&{% endif %}{% if active_course %}course={{ active_course }}&{% endif %}{% if active_max_fee %}max_fee={{ active_max_fee }}{% endif %}{% endif %}" class="input-group-text bg-body border-start-0 border-end-0 text-muted pe-2 text-decoration-none" title="Clear search">
+                            <i class="bi bi-x-circle-fill"></i>
+                        </a>
+                    {% endif %}
+                    <button type="submit" class="btn btn-warning text-dark rounded-end-pill px-3 fw-bold" title="Search">
+                        Search
+                    </button>
+                </div>
+            </form>
+
+            <button type="button" class="btn btn-outline-secondary rounded-pill fw-semibold d-inline-flex align-items-center gap-1 shadow-sm px-3 py-2 text-nowrap" data-bs-toggle="modal" data-bs-target="#searchFilterModal" title="Filter by Location, Course &amp; Budget">
+                <i class="bi bi-sliders text-warning"></i> <span>Filter</span>
+                {% if active_city or active_course or active_max_fee %}
+                    <span class="badge bg-warning text-dark rounded-pill ms-1">Active</span>
+                {% endif %}
+            </button>
+        </div>
+    </div>
+
+    <!-- Quick Discipline Filter Pills -->
+    <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
+        <span class="small fw-bold text-secondary">Quick Disciplines:</span>
+        <a href="{% url 'college_list' %}?course_name=Computer" class="badge bg-white text-dark border py-2 px-3 text-decoration-none">
+            <i class="bi bi-laptop me-1 text-primary"></i>Computer Science &amp; IT
+        </a>
+        <a href="{% url 'college_list' %}?course_name=Engineering" class="badge bg-white text-dark border py-2 px-3 text-decoration-none">
+            <i class="bi bi-gear-wide-connected me-1 text-primary"></i>Engineering &amp; Tech
+        </a>
+        <a href="{% url 'college_list' %}?course_name=MBA" class="badge bg-white text-dark border py-2 px-3 text-decoration-none">
+            <i class="bi bi-briefcase me-1 text-primary"></i>Management (MBA)
+        </a>
+        <a href="{% url 'college_list' %}?course_name=Economics" class="badge bg-white text-dark border py-2 px-3 text-decoration-none">
+            <i class="bi bi-graph-up-arrow me-1 text-primary"></i>Economics &amp; Analytics
+        </a>
+        <a href="{% url 'college_list' %}?course_name=Commerce" class="badge bg-white text-dark border py-2 px-3 text-decoration-none">
+            <i class="bi bi-cash-stack me-1 text-primary"></i>Commerce &amp; Finance
+        </a>
+    </div>
+
+    <!-- Active Filters Summary Banner (shown only when filters are active) -->
+    {% if active_search or active_city or active_course or active_max_fee %}
+        <div class="alert alert-light border shadow-sm rounded-4 d-flex justify-content-between align-items-center mb-4 py-2 px-3">
+            <div class="d-flex align-items-center gap-2 flex-wrap">
+                <span class="small fw-bold text-secondary"><i class="bi bi-funnel-fill text-warning me-1"></i>Active Filters:</span>
+                {% if active_search %}
+                    <span class="badge bg-secondary-subtle text-dark border">Keyword: {{ active_search }}</span>
+                {% endif %}
+                {% if active_city %}
+                    <span class="badge bg-secondary-subtle text-dark border">City: {{ active_city }}</span>
+                {% endif %}
+                {% if active_course %}
+                    <span class="badge bg-secondary-subtle text-dark border">Course: {{ active_course }}</span>
+                {% endif %}
+                {% if active_max_fee %}
+                    <span class="badge bg-secondary-subtle text-dark border">Max Fee: ₹{{ active_max_fee }}</span>
+                {% endif %}
+            </div>
+            <div class="d-flex gap-2">
+                <button type="button" class="btn btn-sm btn-outline-warning text-dark fw-semibold rounded-pill" data-bs-toggle="modal" data-bs-target="#searchFilterModal">
+                    <i class="bi bi-sliders me-1"></i>Edit Filters
+                </button>
+                <a href="{% url 'college_list' %}" class="btn btn-sm btn-outline-secondary rounded-pill">Clear All</a>
+            </div>
+        </div>
+    {% endif %}
+
+
+    <!-- College Cards Grid -->
+    <div class="row g-4">
+        {% for college in colleges %}
+            <div class="col-md-6 col-lg-4">
+                <div class="card h-100 college-card d-flex flex-column">
+                    <div class="card-top-accent"></div>
+                    <div class="card-body p-4 d-flex flex-column">
+                        <div class="d-flex align-items-center justify-content-between mb-3">
+                            <div class="d-flex align-items-center gap-3 overflow-hidden">
+                                {% if college.logo %}
+                                    <img src="{{ college.logo.url }}" alt="{{ college.name }}" class="rounded-3 shadow-sm border p-1 flex-shrink-0" style="width: 50px; height: 50px; object-fit: contain;">
+                                {% else %}
+                                    <div class="bg-primary text-white rounded-3 d-flex align-items-center justify-content-center fw-bold fs-5 shadow-sm flex-shrink-0" style="width: 50px; height: 50px;">
+                                        {{ college.name|slice:":1" }}
+                                    </div>
+                                {% endif %}
+                                <div class="overflow-hidden">
+                                    <span class="text-uppercase fw-bold text-primary small text-truncate d-block">
+                                        <a href="{% url 'university_detail' slug=college.university.slug %}" class="text-decoration-none text-primary">
+                                            {{ college.university.name }}
+                                        </a>
+                                    </span>
+                                    <div>
+                                        {% if college.is_admission_open %}
+                                            <span class="badge bg-success-subtle text-success border border-success-subtle py-1" style="font-size: 0.68rem;" title="{{ college.admission_dates_display }}">
+                                                <i class="bi bi-calendar-check me-1"></i>{{ college.admission_dates_display }}
+                                            </span>
+                                        {% else %}
+                                            <span class="badge bg-danger-subtle text-danger border border-danger-subtle py-1" style="font-size: 0.68rem;">
+                                                <i class="bi bi-calendar-x me-1"></i>Admissions Closed
+                                            </span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            <span class="badge-rating flex-shrink-0">
+                                <i class="bi bi-star-fill text-warning me-1"></i>{{ college.rating }}
+                            </span>
+                        </div>
+
+                        <h5 class="fw-bold text-dark mb-1">
+                            <a href="{% url 'college_detail' slug=college.slug %}" class="text-decoration-none text-dark">
+                                {{ college.name }}
+                            </a>
+                        </h5>
+                        <p class="text-muted small mb-2"><i class="bi bi-geo-alt-fill text-danger me-1"></i>{{ college.city }}</p>
+                        <p class="text-secondary small mb-3 flex-grow-1">{{ college.description|truncatewords:16 }}</p>
+
+                        <!-- Facilities preview -->
+                        {% if college.facilities %}
+                            <div class="mb-3">
+                                <span class="badge bg-light text-secondary border small text-truncate d-inline-block" style="max-width: 100%;">
+                                    <i class="bi bi-check2-circle me-1 text-success"></i>{{ college.facilities|truncatechars:45 }}
+                                </span>
+                            </div>
+                        {% endif %}
+
+                        <!-- Action footer -->
+                        <div class="pt-3 border-top mt-auto">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <div>
+                                    <small class="text-muted d-block">Annual Tuition</small>
+                                    <span class="fw-bold text-primary fs-5">{{ college.fees|inr }}</span>
+                                </div>
+                                {% if college.is_admission_open %}
+                                    <a href="{% url 'registration_form' %}?college={{ college.id }}" class="btn btn-sm btn-outline-warning text-dark fw-semibold">
+                                        Apply Now
+                                    </a>
+                                {% else %}
+                                    <span class="badge bg-light text-muted border small" title="Online application is currently closed for this institution">
+                                        <i class="bi bi-slash-circle me-1"></i>Apply Unavailable
+                                    </span>
+                                {% endif %}
+                            </div>
+
+                            <div class="d-grid mt-2">
+                                <a href="{% url 'college_detail' slug=college.slug %}" class="btn btn-sm btn-primary w-100 fw-semibold py-2">
+                                    <i class="bi bi-info-circle me-1"></i>View Details
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <div class="col-12 text-center py-5">
+                <i class="bi bi-mortarboard fs-1 text-muted d-block mb-3"></i>
+                <h5 class="fw-bold text-dark">No Colleges Match Your Search Filters</h5>
+                <p class="text-muted">Try adjusting your fee range, search query, or selected city.</p>
+                <a href="{% url 'college_list' %}" class="btn btn-primary btn-sm mt-2">Reset Filters</a>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

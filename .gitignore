@@ -1,0 +1,35 @@
+# Virtual Environment
+venv/
+env/
+ENV/
+
+# Environment Variables
+.env
+
+# SQLite Database
+*.sqlite3
+
+# Python Bytecode & Cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Uploaded Media (keep sample logos)
+media/*
+!media/logos/
+!media/logos/**
+
+# Static collected
+staticfiles/
+
+# Backup & scratch files
+theme_backup/
+*.bak
+
+# IDE & Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store

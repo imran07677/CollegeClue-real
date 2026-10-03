@@ -1,0 +1,453 @@
+{% extends "base.html" %}
+
+{% block title %}Manage & Edit Campus - {{ college.name }} - College Clue{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Back to Dashboard -->
+    <div class="mb-3">
+        <a href="{% url 'university_dashboard' %}" class="text-decoration-none text-muted small">
+            <i class="bi bi-arrow-left me-1"></i>Back to University Dashboard
+        </a>
+    </div>
+
+    <!-- Header Banner -->
+    <div class="card border-0 shadow-sm rounded-4 mb-4 bg-gradient bg-primary text-white p-4">
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+            <div>
+                <div class="d-flex align-items-center gap-2 mb-1">
+                    <span class="badge bg-warning text-dark px-3 py-1 rounded-pill fw-bold">Live Campus Management</span>
+                    {% if college.status == 'Approved' %}
+                        <span class="badge bg-success rounded-pill px-3 py-1"><i class="bi bi-check-circle me-1"></i>Approved & Live</span>
+                    {% else %}
+                        <span class="badge bg-warning text-dark rounded-pill px-3 py-1">{{ college.status }}</span>
+                    {% endif %}
+                </div>
+                <h2 class="fw-bold text-white mb-1">{{ college.name }}</h2>
+                <p class="text-white-50 mb-0 small">
+                    Affiliated with <strong>{{ college.university.name }}</strong> • <i class="bi bi-geo-alt-fill text-warning me-1"></i>{{ college.city }}
+                </p>
+            </div>
+            <div class="d-flex flex-wrap gap-2 align-items-center">
+                {% if request.user.is_staff %}
+                    {% if college.status != 'Approved' %}
+                        <form method="post" action="{% url 'admin_approve_college' college.id %}" class="d-inline">
+                            {% csrf_token %}
+                            <input type="hidden" name="admin_notes" value="Approved directly by staff admin.">
+                            <button type="submit" class="btn btn-success rounded-pill px-3 fw-bold btn-sm shadow-sm">
+                                <i class="bi bi-check-circle-fill me-1"></i>Approve College
+                            </button>
+                        </form>
+                    {% endif %}
+                    {% if college.status != 'Rejected' %}
+                        <form method="post" action="{% url 'admin_reject_college' college.id %}" class="d-inline" onsubmit="return confirm('Reject this college?');">
+                            {% csrf_token %}
+                            <input type="hidden" name="admin_notes" value="Rejected directly by staff admin.">
+                            <button type="submit" class="btn btn-outline-light rounded-pill px-3 fw-bold btn-sm">
+                                <i class="bi bi-x-circle me-1"></i>Reject College
+                            </button>
+                        </form>
+                    {% endif %}
+                {% endif %}
+                <a href="{% url 'college_detail' college.slug %}" target="_blank" class="btn btn-warning text-dark fw-bold rounded-pill px-3 shadow-sm">
+                    <i class="bi bi-box-arrow-up-right me-1"></i>View Live Page
+                </a>
+            </div>
+        </div>
+    </div>
+
+    {% if college.admin_notes %}
+        <div class="alert alert-light border shadow-sm rounded-4 mb-4 d-flex align-items-center gap-3">
+            <i class="bi bi-info-circle-fill text-primary fs-4"></i>
+            <div class="small">
+                <strong>Moderation &amp; Approval Notes:</strong> {{ college.admin_notes }}
+            </div>
+        </div>
+    {% endif %}
+
+    <!-- Sub-navigation Tabs (Divided Campus Details & Academic Courses) -->
+    <div class="card border-0 shadow-sm rounded-4 mb-4 p-2" style="background: #ffffff; border: 1px solid #ede8dc !important;">
+        <ul class="nav nav-pills gap-2 flex-wrap">
+            <li class="nav-item">
+                <a class="nav-link active fw-bold rounded-pill px-4 py-2 shadow-sm" href="{% url 'college_edit' college.id %}" style="background-color: #525445; color: #faf8f2; border: 1px solid #45473a;">
+                    <i class="bi bi-building-gear me-2" style="color: #faf8f2;"></i>Campus Details
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link fw-semibold rounded-pill px-4 py-2" href="{% url 'college_courses' college.id %}" style="color: #434538;">
+                    <i class="bi bi-journal-bookmark me-2"></i>Academic Courses
+                    <span class="badge rounded-pill ms-2" style="background: #ede8dc; color: #434538;">{{ courses|length }}</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link fw-semibold rounded-pill px-4 py-2" href="{% url 'college_team' college.id %}" style="color: #434538;">
+                    <i class="bi bi-people-fill me-2"></i>Admin Team
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link fw-semibold rounded-pill px-4 py-2" href="{% url 'university_applications' %}?college={{ college.id }}" style="color: #434538;">
+                    <i class="bi bi-inbox-fill me-2"></i>Applications
+                </a>
+            </li>
+            <li class="nav-item ms-auto d-none d-md-block">
+                <a class="nav-link fw-semibold rounded-pill px-3 py-2 btn btn-outline-secondary" href="{% url 'college_detail' college.slug %}" target="_blank" style="color: #434538; border-color: #ede8dc;">
+                    <i class="bi bi-box-arrow-up-right me-1"></i>View Live Page
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="row g-4">
+        <!-- Full-width: Campus Details Edit Form -->
+        <div class="col-12">
+            <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5">
+                <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center border-bottom pb-3 mb-4 gap-2">
+                    <div>
+                        <h4 class="fw-bold text-dark mb-1">
+                            <i class="bi bi-pencil-square text-primary me-2"></i>Edit Campus Details
+                        </h4>
+                        <p class="text-muted small mb-0">Update institutional info, fees, cutoffs, location, and placement benchmarks.</p>
+                    </div>
+                    <a href="{% url 'college_courses' college.id %}" class="btn btn-outline-primary rounded-pill px-4 py-2 fw-semibold d-inline-flex align-items-center gap-2">
+                        <i class="bi bi-journal-bookmark-fill text-primary"></i>
+                        <span>Manage Academic Courses ({{ courses|length }})</span>
+                        <i class="bi bi-arrow-right small"></i>
+                    </a>
+                </div>
+                <form method="post" enctype="multipart/form-data" novalidate>
+                    {% csrf_token %}
+                    <div class="row g-3">
+                        <div class="col-md-8">
+                            <label class="form-label small fw-semibold text-secondary">College / Institute Name *</label>
+                            {{ form.name }}
+                            {% if form.name.errors %}<div class="text-danger small mt-1">{{ form.name.errors.0 }}</div>{% endif %}
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small fw-semibold text-secondary">City *</label>
+                            {{ form.city }}
+                            {% if form.city.errors %}<div class="text-danger small mt-1">{{ form.city.errors.0 }}</div>{% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-semibold text-secondary">Annual Tuition Fee (₹) *</label>
+                            {{ form.fees }}
+                            {% if form.fees.errors %}<div class="text-danger small mt-1">{{ form.fees.errors.0 }}</div>{% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-semibold text-secondary">Campus Rating (out of 5.0)</label>
+                            {{ form.rating }}
+                            {% if form.rating.errors %}<div class="text-danger small mt-1">{{ form.rating.errors.0 }}</div>{% endif %}
+                        </div>
+                        <!-- Admissions Schedule & Window (Open Date, Opened Till Date, Status) -->
+                        <div class="col-12">
+                            <div class="p-3 bg-light rounded-4 border border-success-subtle shadow-xs">
+                                <div class="d-flex flex-column flex-sm-row align-items-sm-center justify-content-between gap-2 mb-2">
+                                    <div class="d-flex align-items-center gap-2">
+                                        <div class="bg-success text-white p-2 rounded-circle d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;">
+                                            <i class="bi bi-calendar-check-fill small"></i>
+                                        </div>
+                                        <div>
+                                            <h6 class="fw-bold mb-0 text-dark">Admissions Intake Schedule</h6>
+                                            <small class="text-muted">Set when admissions are opened and the application deadline ("Opened Till")</small>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex align-items-center gap-2 flex-wrap">
+                                        <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-3 py-1">
+                                            <i class="bi bi-eye-fill me-1"></i>{{ college.admission_dates_display }}
+                                        </span>
+                                        <button type="submit" form="formToggleAdmission" class="btn btn-sm {% if college.is_admission_open %}btn-danger{% else %}btn-success text-white{% endif %} rounded-pill px-3 py-1 fw-bold shadow-xs d-inline-flex align-items-center gap-1" title="1-click switch to turn admissions ON or OFF">
+                                            <i class="bi bi-power"></i>
+                                            <span>{% if college.is_admission_open %}Admissions: ON (Turn OFF){% else %}Admissions: OFF (Turn ON){% endif %}</span>
+                                        </button>
+                                    </div>
+                                </div>
+                                <form id="formToggleAdmission" method="post" action="{% url 'college_admission_toggle' college.id %}" style="display:none;">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                                </form>
+                                <p class="small text-muted mb-3">
+                                    Control when students can submit admission applications for this campus. Students will see the live schedule badge and deadline on your page.
+                                </p>
+                                <div class="row g-3">
+                                    <div class="col-md-4">
+                                        <label class="form-label small fw-semibold text-secondary">Admissions Availability *</label>
+                                        {{ form.admissions_status }}
+                                        {% if form.admissions_status.errors %}<div class="text-danger small mt-1">{{ form.admissions_status.errors.0 }}</div>{% endif %}
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label small fw-semibold text-secondary">
+                                            <i class="bi bi-calendar-event me-1 text-primary"></i>Admissions Open Date
+                                        </label>
+                                        {{ form.admission_open_date }}
+                                        {% if form.admission_open_date.errors %}<div class="text-danger small mt-1">{{ form.admission_open_date.errors.0 }}</div>{% endif %}
+                                        <div class="form-text small text-muted">When intake begins</div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label small fw-semibold text-secondary">
+                                            <i class="bi bi-calendar-check me-1 text-success"></i>Admissions Opened Till *
+                                        </label>
+                                        {{ form.admission_close_date }}
+                                        {% if form.admission_close_date.errors %}<div class="text-danger small mt-1">{{ form.admission_close_date.errors.0 }}</div>{% endif %}
+                                        <div class="form-text small text-muted">Last date to apply</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Academic Eligibility Cutoffs (Class X & XII Minimum % Criteria) -->
+                        <div class="col-12">
+                            <div class="p-3 bg-light rounded-4 border border-primary-subtle shadow-xs">
+                                <div class="d-flex align-items-center gap-2 mb-2">
+                                    <div class="bg-primary text-white p-2 rounded-circle d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;">
+                                        <i class="bi bi-award-fill small"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="fw-bold mb-0 text-dark">Academic Eligibility Cutoffs</h6>
+                                        <small class="text-muted">Minimum percentage required for students to apply for admission</small>
+                                    </div>
+                                </div>
+                                <p class="small text-muted mb-3">
+                                    Specify the minimum Class X and Class XII percentage marks required by this campus. Student applicants whose marks are below these cutoffs will be automatically informed and restricted from applying.
+                                </p>
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label small fw-semibold text-secondary">Minimum Class X (10th) Cutoff % *</label>
+                                        <div class="input-group">
+                                            {{ form.min_10th_percentage }}
+                                            <span class="input-group-text bg-white fw-bold text-muted">%</span>
+                                        </div>
+                                        {% if form.min_10th_percentage.errors %}
+                                            <div class="text-danger small mt-1">{{ form.min_10th_percentage.errors.0 }}</div>
+                                        {% endif %}
+                                        <div class="form-text small text-muted">e.g. 50.00% or 60.00%</div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label small fw-semibold text-secondary">Minimum Class XII (12th) Cutoff % *</label>
+                                        <div class="input-group">
+                                            {{ form.min_12th_percentage }}
+                                            <span class="input-group-text bg-white fw-bold text-muted">%</span>
+                                        </div>
+                                        {% if form.min_12th_percentage.errors %}
+                                            <div class="text-danger small mt-1">{{ form.min_12th_percentage.errors.0 }}</div>
+                                        {% endif %}
+                                        <div class="form-text small text-muted">e.g. 50.00% or 65.00%</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label small fw-semibold text-secondary">
+                                <i class="bi bi-geo-alt-fill text-danger me-1"></i>Campus Google Maps Location
+                            </label>
+                            {{ form.gmap_location }}
+                            <div class="form-text small text-muted">Paste Google Maps share link, embed URL, or GPS coordinates (e.g. 28.5450, 77.1926).</div>
+                            {% if form.gmap_location.errors %}<div class="text-danger small mt-1">{{ form.gmap_location.errors.0 }}</div>{% endif %}
+                            {% if college.gmap_location %}
+                                <div class="mt-2 d-flex align-items-center gap-2">
+                                    <a href="https://maps.google.com/?q={{ college.gmap_location|urlencode }}" target="_blank" class="btn btn-sm btn-outline-success rounded-pill">
+                                        <i class="bi bi-pin-map-fill me-1"></i>Test Current Location Pin
+                                    </a>
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-12">
+                            <!-- Placement Audit & Recruiter Benchmarks Card -->
+                            <div class="card border-0 rounded-4 p-3 bg-light border border-success-subtle shadow-xs">
+                                <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-2 mb-2">
+                                    <div class="d-flex align-items-center gap-2">
+                                        <div class="bg-success text-white p-2 rounded-circle d-flex align-items-center justify-content-center" style="width: 34px; height: 34px;">
+                                            <i class="bi bi-graph-up-arrow small"></i>
+                                        </div>
+                                        <div>
+                                            <h6 class="fw-bold mb-0 text-dark">Placement Audit &amp; Recruiter Benchmarks</h6>
+                                            <small class="text-muted">Salary package benchmarks, placement success rate, and hiring companies</small>
+                                        </div>
+                                    </div>
+                                    <button type="button" id="btnAutoCalculate" class="btn btn-sm btn-outline-success rounded-pill fw-bold d-inline-flex align-items-center gap-1 shadow-sm px-3">
+                                        <i class="bi bi-magic"></i> Auto-Calculate Benchmarks
+                                    </button>
+                                </div>
+                                <p class="small text-muted mb-3">
+                                    Publish official audited figures or click <strong>Auto-Calculate Benchmarks</strong> to instantly fill realistic estimates calculated from your campus rating, fees, and discipline.
+                                </p>
+
+                                <div class="row g-3">
+                                    <div class="col-sm-6 col-md-4">
+                                        <label class="form-label small fw-semibold text-secondary">Highest Package (CTC)</label>
+                                        {{ form.highest_package }}
+                                        <div class="form-text small text-muted">e.g. ₹44.00 LPA</div>
+                                        {% if form.highest_package.errors %}<div class="text-danger small mt-1">{{ form.highest_package.errors.0 }}</div>{% endif %}
+                                    </div>
+                                    <div class="col-sm-6 col-md-4">
+                                        <label class="form-label small fw-semibold text-secondary">Average Package (CTC)</label>
+                                        {{ form.average_package }}
+                                        <div class="form-text small text-muted">e.g. ₹14.80 LPA</div>
+                                        {% if form.average_package.errors %}<div class="text-danger small mt-1">{{ form.average_package.errors.0 }}</div>{% endif %}
+                                    </div>
+                                    <div class="col-sm-6 col-md-4">
+                                        <label class="form-label small fw-semibold text-secondary">Median Package</label>
+                                        {{ form.median_package }}
+                                        <div class="form-text small text-muted">e.g. ₹12.50 LPA</div>
+                                        {% if form.median_package.errors %}<div class="text-danger small mt-1">{{ form.median_package.errors.0 }}</div>{% endif %}
+                                    </div>
+
+                                    <div class="col-sm-6 col-md-4">
+                                        <label class="form-label small fw-semibold text-secondary">Placement Rate (%)</label>
+                                        {{ form.placement_rate }}
+                                        <div class="form-text small text-muted">e.g. 96.4%</div>
+                                        {% if form.placement_rate.errors %}<div class="text-danger small mt-1">{{ form.placement_rate.errors.0 }}</div>{% endif %}
+                                    </div>
+                                    <div class="col-sm-6 col-md-4">
+                                        <label class="form-label small fw-semibold text-secondary">Total Job Offers</label>
+                                        {{ form.total_offers }}
+                                        <div class="form-text small text-muted">e.g. 820+</div>
+                                        {% if form.total_offers.errors %}<div class="text-danger small mt-1">{{ form.total_offers.errors.0 }}</div>{% endif %}
+                                    </div>
+                                    <div class="col-sm-6 col-md-4">
+                                        <label class="form-label small fw-semibold text-secondary">Highest Summer Stipend</label>
+                                        {{ form.summer_stipend }}
+                                        <div class="form-text small text-muted">e.g. ₹80,000 / mo</div>
+                                        {% if form.summer_stipend.errors %}<div class="text-danger small mt-1">{{ form.summer_stipend.errors.0 }}</div>{% endif %}
+                                    </div>
+
+                                    <div class="col-12">
+                                        <div class="d-flex justify-content-between align-items-center mb-1">
+                                            <label class="form-label small fw-semibold text-secondary mb-0">Top Visiting Recruiter Companies</label>
+                                            <div class="d-flex gap-1">
+                                                <button type="button" class="btn btn-sm btn-light border rounded-pill py-0 px-2 small text-muted btn-add-chips" data-company="Google, Microsoft, Amazon, Adobe" style="font-size: 0.72rem;">+ Tech Giants</button>
+                                                <button type="button" class="btn btn-sm btn-light border rounded-pill py-0 px-2 small text-muted btn-add-chips" data-company="Deloitte, McKinsey & Company, Goldman Sachs" style="font-size: 0.72rem;">+ Consulting &amp; BFSI</button>
+                                            </div>
+                                        </div>
+                                        {{ form.top_recruiters }}
+                                        <div class="form-text small text-muted">Comma-separated company names visiting campus (e.g. Google, Microsoft, Amazon, Deloitte, Goldman Sachs).</div>
+                                        {% if form.top_recruiters.errors %}<div class="text-danger small mt-1">{{ form.top_recruiters.errors.0 }}</div>{% endif %}
+                                    </div>
+
+                                    <div class="col-12">
+                                        <label class="form-label small fw-semibold text-secondary">Career Cell &amp; Pre-Placement Training Highlights</label>
+                                        {{ form.placement_highlights }}
+                                        <div class="form-text small text-muted">Key corporate relations initiatives, pre-placement training bootcamps, and PPO highlights (one bullet per line).</div>
+                                        {% if form.placement_highlights.errors %}<div class="text-danger small mt-1">{{ form.placement_highlights.errors.0 }}</div>{% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label small fw-semibold text-secondary">Campus Facilities</label>
+                            {{ form.facilities }}
+                            {% if form.facilities.errors %}<div class="text-danger small mt-1">{{ form.facilities.errors.0 }}</div>{% endif %}
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label small fw-semibold text-secondary">Campus Overview &amp; History Narrative</label>
+                            {{ form.description }}
+                            {% if form.description.errors %}<div class="text-danger small mt-1">{{ form.description.errors.0 }}</div>{% endif %}
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label small fw-semibold text-secondary">College Logo / Header Image</label>
+                            {{ form.logo }}
+                            {% if college.logo %}
+                                <div class="mt-2 small text-muted">Current logo: <a href="{{ college.logo.url }}" target="_blank">View</a></div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="mt-4 pt-3 border-top d-flex justify-content-between align-items-center">
+                        <a href="{% url 'college_courses' college.id %}" class="btn btn-outline-secondary rounded-pill px-3">
+                            <i class="bi bi-journal-bookmark me-1"></i>Next: Manage Courses &rarr;
+                        </a>
+                        <button type="submit" class="btn btn-primary rounded-pill px-4 fw-bold">
+                            <i class="bi bi-save me-1"></i>Save Campus Changes
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const btnAuto = document.getElementById('btnAutoCalculate');
+    if (!btnAuto) return;
+
+    btnAuto.addEventListener('click', function() {
+        const nameInput = document.getElementById('id_name');
+        const nameVal = (nameInput ? nameInput.value : '{{ college.name|escapejs }}').toLowerCase();
+        
+        const ratingInput = document.getElementById('id_rating');
+        const ratingVal = parseFloat(ratingInput && ratingInput.value ? ratingInput.value : '{{ college.rating|default:4.3 }}') || 4.3;
+
+        const isTech = /engineering|technology|tech|iit|bits|dtu|computing|science|institute/.test(nameVal);
+        const isMgmt = /management|business|mba|dms|commerce|school of business/.test(nameVal);
+
+        let highest = "₹32.00 LPA", avg = "₹10.50 LPA", med = "₹8.80 LPA", rate = "92.8%", offers = "540+", stipend = "₹50,000 / mo";
+        let defaultRecruiters = "Google, Microsoft, Amazon, Adobe, Oracle, Cisco Systems, Deloitte, TCS, Infosys, Larsen & Toubro";
+
+        if (isTech) {
+            if (ratingVal >= 4.7) {
+                highest = "₹58.50 LPA"; avg = "₹21.40 LPA"; med = "₹18.00 LPA"; rate = "98.2%"; offers = "1,150+"; stipend = "₹1,25,000 / mo";
+            } else if (ratingVal >= 4.4) {
+                highest = "₹44.00 LPA"; avg = "₹14.80 LPA"; med = "₹12.50 LPA"; rate = "96.4%"; offers = "820+"; stipend = "₹80,000 / mo";
+            } else {
+                highest = "₹32.00 LPA"; avg = "₹10.50 LPA"; med = "₹8.80 LPA"; rate = "92.8%"; offers = "540+"; stipend = "₹50,000 / mo";
+            }
+            defaultRecruiters = "Google, Microsoft, Amazon, Adobe, Oracle, Cisco Systems, Deloitte, Goldman Sachs, TCS, Infosys, Larsen & Toubro, Texas Instruments";
+        } else if (isMgmt) {
+            if (ratingVal >= 4.6) {
+                highest = "₹42.00 LPA"; avg = "₹16.50 LPA"; med = "₹14.20 LPA"; rate = "97.5%"; offers = "620+"; stipend = "₹1,00,000 / mo";
+            } else {
+                highest = "₹28.00 LPA"; avg = "₹11.20 LPA"; med = "₹9.50 LPA"; rate = "94.0%"; offers = "410+"; stipend = "₹60,000 / mo";
+            }
+            defaultRecruiters = "McKinsey & Company, Boston Consulting Group (BCG), Deloitte, PwC, Goldman Sachs, Morgan Stanley, HDFC Bank, ICICI Bank";
+        } else {
+            highest = "₹26.50 LPA"; avg = "₹9.40 LPA"; med = "₹7.80 LPA"; rate = "91.5%"; offers = "480+"; stipend = "₹45,000 / mo";
+            defaultRecruiters = "Deloitte, Ernst & Young (EY), KPMG, Tata Consultancy Services (TCS), Infosys, ICICI Bank, Wipro";
+        }
+
+        const defaultHighlights = "100% placement assistance facilitated through the dedicated Corporate Relations & Placement Division.\nOver 42% of graduates received Pre-Placement Offers (PPOs) following competitive summer internships.\nStructured pre-placement training including DSA bootcamps, quantitative aptitude, and mock interviews with alumni leaders.\nAnnual participation from 180+ Fortune 500 corporations, top-tier domestic conglomerates, and high-growth unicorn startups.";
+
+        const setVal = (id, val) => {
+            const el = document.getElementById(id);
+            if (el) {
+                el.value = val;
+                el.classList.add('bg-success-subtle');
+                setTimeout(() => el.classList.remove('bg-success-subtle'), 1200);
+            }
+        };
+
+        setVal('id_highest_package', highest);
+        setVal('id_average_package', avg);
+        setVal('id_median_package', med);
+        setVal('id_placement_rate', rate);
+        setVal('id_total_offers', offers);
+        setVal('id_summer_stipend', stipend);
+        setVal('id_top_recruiters', defaultRecruiters);
+        setVal('id_placement_highlights', defaultHighlights);
+
+        btnAuto.innerHTML = '<i class="bi bi-check2-circle"></i> Benchmarks Calculated &amp; Filled!';
+        btnAuto.classList.remove('btn-outline-success');
+        btnAuto.classList.add('btn-success', 'text-white');
+        setTimeout(() => {
+            btnAuto.innerHTML = '<i class="bi bi-magic"></i> Auto-Calculate Benchmarks';
+            btnAuto.classList.remove('btn-success', 'text-white');
+            btnAuto.classList.add('btn-outline-success');
+        }, 2500);
+    });
+
+    document.querySelectorAll('.btn-add-chips').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const input = document.getElementById('id_top_recruiters');
+            if (!input) return;
+            const toAdd = this.dataset.company;
+            if (input.value.trim().length > 0) {
+                input.value += ', ' + toAdd;
+            } else {
+                input.value = toAdd;
+            }
+            input.focus();
+        });
+    });
+});
+</script>
+{% endblock %}

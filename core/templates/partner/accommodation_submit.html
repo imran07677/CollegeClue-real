@@ -1,0 +1,159 @@
+{% extends "base.html" %}
+
+{% block title %}List New Accommodation - Housing Partner Portal{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Breadcrumb & Back -->
+    <div class="mb-3">
+        <a href="{% url 'accommodation_dashboard' %}" class="text-decoration-none text-muted small">
+            <i class="bi bi-arrow-left me-1"></i>Back to Partner Dashboard
+        </a>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+                <div class="card-header bg-gradient text-white p-4" style="background: linear-gradient(135deg, #0d6efd 0%, #0dcaf0 100%) !important;">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="bg-white text-primary rounded-circle p-3 d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                            <i class="bi bi-house-add fs-3"></i>
+                        </div>
+                        <div>
+                            <h3 class="fw-bold mb-1">List Student PG / Hostel</h3>
+                            <p class="mb-0 text-white-50 small">
+                                Submit property details, rent, and amenities. Your submission will be sent to the platform administrator for approval before being visible to students.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-body p-4 p-md-5">
+                    <div class="alert alert-info d-flex align-items-center rounded-3 mb-4" role="alert">
+                        <i class="bi bi-shield-check fs-4 me-3 flex-shrink-0 text-primary"></i>
+                        <div class="small">
+                            <strong>Admin Verification Process:</strong> All submitted student housing listings are reviewed by the platform admin to ensure verified pricing, safety standards, and location proximity before publication.
+                        </div>
+                    </div>
+
+                    <form method="post" novalidate>
+                        {% csrf_token %}
+
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger rounded-3">
+                                {% for error in form.non_field_errors %}
+                                    <div><i class="bi bi-exclamation-circle me-1"></i>{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+
+                        <div class="row g-3">
+                            <div class="col-md-8">
+                                <label class="form-label fw-semibold text-secondary small">PG / Hostel Name *</label>
+                                {{ form.name }}
+                                {% if form.name.errors %}<div class="text-danger small mt-1">{{ form.name.errors.0 }}</div>{% endif %}
+                            </div>
+
+                            <div class="col-md-4">
+                                <label class="form-label fw-semibold text-secondary small">Accommodation Type *</label>
+                                {{ form.type }}
+                                {% if form.type.errors %}<div class="text-danger small mt-1">{{ form.type.errors.0 }}</div>{% endif %}
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold text-secondary small">Nearest College / Campus (Optional)</label>
+                                {{ form.college }}
+                                <div class="form-text small">Helps students find housing near their applied college.</div>
+                                {% if form.college.errors %}<div class="text-danger small mt-1">{{ form.college.errors.0 }}</div>{% endif %}
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold text-secondary small">City *</label>
+                                {{ form.city }}
+                                {% if form.city.errors %}<div class="text-danger small mt-1">{{ form.city.errors.0 }}</div>{% endif %}
+                            </div>
+
+                            <div class="col-12">
+                                <label class="form-label fw-semibold text-secondary small">Complete Address & Landmark *</label>
+                                {{ form.address }}
+                                {% if form.address.errors %}<div class="text-danger small mt-1">{{ form.address.errors.0 }}</div>{% endif %}
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold text-secondary small">Monthly Rent (₹) *</label>
+                                {{ form.rent }}
+                                {% if form.rent.errors %}<div class="text-danger small mt-1">{{ form.rent.errors.0 }}</div>{% endif %}
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold text-secondary small">Room Sharing Type *</label>
+                                {{ form.room_type }}
+                                {% if form.room_type.errors %}<div class="text-danger small mt-1">{{ form.room_type.errors.0 }}</div>{% endif %}
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold text-secondary small">Resident Category *</label>
+                                {{ form.gender }}
+                                {% if form.gender.errors %}<div class="text-danger small mt-1">{{ form.gender.errors.0 }}</div>{% endif %}
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold text-secondary small">Food &amp; Meals *</label>
+                                {{ form.food_included }}
+                                {% if form.food_included.errors %}<div class="text-danger small mt-1">{{ form.food_included.errors.0 }}</div>{% endif %}
+                            </div>
+
+                            <div class="col-md-4">
+                                <label class="form-label fw-semibold text-secondary small">Security Deposit (₹) *</label>
+                                {{ form.security_deposit }}
+                                {% if form.security_deposit.errors %}<div class="text-danger small mt-1">{{ form.security_deposit.errors.0 }}</div>{% endif %}
+                            </div>
+
+                            <div class="col-md-4">
+                                <label class="form-label fw-semibold text-secondary small">Notice Period *</label>
+                                {{ form.notice_period }}
+                                {% if form.notice_period.errors %}<div class="text-danger small mt-1">{{ form.notice_period.errors.0 }}</div>{% endif %}
+                            </div>
+
+                            <div class="col-md-4">
+                                <label class="form-label fw-semibold text-secondary small">Gate Closing Time *</label>
+                                {{ form.gate_closing_time }}
+                                {% if form.gate_closing_time.errors %}<div class="text-danger small mt-1">{{ form.gate_closing_time.errors.0 }}</div>{% endif %}
+                            </div>
+
+                            <div class="col-12">
+                                <label class="form-label fw-semibold text-secondary small">Amenities &amp; Facilities Included *</label>
+                                {{ form.facilities }}
+                                <div class="form-text small">e.g. Wi-Fi, 3 Meals/Day, AC/Non-AC, Power Backup, RO Water, Washing Machine, 24/7 CCTV.</div>
+                                {% if form.facilities.errors %}<div class="text-danger small mt-1">{{ form.facilities.errors.0 }}</div>{% endif %}
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold text-secondary small">Contact Phone Number *</label>
+                                {{ form.contact_phone }}
+                                {% if form.contact_phone.errors %}<div class="text-danger small mt-1">{{ form.contact_phone.errors.0 }}</div>{% endif %}
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold text-secondary small">Contact Email *</label>
+                                {{ form.contact_email }}
+                                {% if form.contact_email.errors %}<div class="text-danger small mt-1">{{ form.contact_email.errors.0 }}</div>{% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="d-flex flex-column flex-sm-row justify-content-between align-items-center gap-3 pt-4 border-top mt-4">
+                            <a href="{% url 'accommodation_dashboard' %}" class="btn btn-outline-secondary rounded-pill px-4">
+                                Cancel
+                            </a>
+                            <button type="submit" class="btn btn-info text-white rounded-pill px-5 py-2 fw-bold shadow">
+                                <i class="bi bi-send-check-fill me-2"></i>Submit Listing for Admin Approval
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

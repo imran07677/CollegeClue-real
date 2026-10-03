@@ -1,0 +1,207 @@
+{% extends "base.html" %}
+
+{% block title %}Manage & Edit Property - {{ accommodation.name }} - College Clue{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Back to Dashboard -->
+    <div class="mb-3">
+        <a href="{% url 'accommodation_dashboard' %}" class="text-decoration-none text-muted small">
+            <i class="bi bi-arrow-left me-1"></i>Back to Housing Dashboard
+        </a>
+    </div>
+
+    <!-- Header Banner -->
+    <div class="card border-0 shadow-sm rounded-4 mb-4 bg-gradient text-white p-4" style="background: linear-gradient(135deg, #0d6efd 0%, #0dcaf0 100%) !important;">
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+            <div>
+                <div class="d-flex align-items-center gap-2 mb-1">
+                    <span class="badge bg-warning text-dark px-3 py-1 rounded-pill fw-bold">Live Housing Management</span>
+                    {% if accommodation.status == 'Approved' %}
+                        <span class="badge bg-success rounded-pill px-3 py-1"><i class="bi bi-check-circle me-1"></i>Approved & Live</span>
+                    {% else %}
+                        <span class="badge bg-warning text-dark rounded-pill px-3 py-1">{{ accommodation.status }}</span>
+                    {% endif %}
+                </div>
+                <h2 class="fw-bold text-white mb-1">{{ accommodation.name }}</h2>
+                <p class="text-white-50 mb-0 small">
+                    {{ accommodation.get_type_display }} • <i class="bi bi-geo-alt-fill text-warning me-1"></i>{{ accommodation.city }}
+                </p>
+            </div>
+            <div class="d-flex gap-2">
+                <a href="{% url 'accommodation_detail' accommodation.id %}" target="_blank" class="btn btn-warning text-dark fw-bold rounded-pill px-3 shadow-sm">
+                    <i class="bi bi-box-arrow-up-right me-1"></i>View Live Listing
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- Left: Property Details & Photo Form -->
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm rounded-4 p-4">
+                <h5 class="fw-bold text-dark border-bottom pb-3 mb-3">
+                    <i class="bi bi-pencil-square text-primary me-2"></i>Update Property Information & Photos
+                </h5>
+                <form method="post" enctype="multipart/form-data" novalidate>
+                    {% csrf_token %}
+                    <div class="row g-3">
+                        <div class="col-md-8">
+                            <label class="form-label small fw-semibold text-secondary">Property / PG Name *</label>
+                            {{ form.name }}
+                            {% if form.name.errors %}<div class="text-danger small mt-1">{{ form.name.errors.0 }}</div>{% endif %}
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small fw-semibold text-secondary">Type *</label>
+                            {{ form.type }}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-semibold text-secondary">Nearest College</label>
+                            {{ form.college }}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-semibold text-secondary">City *</label>
+                            {{ form.city }}
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label small fw-semibold text-secondary">Complete Address *</label>
+                            {{ form.address }}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-semibold text-secondary">Monthly Rent (₹) *</label>
+                            {{ form.rent }}
+                            {% if form.rent.errors %}<div class="text-danger small mt-1">{{ form.rent.errors.0 }}</div>{% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-semibold text-secondary">Room Sharing Type *</label>
+                            {{ form.room_type }}
+                            {% if form.room_type.errors %}<div class="text-danger small mt-1">{{ form.room_type.errors.0 }}</div>{% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-semibold text-secondary">Resident Category *</label>
+                            {{ form.gender }}
+                            {% if form.gender.errors %}<div class="text-danger small mt-1">{{ form.gender.errors.0 }}</div>{% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-semibold text-secondary">Food &amp; Meals *</label>
+                            {{ form.food_included }}
+                            {% if form.food_included.errors %}<div class="text-danger small mt-1">{{ form.food_included.errors.0 }}</div>{% endif %}
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small fw-semibold text-secondary">Security Deposit (₹) *</label>
+                            {{ form.security_deposit }}
+                            {% if form.security_deposit.errors %}<div class="text-danger small mt-1">{{ form.security_deposit.errors.0 }}</div>{% endif %}
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small fw-semibold text-secondary">Notice Period *</label>
+                            {{ form.notice_period }}
+                            {% if form.notice_period.errors %}<div class="text-danger small mt-1">{{ form.notice_period.errors.0 }}</div>{% endif %}
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small fw-semibold text-secondary">Gate Closing Time *</label>
+                            {{ form.gate_closing_time }}
+                            {% if form.gate_closing_time.errors %}<div class="text-danger small mt-1">{{ form.gate_closing_time.errors.0 }}</div>{% endif %}
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label small fw-semibold text-secondary">Facilities &amp; Amenities *</label>
+                            {{ form.facilities }}
+                            {% if form.facilities.errors %}<div class="text-danger small mt-1">{{ form.facilities.errors.0 }}</div>{% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-semibold text-secondary">Contact Phone *</label>
+                            {{ form.contact_phone }}
+                            {% if form.contact_phone.errors %}<div class="text-danger small mt-1">{{ form.contact_phone.errors.0 }}</div>{% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-semibold text-secondary">Contact Email *</label>
+                            {{ form.contact_email }}
+                            {% if form.contact_email.errors %}<div class="text-danger small mt-1">{{ form.contact_email.errors.0 }}</div>{% endif %}
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label small fw-semibold text-secondary">Property Photo</label>
+                            {{ form.image }}
+                            {% if accommodation.image %}
+                                <div class="mt-2 small text-muted">
+                                    Current photo: <a href="{{ accommodation.image.url }}" target="_blank">View Photo</a>
+                                </div>
+                            {% endif %}
+                            {% if form.image.errors %}<div class="text-danger small mt-1">{{ form.image.errors.0 }}</div>{% endif %}
+                        </div>
+                    </div>
+                    <div class="mt-4 pt-3 border-top d-flex justify-content-end">
+                        <button type="submit" class="btn btn-primary rounded-pill px-4 fw-bold">
+                            <i class="bi bi-save me-1"></i>Save Property Updates
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Right: Vacancy Quick Controller & Photo Preview -->
+        <div class="col-lg-4">
+            <!-- Vacancy Quick Card -->
+            <div class="card border-0 shadow-sm rounded-4 p-4 mb-4 bg-light">
+                <h5 class="fw-bold text-dark border-bottom pb-2 mb-3">
+                    <i class="bi bi-door-open-fill text-warning me-2"></i>Vacancy Controller
+                </h5>
+                <div class="text-center py-3">
+                    {% if accommodation.is_available %}
+                        <div class="display-6 text-success mb-2"><i class="bi bi-check-circle-fill"></i></div>
+                        <h5 class="fw-bold text-success mb-1">VACANT & AVAILABLE</h5>
+                        <p class="text-muted small">Visible to students searching for housing near colleges.</p>
+                        <form method="post" action="{% url 'accommodation_toggle_vacancy' accommodation.id %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-outline-danger btn-sm rounded-pill px-3 fw-bold">
+                                <i class="bi bi-slash-circle me-1"></i>Mark as FULL (No Vacancy)
+                            </button>
+                        </form>
+                    {% else %}
+                        <div class="display-6 text-danger mb-2"><i class="bi bi-slash-circle-fill"></i></div>
+                        <h5 class="fw-bold text-danger mb-1">FULLY OCCUPIED</h5>
+                        <p class="text-muted small">Currently hidden from student vacancy recommendations.</p>
+                        <form method="post" action="{% url 'accommodation_toggle_vacancy' accommodation.id %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-success btn-sm rounded-pill px-3 fw-bold shadow-sm">
+                                <i class="bi bi-check-circle me-1"></i>Mark as VACANT (Open)
+                            </button>
+                        </form>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Property Snapshot -->
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+                <div class="card-header bg-white py-3 px-4 border-bottom">
+                    <h6 class="fw-bold mb-0 text-dark">
+                        <i class="bi bi-image me-2 text-primary"></i>Listing Preview
+                    </h6>
+                </div>
+                <div class="card-body p-4 text-center">
+                    {% if accommodation.image %}
+                        <img src="{{ accommodation.image.url }}" alt="{{ accommodation.name }}" class="img-fluid rounded-3 mb-3 shadow-sm" style="max-height: 200px; object-fit: cover; width: 100%;">
+                    {% else %}
+                        <div class="bg-secondary-subtle p-4 rounded-3 text-muted mb-3">
+                            <i class="bi bi-camera fs-1"></i>
+                            <div class="small mt-1">No property photo uploaded yet</div>
+                        </div>
+                    {% endif %}
+                    <div class="text-start small">
+                        <div class="d-flex justify-content-between py-1 border-bottom">
+                            <span class="text-muted">Monthly Rent:</span>
+                            <span class="fw-bold text-primary">₹{{ accommodation.rent }}</span>
+                        </div>
+                        <div class="d-flex justify-content-between py-1 border-bottom">
+                            <span class="text-muted">Sharing:</span>
+                            <span class="fw-semibold">{{ accommodation.get_room_type_display }}</span>
+                        </div>
+                        <div class="d-flex justify-content-between py-1 border-bottom">
+                            <span class="text-muted">Contact:</span>
+                            <span class="fw-semibold">{{ accommodation.contact_phone }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

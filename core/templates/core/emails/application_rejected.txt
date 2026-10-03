@@ -1,0 +1,22 @@
+Dear {{ student_name }},
+
+Thank you for your interest in {{ college_name }}.
+
+We are writing to inform you that after careful review of your application (ID: {{ registration_id }}) for {{ course_name }}, the admissions committee was unable to approve your application at this time.
+
+=======================================================
+APPLICATION DETAILS
+=======================================================
+Tracking UUID   : {{ registration_id }}
+College Name    : {{ college_name }}
+Degree / Course : {{ course_name }}
+Status          : CANCELLED
+{% if admin_notes %}Admissions Notes: {{ admin_notes }}{% endif %}
+=======================================================
+
+You are warmly invited to explore and apply to other premier colleges and courses available on the College Clue platform.
+
+Best regards,
+Admissions Committee
+{{ college_name }}
+Via College Clue Platform

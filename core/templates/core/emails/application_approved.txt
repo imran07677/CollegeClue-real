@@ -1,0 +1,25 @@
+Dear {{ student_name }},
+
+Great news! Your admission application for {{ college_name }} has been officially APPROVED and CONFIRMED by the College Admissions Committee.
+
+=======================================================
+ADMISSION APPROVAL RECEIPT
+=======================================================
+Tracking UUID   : {{ registration_id }}
+College Name    : {{ college_name }}
+Degree / Course : {{ course_name }}
+Decision Status : CONFIRMED / APPROVED
+{% if admin_notes %}Admissions Notes: {{ admin_notes }}{% endif %}
+=======================================================
+
+NEXT STEPS:
+1. Log in to your College Clue student dashboard to view your official confirmation badge and admission slip.
+2. Report to the admissions registry of {{ college_name }} on the designated date with your academic records and identification proof.
+3. You can also explore verified student housing and hostels directly adjacent to campus via your student account.
+
+Congratulations once again on your admission!
+
+Warm regards,
+Admissions Office
+{{ college_name }}
+Via College Clue Platform

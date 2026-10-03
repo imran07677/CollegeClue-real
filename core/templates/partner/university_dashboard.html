@@ -1,0 +1,360 @@
+{% extends "base.html" %}
+
+{% block title %}University Partner Portal - College Clue{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Header Banner -->
+    <div class="card border-0 shadow-sm rounded-4 mb-4 bg-gradient bg-primary text-white p-4">
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+            <div>
+                <span class="badge bg-warning text-dark px-3 py-1 rounded-pill fw-bold mb-2">University / College Partner Portal</span>
+                <h2 class="fw-bold text-white mb-1">
+                    <i class="bi bi-mortarboard-fill me-2 text-warning"></i>Campus Listing & Moderation Dashboard
+                </h2>
+                <p class="text-white-50 mb-0 small">
+                    Manage your campus degree programs, tuition fees, placement records, and review student admission applications.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Submitted Colleges List -->
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+        <div class="card-header bg-white py-3 px-4 d-flex justify-content-between align-items-center border-bottom">
+            <h5 class="fw-bold mb-0 text-dark">
+                <i class="bi bi-list-stars me-2 text-primary"></i>Your Administered Colleges &amp; Campuses
+            </h5>
+            <span class="badge bg-secondary-subtle text-secondary rounded-pill">{{ stats.total }} records</span>
+        </div>
+        <div class="card-body p-4">
+            {% if submitted_colleges %}
+                <div class="row g-4">
+                    {% for college in submitted_colleges %}
+                        <div class="col-12">
+                            <div class="border rounded-4 p-3 p-md-4 shadow-sm bg-light">
+                                <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2 mb-3 border-bottom pb-3">
+                                    <div>
+                                        <div class="d-flex align-items-center gap-2 mb-1">
+                                            <h5 class="fw-bold text-dark mb-0">{{ college.name }}</h5>
+                                            {% if college.status == 'Approved' %}
+                                                <span class="badge bg-success px-3 py-1 rounded-pill"><i class="bi bi-check-circle me-1"></i>Approved & Live</span>
+                                            {% elif college.status == 'Rejected' %}
+                                                <span class="badge bg-danger px-3 py-1 rounded-pill"><i class="bi bi-x-circle me-1"></i>Rejected</span>
+                                            {% else %}
+                                                <span class="badge bg-warning text-dark px-3 py-1 rounded-pill"><i class="bi bi-hourglass-split me-1"></i>Pending Admin Approval</span>
+                                            {% endif %}
+                                        </div>
+                                        <div class="text-muted small">
+                                            Affiliated to <strong>{{ college.university.name }}</strong> • <i class="bi bi-geo-alt-fill text-danger me-1"></i>{{ college.city }}
+                                            {% if college.admin_email %}
+                                                • <i class="bi bi-envelope-at text-primary me-1"></i>Admin: {{ college.admin_email }}
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <div class="text-md-end d-flex flex-wrap gap-2 justify-content-md-end mt-2 mt-md-0">
+                                        {% if college.status == 'Approved' %}
+                                            <a href="{% url 'university_applications' %}?college={{ college.id }}" class="btn btn-sm btn-outline-warning text-dark rounded-pill px-3 fw-bold">
+                                                <i class="bi bi-inbox-fill me-1"></i>Applications
+                                            </a>
+                                            <a href="{% url 'college_team' college.id %}" class="btn btn-sm btn-outline-secondary rounded-pill px-3 fw-semibold">
+                                                <i class="bi bi-people-fill me-1"></i>Admin Team ({{ college.team_members.count }}/{{ college.max_team_members }})
+                                            </a>
+                                            <a href="{% url 'college_edit' college.id %}" class="btn btn-sm btn-outline-primary rounded-pill px-3 fw-semibold" title="Edit Campus Information &amp; Fees">
+                                                <i class="bi bi-building-gear me-1"></i>Campus Details
+                                            </a>
+                                            <a href="{% url 'college_courses' college.id %}" class="btn btn-sm btn-primary rounded-pill px-3 fw-semibold" title="Manage Academic Programs &amp; Add Courses">
+                                                <i class="bi bi-journal-bookmark me-1"></i>Academic Courses ({{ college.courses.count }})
+                                            </a>
+                                            <a href="{% url 'college_detail' college.slug %}" class="btn btn-sm btn-outline-secondary rounded-pill px-3" target="_blank">
+                                                <i class="bi bi-box-arrow-up-right me-1"></i>View Live
+                                            </a>
+                                        {% else %}
+                                            <span class="text-muted small fst-italic">Pending Admin Review</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+
+                                <!-- Admissions Schedule & Dates Bar -->
+                                <div class="p-3 bg-white rounded-4 border d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-2 mb-3 shadow-xs">
+                                    <div class="d-flex align-items-center gap-2 flex-wrap">
+                                        <div class="bg-primary-subtle text-primary p-2 rounded-circle d-flex align-items-center justify-content-center" style="width: 34px; height: 34px;">
+                                            <i class="bi bi-calendar-range small"></i>
+                                        </div>
+                                        <div>
+                                            <div class="d-flex align-items-center gap-2">
+                                                <span class="fw-bold text-dark small">Admissions Intake:</span>
+                                                {% if college.is_admission_open %}
+                                                    <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-3 py-1">
+                                                        <i class="bi bi-calendar-check-fill me-1"></i>{{ college.admission_dates_display }}
+                                                    </span>
+                                                {% else %}
+                                                    <span class="badge bg-danger-subtle text-danger border border-danger-subtle rounded-pill px-3 py-1">
+                                                        <i class="bi bi-calendar-x-fill me-1"></i>{{ college.admission_dates_display }}
+                                                    </span>
+                                                {% endif %}
+                                            </div>
+                                            <div class="small text-muted mt-1">
+                                                {% if college.admission_open_date and college.admission_close_date %}
+                                                    Intake window: <strong>{{ college.admission_open_date|date:"d M Y" }}</strong> to <strong>{{ college.admission_close_date|date:"d M Y" }}</strong>
+                                                {% elif college.admission_close_date %}
+                                                    Open till: <strong>{{ college.admission_close_date|date:"d M Y" }}</strong>
+                                                {% else %}
+                                                    Open for student applications
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex align-items-center gap-2 flex-wrap">
+                                        <!-- ONE-CLICK ADMISSIONS ON / OFF BUTTON -->
+                                        <form method="post" action="{% url 'college_admission_toggle' college.id %}" class="d-inline">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                                            {% if college.is_admission_open %}
+                                                <button type="submit" class="btn btn-sm btn-danger rounded-pill px-3 py-1 fw-bold shadow-xs d-inline-flex align-items-center gap-1" title="Click to turn admissions OFF">
+                                                    <i class="bi bi-power"></i>
+                                                    <span>Admissions: <strong>ON</strong> (Turn OFF)</span>
+                                                </button>
+                                            {% else %}
+                                                <button type="submit" class="btn btn-sm btn-success rounded-pill px-3 py-1 fw-bold shadow-xs d-inline-flex align-items-center gap-1 text-white" title="Click to turn admissions ON">
+                                                    <i class="bi bi-power"></i>
+                                                    <span>Admissions: <strong>OFF</strong> (Turn ON)</span>
+                                                </button>
+                                            {% endif %}
+                                        </form>
+
+                                        <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill px-3 py-1 fw-semibold shadow-xs" data-bs-toggle="modal" data-bs-target="#modalAdmissionDates{{ college.id }}" title="Change specific dates">
+                                            <i class="bi bi-calendar-event me-1"></i>Edit Dates
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div class="row g-3">
+                                    <div class="col-md-7">
+                                        <div class="row g-2 mb-2">
+                                            <div class="col-6">
+                                                <span class="text-muted small">Annual Tuition Fee:</span>
+                                                <span class="fw-bold text-dark ms-1">₹{{ college.fees }}</span>
+                                            </div>
+                                            <div class="col-6">
+                                                <span class="text-muted small">Campus Rating:</span>
+                                                <span class="fw-bold text-warning ms-1"><i class="bi bi-star-fill me-1"></i>{{ college.rating }} / 5.0</span>
+                                            </div>
+                                        </div>
+                                        <div class="small text-secondary mb-2">
+                                            <strong>Facilities:</strong> {{ college.facilities|default:"Standard campus facilities" }}
+                                        </div>
+                                        {% if college.gmap_location %}
+                                            <div class="small text-muted mt-2">
+                                                <i class="bi bi-geo-alt-fill text-danger me-1"></i><strong>Map Pin:</strong>
+                                                <a href="https://maps.google.com/?q={{ college.gmap_location|urlencode }}" target="_blank" class="text-decoration-none">
+                                                    {{ college.gmap_location|truncatechars:35 }} <i class="bi bi-box-arrow-up-right small"></i>
+                                                </a>
+                                            </div>
+                                        {% endif %}
+                                        {% if college.admin_notes %}
+                                            <div class="p-2 rounded-3 bg-white border small mt-2">
+                                                <strong class="text-primary"><i class="bi bi-shield-check me-1"></i>Admin Feedback:</strong>
+                                                <span class="text-muted">{{ college.admin_notes }}</span>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+
+                                    <div class="col-md-5 border-start-md ps-md-3">
+                                        <div class="small fw-bold text-muted text-uppercase mb-2">Submitted Courses</div>
+                                        {% if college.courses.all %}
+                                            <ul class="list-unstyled mb-0 small">
+                                                {% for course in college.courses.all %}
+                                                    <li class="py-1 border-bottom d-flex justify-content-between align-items-center">
+                                                        <span>
+                                                            <i class="bi bi-mortarboard me-1 text-primary"></i>{{ course.name }} ({{ course.duration_years }} yrs)
+                                                            {% if course.course_url %}
+                                                                <a href="{{ course.course_url }}" target="_blank" class="badge bg-light text-primary border text-decoration-none ms-1" title="Course Link">
+                                                                    <i class="bi bi-box-arrow-up-right"></i>
+                                                                </a>
+                                                            {% endif %}
+                                                        </span>
+                                                        <span class="fw-semibold">₹{{ course.fee }}</span>
+                                                    </li>
+                                                {% endfor %}
+                                            </ul>
+                                        {% else %}
+                                            <span class="text-muted small fst-italic">No courses recorded.</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Modal: Change Admission Dates -->
+                        <div class="modal fade" id="modalAdmissionDates{{ college.id }}" tabindex="-1" aria-labelledby="modalAdmissionDatesLabel{{ college.id }}" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content rounded-4 border-0 shadow">
+                                    <div class="modal-header border-0 pb-0 pt-4 px-4">
+                                        <div class="d-flex align-items-center gap-2">
+                                            <div class="bg-primary-subtle text-primary p-2 rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                                <i class="bi bi-calendar-range fs-5 text-primary"></i>
+                                            </div>
+                                            <div>
+                                                <h5 class="modal-title fw-bold text-dark mb-0" id="modalAdmissionDatesLabel{{ college.id }}">Admissions Intake Schedule</h5>
+                                                <small class="text-muted">{{ college.name }}</small>
+                                            </div>
+                                        </div>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <form method="post" action="{% url 'college_admission_dates_update' college.id %}">
+                                        {% csrf_token %}
+                                        <div class="modal-body p-4">
+                                            <p class="text-muted small mb-3">
+                                                Update your campus admission availability. Set when admission applications begin and the last date to apply ("Opened Till").
+                                            </p>
+                                            <div class="mb-3">
+                                                <label class="form-label small fw-semibold text-secondary">Admissions Availability Status *</label>
+                                                <select name="admissions_status" class="form-select rounded-3">
+                                                    <option value="Open" {% if college.admissions_status == 'Open' %}selected{% endif %}>Open for Admissions (Accepting Applications)</option>
+                                                    <option value="Closed" {% if college.admissions_status == 'Closed' %}selected{% endif %}>Admissions Closed (Intake Suspended / Ended)</option>
+                                                </select>
+                                            </div>
+                                            <div class="row g-3 mb-3">
+                                                <div class="col-6">
+                                                    <label class="form-label small fw-semibold text-secondary">
+                                                        <i class="bi bi-calendar-event me-1 text-primary"></i>Admission Open Date
+                                                    </label>
+                                                    <input type="date" name="admission_open_date" class="form-control rounded-3" value="{{ college.admission_open_date|date:'Y-m-d'|default:'' }}">
+                                                    <div class="form-text small text-muted">When applications start</div>
+                                                </div>
+                                                <div class="col-6">
+                                                    <label class="form-label small fw-semibold text-secondary">
+                                                        <i class="bi bi-calendar-check me-1 text-success"></i>Admission Opened Till *
+                                                    </label>
+                                                    <input type="date" name="admission_close_date" class="form-control rounded-3" value="{{ college.admission_close_date|date:'Y-m-d'|default:'' }}" required>
+                                                    <div class="form-text small text-muted">Application deadline date</div>
+                                                </div>
+                                            </div>
+                                            <div class="p-3 bg-light rounded-3 border small text-muted">
+                                                <i class="bi bi-eye-fill text-primary me-1"></i><strong>Student Visibility:</strong>
+                                                Students visiting your college page will see:
+                                                <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill ms-1">
+                                                    {{ college.admission_dates_display }}
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer border-0 pt-0 pb-4 px-4 d-flex justify-content-end gap-2">
+                                            <button type="button" class="btn btn-light rounded-pill px-3" data-bs-dismiss="modal">Cancel</button>
+                                            <button type="submit" class="btn btn-primary fw-bold rounded-pill px-4 shadow-sm">
+                                                <i class="bi bi-check2-circle me-1"></i>Save Schedule
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="text-center py-5">
+                    <div class="display-5 text-muted mb-3"><i class="bi bi-building"></i></div>
+                    <h5 class="fw-bold text-dark">No Campuses Assigned Yet</h5>
+                    <p class="text-muted small mb-0">Your institution partner profile is active. Please contact platform administration to link your colleges or campuses.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- University Google Maps Location Management -->
+    {% if administered_universities %}
+        <div class="card border-0 shadow-sm rounded-4 mt-4 overflow-hidden">
+            <div class="card-header bg-white py-3 px-4 border-bottom d-flex justify-content-between align-items-center">
+                <div>
+                    <h5 class="fw-bold mb-0 text-dark">
+                        <i class="bi bi-geo-alt-fill text-danger me-2"></i>University Google Maps Location Setup
+                    </h5>
+                    <small class="text-muted">Set or update the official manual Google Maps coordinates or link for your university</small>
+                </div>
+            </div>
+            <div class="card-body p-4">
+                <div class="row g-3">
+                    {% for uni in administered_universities %}
+                        <div class="col-md-6">
+                            <div class="border rounded-4 p-3 bg-light h-100 d-flex flex-column justify-content-between">
+                                <div>
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <h6 class="fw-bold text-dark mb-0">{{ uni.name }}</h6>
+                                        {% if uni.gmap_location %}
+                                            <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill">
+                                                <i class="bi bi-check-circle-fill me-1"></i>Location Set
+                                            </span>
+                                        {% else %}
+                                            <span class="badge bg-warning-subtle text-warning-emphasis border border-warning-subtle rounded-pill">
+                                                <i class="bi bi-exclamation-circle me-1"></i>Location Missing
+                                            </span>
+                                        {% endif %}
+                                    </div>
+                                    <p class="text-muted small mb-2"><i class="bi bi-geo-alt me-1"></i>{{ uni.city }}, {{ uni.state }}</p>
+                                    {% if uni.gmap_location %}
+                                        <p class="small text-secondary mb-2 text-truncate" title="{{ uni.gmap_location }}">
+                                            <strong>Pin:</strong> {{ uni.gmap_location }}
+                                        </p>
+                                    {% else %}
+                                        <p class="small text-muted mb-2 fst-italic">
+                                            No Google Maps location pin has been set for this university yet.
+                                        </p>
+                                    {% endif %}
+                                </div>
+                                <div class="d-flex gap-2 pt-2 border-top mt-2">
+                                    <button type="button" class="btn btn-sm btn-primary rounded-pill px-3 fw-semibold" data-bs-toggle="modal" data-bs-target="#modalUniLocation{{ uni.id }}">
+                                        <i class="bi bi-pin-map-fill me-1"></i>Set / Update Location
+                                    </button>
+                                    {% if uni.gmap_location %}
+                                        <a href="https://maps.google.com/?q={{ uni.gmap_location|urlencode }}" target="_blank" class="btn btn-sm btn-outline-success rounded-pill px-3">
+                                            <i class="bi bi-box-arrow-up-right me-1"></i>Open Map
+                                        </a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- University Location Edit Modal -->
+                        <div class="modal fade" id="modalUniLocation{{ uni.id }}" tabindex="-1" aria-labelledby="modalUniLocationLabel{{ uni.id }}" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content rounded-4 border-0 shadow">
+                                    <div class="modal-header border-bottom p-3 px-4">
+                                        <h6 class="modal-title fw-bold text-dark" id="modalUniLocationLabel{{ uni.id }}">
+                                            <i class="bi bi-geo-alt-fill text-danger me-2"></i>Update Location: {{ uni.name }}
+                                        </h6>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <form method="post" action="{% url 'university_location_update' uni.id %}">
+                                        {% csrf_token %}
+                                        <div class="modal-body p-4">
+                                            <div class="mb-3">
+                                                <label class="form-label fw-bold small text-dark">Google Maps Location / Share Link / Coordinates *</label>
+                                                <input type="text" name="gmap_location" value="{{ uni.gmap_location|default:'' }}" class="form-control rounded-3" placeholder="e.g. https://maps.app.goo.gl/... or 28.5450, 77.1926 or University Campus Address" required>
+                                                <div class="form-text small text-muted">
+                                                    You can paste the Google Maps share link, GPS coordinates (latitude, longitude), or university campus landmark.
+                                                </div>
+                                            </div>
+                                            <div class="alert alert-info py-2 px-3 small rounded-3 mb-0">
+                                                <i class="bi bi-info-circle me-1"></i>
+                                                <a href="https://www.google.com/maps/search/{{ uni.name|urlencode }}+{{ uni.city|urlencode }}" target="_blank" class="alert-link text-decoration-underline">
+                                                    Click here to find {{ uni.name }} on Google Maps
+                                                </a>, then copy the address or share link.
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer border-top p-3 px-4 d-flex justify-content-end gap-2">
+                                            <button type="button" class="btn btn-secondary rounded-pill px-3" data-bs-dismiss="modal">Cancel</button>
+                                            <button type="submit" class="btn btn-primary rounded-pill px-4 fw-bold">
+                                                <i class="bi bi-save me-1"></i>Save Location
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

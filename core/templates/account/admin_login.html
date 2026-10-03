@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% block title %}Administrator Sign In - College Clue{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-7 col-lg-5">
+            <!-- CollegeClue Brand Animated Header -->
+            <div class="text-center mb-4">
+                <a href="{% url 'home' %}" class="d-inline-flex flex-column align-items-center text-decoration-none" title="CollegeClue Home">
+                    <span class="cc-navbar-logo-badge mb-2">
+                        <svg viewBox="0 0 60 60" width="56" height="56" class="cc-navbar-svg shadow-sm rounded-circle">
+                            <defs>
+                                <linearGradient id="adminLoginGold" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="#fef08a"/>
+                                    <stop offset="100%" stop-color="#f59e0b"/>
+                                </linearGradient>
+                                <linearGradient id="adminLoginBlue" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="#3b82f6"/>
+                                    <stop offset="100%" stop-color="#0f172a"/>
+                                </linearGradient>
+                            </defs>
+                            <circle cx="30" cy="30" r="27" fill="url(#adminLoginBlue)" stroke="url(#adminLoginGold)" stroke-width="2" class="cc-nb-orbit"/>
+                            <polygon points="30,14 48,23 30,32 12,23" fill="url(#adminLoginGold)"/>
+                            <path d="M19,26 L19,35 C19,41 41,41 41,35 L41,26" fill="none" stroke="url(#adminLoginGold)" stroke-width="2"/>
+                            <circle cx="30" cy="23" r="2" fill="#ffffff"/>
+                            <path d="M30,23 Q39,26 42,35" fill="none" stroke="#fef08a" stroke-width="1.8"/>
+                            <circle cx="42" cy="35" r="2.5" fill="#fef08a"/>
+                        </svg>
+                    </span>
+                    <h2 class="fw-bold mb-0 text-dark">
+                        College<span class="text-warning">Clue</span>
+                    </h2>
+                    <span class="badge bg-dark text-warning border border-warning border-opacity-50 mt-1 px-3 py-1 rounded-pill fw-bold" style="font-size: 0.72rem; letter-spacing: 0.5px;">
+                        <i class="bi bi-shield-lock-fill me-1"></i>ADMINISTRATOR ACCESS ONLY
+                    </span>
+                </a>
+            </div>
+
+            <div class="card shadow-lg border-0 rounded-4 overflow-hidden" style="background: linear-gradient(145deg, #ffffff, #f8fafc); border: 1px solid rgba(0, 0, 0, 0.08) !important;">
+                <div class="p-2 bg-dark text-center">
+                    <span class="text-warning small fw-bold" style="font-size: 0.75rem; letter-spacing: 1px;">
+                        <i class="bi bi-shield-shaded me-1"></i>RESTRICTED PLATFORM CONTROL PORTAL
+                    </span>
+                </div>
+                
+                <div class="card-body p-4 p-md-5">
+                    <div class="text-center mb-4">
+                        <div class="bg-dark text-warning rounded-circle d-inline-flex align-items-center justify-content-center mb-3 shadow" style="width: 64px; height: 64px; border: 2px solid rgba(245, 158, 11, 0.4);">
+                            <i class="bi bi-shield-lock-fill fs-2"></i>
+                        </div>
+                        <h3 class="fw-bold text-dark mb-1">Platform Admin Login</h3>
+                        <p class="text-muted small mb-0">
+                            Sign in with your designated administrator credentials to access the moderation, campus verification, and approval center.
+                        </p>
+                    </div>
+
+                    <form method="post" novalidate>
+                        {% csrf_token %}
+                        {% if request.GET.next %}
+                            <input type="hidden" name="next" value="{{ request.GET.next }}">
+                        {% endif %}
+
+                        <!-- Username Field -->
+                        <div class="mb-3">
+                            <label for="id_username" class="form-label requiredField fw-semibold text-dark">
+                                Administrator Username or Email<span class="asteriskField text-danger">*</span>
+                            </label>
+                            {{ form.username }}
+                            {% if form.username.errors %}
+                                <div class="text-danger small mt-1">{{ form.username.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Password Field -->
+                        <div class="mb-3">
+                            <label for="id_password" class="form-label requiredField fw-semibold text-dark">
+                                Master Password<span class="asteriskField text-danger">*</span>
+                            </label>
+                            {{ form.password }}
+                            {% if form.password.errors %}
+                                <div class="text-danger small mt-1">{{ form.password.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Non-field Errors -->
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger py-2 px-3 small rounded-3 mb-3">
+                                {{ form.non_field_errors.0 }}
+                            </div>
+                        {% endif %}
+
+                        <div class="d-grid mt-4">
+                            <button type="submit" class="btn btn-dark btn-lg fw-bold shadow text-warning">
+                                <i class="bi bi-shield-check me-2"></i>Sign In to Moderation Center
+                            </button>
+                        </div>
+                    </form>
+
+                    <div class="mt-4 pt-3 text-center border-top">
+                        <a href="{% url 'login' %}?role=student" class="small text-secondary text-decoration-none">
+                            <i class="bi bi-arrow-left me-1"></i>Return to Public Student Portal
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

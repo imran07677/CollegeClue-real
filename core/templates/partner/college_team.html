@@ -1,0 +1,330 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Admin Team - {{ college.name }} - College Clue{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Back to Campus -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <a href="{% url 'college_edit' college.id %}" class="text-decoration-none text-muted small">
+            <i class="bi bi-arrow-left me-1"></i>Back to {{ college.name }} Management
+        </a>
+        <a href="{% url 'university_dashboard' %}" class="text-decoration-none text-muted small">
+            <i class="bi bi-speedometer2 me-1"></i>Campus Dashboard
+        </a>
+    </div>
+
+    <!-- Header Banner -->
+    <div class="card border-0 shadow-sm rounded-4 mb-4 bg-gradient bg-primary text-white p-4">
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+            <div>
+                <span class="badge bg-warning text-dark px-3 py-1 rounded-pill fw-bold mb-2">College Administrative Access</span>
+                <h2 class="fw-bold text-white mb-1">
+                    <i class="bi bi-people-fill me-2 text-warning"></i>Admin Team &amp; Authorized Staff Access
+                </h2>
+                <p class="text-white-50 mb-0 small">
+                    {{ college.name }} &bull; Affiliated to <strong>{{ college.university.name }}</strong>
+                </p>
+            </div>
+            <div>
+                <a href="{% url 'university_applications' %}?college={{ college.id }}" class="btn btn-warning text-dark fw-bold rounded-pill px-3 shadow-sm">
+                    <i class="bi bi-inbox-fill me-1"></i>Review Applications
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sub-navigation Tabs -->
+    <div class="card border-0 shadow-sm rounded-4 mb-4 p-2" style="background: #ffffff; border: 1px solid #ede8dc !important;">
+        <ul class="nav nav-pills gap-2 flex-wrap">
+            <li class="nav-item">
+                <a class="nav-link fw-semibold rounded-pill px-4 py-2" href="{% url 'college_edit' college.id %}" style="color: #434538;">
+                    <i class="bi bi-building-gear me-2"></i>Campus Details
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link fw-semibold rounded-pill px-4 py-2" href="{% url 'college_courses' college.id %}" style="color: #434538;">
+                    <i class="bi bi-journal-bookmark me-2"></i>Academic Courses
+                    <span class="badge rounded-pill ms-2" style="background: #ede8dc; color: #434538;">{{ college.courses.count }}</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link active fw-bold rounded-pill px-4 py-2 shadow-sm" href="{% url 'college_team' college.id %}" style="background-color: #525445; color: #faf8f2; border: 1px solid #45473a;">
+                    <i class="bi bi-people-fill me-2" style="color: #faf8f2;"></i>Admin Team
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link fw-semibold rounded-pill px-4 py-2" href="{% url 'university_applications' %}?college={{ college.id }}" style="color: #434538;">
+                    <i class="bi bi-inbox-fill me-2"></i>Applications
+                </a>
+            </li>
+            <li class="nav-item ms-auto d-none d-md-block">
+                <a class="nav-link fw-semibold rounded-pill px-3 py-2 btn btn-outline-secondary" href="{% url 'college_detail' college.slug %}" target="_blank" style="color: #434538; border-color: #ede8dc;">
+                    <i class="bi bi-box-arrow-up-right me-1"></i>View Live Page
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="row g-4">
+        <!-- Left Column: Primary Admin Settings & Team Seat Capacity -->
+        <div class="col-lg-5">
+            <div class="card border-0 shadow-sm rounded-4 p-4 bg-white mb-4">
+                <h5 class="fw-bold text-dark border-bottom pb-3 mb-3">
+                    <i class="bi bi-shield-lock-fill text-primary me-2"></i>Primary Admin Settings
+                </h5>
+                <form method="post" novalidate>
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="update_settings">
+
+                    <div class="mb-3">
+                        <label class="form-label small fw-semibold text-secondary">
+                            Official College Admin Email (Primary Admin Holder)
+                        </label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-0"><i class="bi bi-envelope-at"></i></span>
+                            <input type="email" name="admin_email" class="form-control bg-light border-0" value="{{ college.admin_email|default:college.submitted_by.email }}" placeholder="e.g. xyz@svr.edu.in">
+                        </div>
+                        <div class="form-text small">
+                            Primary administrative contact designated for this college.
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label small fw-semibold text-secondary">
+                            Authorized Staff Team Capacity (Accounts Allowed)
+                        </label>
+                        <select name="max_team_members" class="form-select bg-light border-0">
+                            <option value="1" {% if college.max_team_members == 1 %}selected{% endif %}>1 Account (Solo Admin Only)</option>
+                            <option value="2" {% if college.max_team_members == 2 %}selected{% endif %}>2 Accounts (Primary + 1 Staff)</option>
+                            <option value="4" {% if college.max_team_members == 4 %}selected{% endif %}>4 Accounts (Primary + 3 Staff)</option>
+                            <option value="6" {% if college.max_team_members == 6 %}selected{% endif %}>6 Accounts (Admissions Committee - 6 seats)</option>
+                            <option value="8" {% if college.max_team_members == 8 %}selected{% endif %}>8 Accounts (Large Campus Team)</option>
+                            <option value="10" {% if college.max_team_members == 10 %}selected{% endif %}>10 Accounts (University Department)</option>
+                        </select>
+                        <div class="form-text small">
+                            Change team capacity (e.g. 1, 4, 6) if additional staff need access to review admission applications and update courses.
+                        </div>
+                    </div>
+
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary rounded-pill fw-bold">
+                            <i class="bi bi-save me-1"></i>Save Admin Settings
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Seat Quota Status Widget -->
+            <div class="card border-0 shadow-sm rounded-4 p-4 bg-light">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="small fw-bold text-muted text-uppercase">Team Seat Allocation</span>
+                    <span class="badge bg-primary rounded-pill">{{ current_count }} / {{ college.max_team_members }} Seats Occupied</span>
+                </div>
+                <div class="progress mb-2" style="height: 10px;">
+                    <div class="progress-bar bg-primary progress-bar-striped" role="progressbar" style="width: {% widthratio current_count college.max_team_members 100 %}%;" aria-valuenow="{{ current_count }}" aria-valuemin="0" aria-valuemax="{{ college.max_team_members }}"></div>
+                </div>
+                <div class="small text-muted">
+                    {% if seats_remaining > 0 %}
+                        <i class="bi bi-check-circle text-success me-1"></i><strong>{{ seats_remaining }}</strong> additional staff member seat{{ seats_remaining|pluralize }} available.
+                    {% else %}
+                        <i class="bi bi-exclamation-circle text-warning me-1"></i>All <strong>{{ college.max_team_members }}</strong> authorized seats are currently filled.
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column: Add Staff Member & Active Team Members -->
+        <div class="col-lg-7">
+            <!-- Add New Team Member Card (Admin Account Creator) -->
+            <div class="card border-0 shadow-sm rounded-4 p-4 bg-white mb-4">
+                <div class="d-flex justify-content-between align-items-center border-bottom pb-3 mb-3 flex-wrap gap-2">
+                    <h5 class="fw-bold text-dark mb-0">
+                        <i class="bi bi-person-plus-fill text-primary me-2"></i>Create Administrator &amp; Staff Account
+                    </h5>
+                    <span class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill px-3 py-2 fw-semibold">
+                        <i class="bi bi-globe me-1"></i>Official Domain: @{{ college.email_domain }}
+                    </span>
+                </div>
+
+                <p class="text-muted small mb-3">
+                    Create an administrator or staff account for <strong>{{ college.name }}</strong> with a <strong>unique username</strong>. 
+                    The other user logs in with this unique username (or email) and accesses the <strong>exact same college database, courses, applications, and settings</strong>.
+                </p>
+
+                <!-- Quick 1-Click Role Presets -->
+                <div class="mb-3">
+                    <label class="form-label small fw-semibold text-secondary mb-1">
+                        <i class="bi bi-lightning-charge-fill text-warning me-1"></i>1-Click Role Presets:
+                    </label>
+                    <div class="d-flex flex-wrap gap-2">
+                        <button type="button" class="btn btn-sm btn-outline-primary rounded-pill role-preset-btn" data-prefix="admissions">
+                            <i class="bi bi-inbox me-1"></i>admissions@
+                        </button>
+                        <button type="button" class="btn btn-sm btn-outline-primary rounded-pill role-preset-btn" data-prefix="dean">
+                            <i class="bi bi-award me-1"></i>dean@
+                        </button>
+                        <button type="button" class="btn btn-sm btn-outline-primary rounded-pill role-preset-btn" data-prefix="registrar">
+                            <i class="bi bi-journal-check me-1"></i>registrar@
+                        </button>
+                        <button type="button" class="btn btn-sm btn-outline-primary rounded-pill role-preset-btn" data-prefix="principal">
+                            <i class="bi bi-person-badge me-1"></i>principal@
+                        </button>
+                        <button type="button" class="btn btn-sm btn-outline-primary rounded-pill role-preset-btn" data-prefix="placement">
+                            <i class="bi bi-briefcase me-1"></i>placement@
+                        </button>
+                        <button type="button" class="btn btn-sm btn-outline-primary rounded-pill role-preset-btn" data-prefix="counselor">
+                            <i class="bi bi-chat-quote me-1"></i>counselor@
+                        </button>
+                        <button type="button" class="btn btn-sm btn-outline-primary rounded-pill role-preset-btn" data-prefix="hod.cse">
+                            <i class="bi bi-laptop me-1"></i>hod.cse@
+                        </button>
+                    </div>
+                </div>
+
+                <form method="post" id="addStaffEmailForm" novalidate>
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="add_member">
+
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label small fw-semibold text-secondary">
+                                Unique Username <span class="text-danger">*</span>
+                            </label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-0"><i class="bi bi-person-badge text-primary"></i></span>
+                                <input type="text" id="staffUsernameInput" name="staff_username" class="form-control bg-light border-0" placeholder="e.g. subadmin1, hod_cse" required autocomplete="off">
+                            </div>
+                            <div class="form-text small">Must be unique across the platform.</div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label small fw-semibold text-secondary">
+                                Institutional / Staff Email <span class="text-danger">*</span>
+                            </label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-0"><i class="bi bi-envelope text-warning"></i></span>
+                                <input type="email" id="staffEmailInput" name="staff_email" class="form-control bg-light border-0" placeholder="e.g. admissions@{{ college.email_domain }}" required autocomplete="off">
+                            </div>
+                            <div class="form-text small">Official email for this account.</div>
+                        </div>
+
+                        <div class="col-md-12">
+                            <label class="form-label small fw-semibold text-secondary">
+                                Account Password (Optional)
+                            </label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-0"><i class="bi bi-key-fill text-success"></i></span>
+                                <input type="text" id="staffPasswordInput" name="staff_password" class="form-control bg-light border-0" placeholder="Enter password (or leave blank for default: PartnerPassword123!)" autocomplete="new-password">
+                            </div>
+                            <div class="form-text small">Give this password to the other user to log in into the same college account.</div>
+                        </div>
+
+                        <div class="col-12 mt-2">
+                            <button type="submit" class="btn btn-success w-100 rounded-pill py-2 fw-bold shadow-sm">
+                                <i class="bi bi-person-check-fill me-1"></i>Create &amp; Save Admin Account
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Active Team Members Table -->
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden bg-white">
+                <div class="card-header bg-white py-3 px-4 d-flex justify-content-between align-items-center border-bottom">
+                    <h5 class="fw-bold mb-0 text-dark">
+                        <i class="bi bi-people me-2 text-primary"></i>Active Authorized Admin &amp; Staff Accounts
+                    </h5>
+                    <span class="badge bg-secondary-subtle text-secondary rounded-pill">{{ current_count }} Member{{ current_count|pluralize }}</span>
+                </div>
+                <div class="card-body p-0">
+                    <!-- Primary Admin Record -->
+                    <div class="p-3 px-4 border-bottom bg-light d-flex justify-content-between align-items-center">
+                        <div>
+                            <span class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill me-2 px-2 py-1 small">
+                                <i class="bi bi-star-fill text-warning me-1"></i>Primary Admin Holder
+                            </span>
+                            <span class="fw-bold text-dark fs-6">{{ college.admin_email|default:college.submitted_by.email }}</span>
+                            <div class="text-muted small mt-1">
+                                <i class="bi bi-person-fill text-primary me-1"></i>Username: <strong>{{ college.submitted_by.username }}</strong> &bull; Registered Creator / Institute Administrator
+                            </div>
+                        </div>
+                        <span class="badge bg-light text-secondary border small">Owner</span>
+                    </div>
+
+                    <!-- Authorized Additional Members -->
+                    {% if team_members %}
+                        <div class="table-responsive">
+                            <table class="table align-middle mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th class="ps-4 small text-muted text-uppercase">Username</th>
+                                        <th class="small text-muted text-uppercase">Email Address</th>
+                                        <th class="small text-muted text-uppercase">Database Access</th>
+                                        <th class="small text-muted text-uppercase">Created</th>
+                                        <th class="text-end pe-4 small text-muted text-uppercase">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for member in team_members %}
+                                        <tr>
+                                            <td class="ps-4">
+                                                <span class="badge bg-primary text-white px-2 py-1 fs-6 fw-bold">
+                                                    <i class="bi bi-person-check-fill me-1"></i>{{ member.user.username|default:"N/A" }}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <div class="fw-semibold text-dark">{{ member.email }}</div>
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill small">
+                                                    <i class="bi bi-database-check me-1"></i>Same Database (Full Access)
+                                                </span>
+                                            </td>
+                                            <td class="small text-muted">{{ member.created_at|date:"M j, Y" }}</td>
+                                            <td class="text-end pe-4">
+                                                <form method="post" class="d-inline" onsubmit="return confirm('Revoke account and remove access for username {{ member.user.username|default:member.email }}?');">
+                                                    {% csrf_token %}
+                                                    <input type="hidden" name="action" value="remove_member">
+                                                    <input type="hidden" name="member_id" value="{{ member.id }}">
+                                                    <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill px-3" title="Revoke Access">
+                                                        <i class="bi bi-trash3 me-1"></i>Revoke
+                                                    </button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="text-center py-4 text-muted small">
+                            <i class="bi bi-people d-block fs-3 mb-2 text-secondary"></i>
+                            No additional admin accounts created yet. Use the form above to create and save accounts with unique usernames for other users.
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.querySelectorAll('.role-preset-btn').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            const prefix = this.getAttribute('data-prefix');
+            const emailInput = document.getElementById('staffEmailInput');
+            const userInput = document.getElementById('staffUsernameInput');
+            if (emailInput && prefix) {
+                emailInput.value = prefix + '@{{ college.email_domain }}';
+            }
+            if (userInput && prefix) {
+                userInput.value = prefix.replace('.', '_') + '_admin';
+                userInput.focus();
+            }
+        });
+    });
+</script>
+{% endblock %}

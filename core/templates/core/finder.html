@@ -1,0 +1,557 @@
+{% extends "base.html" %}
+{% load core_extras %}
+
+{% block title %}Campus & Nearby Housing Finder - College Clue{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Header Banner -->
+    <div class="card border-0 shadow-sm rounded-4 mb-4 text-white p-4 p-md-5" style="background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 50%, #0f766e 100%);">
+        <div class="row align-items-center">
+            <div class="col-lg-8">
+                <span class="badge bg-warning text-dark px-3 py-1 rounded-pill fw-bold mb-2">
+                    <i class="bi bi-geo-alt-fill me-1"></i>Location-Based Smart Discovery
+                </span>
+                <h1 class="display-5 fw-extrabold mb-2">Campus &amp; Nearby PG Recommender</h1>
+                <p class="lead mb-0 text-light opacity-90 fs-6">
+                    Step 1: Pick a city &bull; Step 2: Choose your desired college &bull; Step 3: Get recommended student PGs and hostels in that campus vicinity.
+                </p>
+            </div>
+            <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
+                <a href="{% url 'registration_form' %}" class="btn btn-warning fw-bold text-dark px-4 py-2 shadow rounded-pill">
+                    <i class="bi bi-pencil-square me-1"></i>Apply for Admission
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stepper Navigation Indicator -->
+    <div class="row g-2 mb-4 text-center">
+        <div class="col-md-4">
+            <div id="step-indicator-1" class="p-3 bg-white rounded-4 shadow-sm border border-primary h-100">
+                <span class="badge bg-primary rounded-circle me-2 p-2">1</span>
+                <strong class="text-primary">1. Select Target Location</strong>
+                <div class="small text-muted mt-1" id="step-1-subtext">Choose city where you wish to study</div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div id="step-indicator-2" class="p-3 bg-white rounded-4 shadow-sm border h-100">
+                <span class="badge bg-secondary rounded-circle me-2 p-2">2</span>
+                <strong class="text-secondary" id="step-2-title">2. Choose College</strong>
+                <div class="small text-muted mt-1" id="step-2-subtext">Browse colleges in this location</div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div id="step-indicator-3" class="p-3 bg-white rounded-4 shadow-sm border h-100">
+                <span class="badge bg-secondary rounded-circle me-2 p-2">3</span>
+                <strong class="text-secondary" id="step-3-title">3. Recommended PGs &amp; Housing</strong>
+                <div class="small text-muted mt-1" id="step-3-subtext">Verified living options near campus</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- STEP 1: Location Selection -->
+    <div class="card border-0 shadow-sm rounded-4 mb-4 filter-card">
+        <div class="card-body p-4">
+            <h5 class="fw-bold mb-3"><i class="bi bi-geo-alt text-danger me-2"></i>Step 1: Where do you want to study?</h5>
+            
+            <!-- Popular City Chips -->
+            <div class="d-flex flex-wrap gap-2 mb-3" id="quick-city-chips">
+                {% for city in unique_cities %}
+                    <button type="button" class="btn btn-sm btn-outline-primary rounded-pill city-chip-btn {% if city == selected_city %}active text-white bg-primary{% endif %}" data-city="{{ city }}">
+                        <i class="bi bi-pin-map-fill me-1"></i>{{ city }}
+                    </button>
+                {% endfor %}
+            </div>
+
+            <div class="row g-3 align-items-center">
+                <div class="col-md-8">
+                    <div class="input-group">
+                        <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-search"></i></span>
+                        <input type="text" id="city-search-input" class="form-control border-start-0 shadow-none" placeholder="Type city name (e.g. New Delhi, Bengaluru, Mumbai, Pune, Chennai, Kolkata)..." value="{{ selected_city }}">
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <button id="find-colleges-btn" class="btn btn-primary w-100 fw-bold">
+                        <i class="bi bi-arrow-right-circle me-1"></i>Show Colleges in Location
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- STEP 2: Colleges In Selected Location -->
+    <div id="step-2-container" class="{% if not selected_city %}d-none{% endif %} mb-4">
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2 mb-3">
+            <div>
+                <h4 class="fw-bold mb-0">
+                    <i class="bi bi-mortarboard text-primary me-2"></i>Step 2: Colleges in <span id="display-selected-city" class="text-primary">{{ selected_city }}</span>
+                </h4>
+                <small class="text-muted">Type below to search by college name, or select an option to view details or apply.</small>
+            </div>
+            <span id="colleges-count-badge" class="badge bg-primary-subtle text-primary border border-primary-subtle px-3 py-2 rounded-pill">
+                {{ colleges_in_city|length }} Colleges Found
+            </span>
+        </div>
+
+        <!-- Live College Filter in Finder -->
+        <div class="card border-0 shadow-sm rounded-4 p-3 mb-4 bg-white">
+            <div class="input-group">
+                <span class="input-group-text bg-transparent border-0 text-muted ps-2"><i class="bi bi-search"></i></span>
+                <input type="text" id="finder-college-search-input" class="form-control border-0 shadow-none ps-1" placeholder="Search colleges by name (e.g. IIT, St. Xavier's, Technology, Management)...">
+            </div>
+        </div>
+
+        <div id="colleges-grid" class="row g-4 mb-4">
+            {% for college in colleges_in_city %}
+                <div class="col-md-6 col-lg-4 college-select-item" data-college-id="{{ college.id }}" data-name="{{ college.name|lower }}" data-university="{{ college.university.name|lower }}">
+                    <div class="card h-100 college-card rounded-4 border {% if selected_college and selected_college.id == college.id %}border-primary shadow{% endif %}">
+                        <div class="card-top-accent"></div>
+                        <div class="card-body p-4 d-flex flex-column">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <span class="badge bg-light text-primary border text-truncate" style="max-width: 70%;">{{ college.university.name }}</span>
+                                <span class="badge-rating"><i class="bi bi-star-fill text-warning me-1"></i>{{ college.rating }}</span>
+                            </div>
+                            <h5 class="fw-bold text-dark mb-1">{{ college.name }}</h5>
+                            <p class="text-muted small mb-2"><i class="bi bi-geo-alt-fill text-danger me-1"></i>{{ college.city }}</p>
+                            <p class="text-secondary small mb-3 flex-grow-1">{{ college.description|truncatewords:14 }}</p>
+                            
+                            <div class="pt-2 border-top mt-auto">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <small class="text-muted">Annual Tuition</small>
+                                    <span class="fw-bold text-primary">{{ college.fees|inr }}</span>
+                                </div>
+                                <div class="d-flex flex-wrap gap-2 mb-2">
+                                    <a href="{% url 'college_detail' slug=college.slug %}" class="btn btn-sm btn-outline-primary fw-semibold flex-fill text-center">
+                                        <i class="bi bi-info-circle me-1"></i>View Info
+                                    </a>
+                                    <a href="{% url 'registration_form' %}?college={{ college.id }}" class="btn btn-sm btn-warning text-dark fw-bold flex-fill text-center shadow-sm">
+                                        <i class="bi bi-pencil-square me-1"></i>Apply Now
+                                    </a>
+                                </div>
+                                <button type="button" class="btn btn-sm btn-outline-success w-100 select-college-trigger fw-semibold" data-college-id="{{ college.id }}">
+                                    <i class="bi bi-houses me-1"></i>Select &amp; See PGs &rarr;
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <div class="col-12 text-center py-4 text-muted">
+                    No colleges found for this location. Select a city above.
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- STEP 3: Selected College Details & Recommended PGs / Hostels -->
+    <div id="step-3-container" class="{% if not selected_college %}d-none{% endif %} mb-4">
+        <!-- Selected College Spotlight Card -->
+        <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5 mb-4 bg-white border-top border-4 border-primary">
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+                <div>
+                    <span class="badge bg-primary-subtle text-primary border border-primary-subtle mb-2 px-3 py-1" id="spotlight-university">
+                        {{ selected_college.university.name }}
+                    </span>
+                    <h2 class="fw-bold text-dark mb-1" id="spotlight-college-name">{{ selected_college.name }}</h2>
+                    <p class="text-muted mb-0" id="spotlight-location">
+                        <i class="bi bi-geo-alt-fill text-danger me-1"></i>{{ selected_college.city }} &bull; Rated <strong class="text-warning">★ {{ selected_college.rating }}</strong>
+                    </p>
+                </div>
+                <div class="d-flex flex-wrap gap-2">
+                    <a id="spotlight-register-btn" href="{% if selected_college %}{% url 'registration_form' %}?college={{ selected_college.id }}{% else %}#{% endif %}" class="btn btn-warning fw-bold text-dark px-4 shadow-sm">
+                        <i class="bi bi-pencil-square me-1"></i>Apply for Admission
+                    </a>
+                    <a id="spotlight-detail-btn" href="{% if selected_college %}{% url 'college_detail' slug=selected_college.slug %}{% else %}#{% endif %}" class="btn btn-outline-primary px-3">
+                        <i class="bi bi-info-circle me-1"></i>Full College Page
+                    </a>
+                    <a id="spotlight-dedicated-acc-btn" href="{% if selected_college %}{% url 'college_accommodations' slug=selected_college.slug %}{% else %}#{% endif %}" class="btn btn-outline-success px-3">
+                        <i class="bi bi-houses me-1"></i>Dedicated PG Page &rarr;
+                    </a>
+                </div>
+            </div>
+
+            <!-- College Facilities -->
+            <div class="p-3 bg-light rounded-3 mb-3">
+                <strong class="text-dark small d-block mb-1"><i class="bi bi-check2-circle text-success me-1"></i>Campus Facilities:</strong>
+                <span class="text-muted small" id="spotlight-facilities">{{ selected_college.facilities }}</span>
+            </div>
+
+            <!-- Offered Courses -->
+            <div>
+                <strong class="text-dark small d-block mb-2"><i class="bi bi-book text-primary me-1"></i>Available Degree Programs:</strong>
+                <div id="spotlight-courses-list" class="d-flex flex-wrap gap-2">
+                    {% for c in selected_college.courses.all %}
+                        <span class="badge bg-white text-dark border p-2 small">
+                            {{ c.name }} &bull; <strong class="text-primary">{{ c.fee|inr }}/yr</strong> ({{ c.duration_years }} yrs)
+                        </span>
+                    {% empty %}
+                        <span class="text-muted small">No courses recorded yet.</span>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Recommended Nearby PGs & Hostels -->
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <div>
+                <h4 class="fw-bold mb-0">
+                    <i class="bi bi-houses text-primary me-2"></i>Recommended Student Accommodations (PGs &amp; Hostels)
+                </h4>
+                <p class="text-muted small mb-0">Verified housing within walking or short commute distance from <span id="recom-target-college" class="fw-bold text-dark">{{ selected_college.name }}</span></p>
+            </div>
+            <span id="recom-count-badge" class="badge bg-success-subtle text-success border border-success-subtle px-3 py-2 rounded-pill fs-6">
+                {{ recommended_accommodations|length }} Housing Options
+            </span>
+        </div>
+
+        <div id="accommodations-grid" class="row g-4">
+            {% for acc in recommended_accommodations %}
+                <div class="col-md-6 col-lg-4">
+                    <div class="card h-100 accommodation-card">
+                        <div class="card-top-accent"></div>
+                        <div class="card-body p-4 d-flex flex-column">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="badge bg-primary-subtle text-primary border border-primary-subtle fw-semibold">{{ acc.type }}</span>
+                                {% if acc.college_id == selected_college.id %}
+                                    <span class="badge bg-warning-subtle text-dark border border-warning-subtle"><i class="bi bi-geo-alt-fill text-danger me-1"></i>Campus Residence</span>
+                                {% else %}
+                                    <span class="badge bg-success-subtle text-success border border-success-subtle"><i class="bi bi-check-circle-fill me-1"></i>Nearby Vicinity</span>
+                                {% endif %}
+                            </div>
+
+                            <h5 class="fw-bold text-dark mb-1">
+                                <a href="{% url 'accommodation_detail' pk=acc.pk %}" class="text-decoration-none text-dark">
+                                    {{ acc.name }}
+                                </a>
+                            </h5>
+
+                            <p class="text-muted small mb-2"><i class="bi bi-geo-alt me-1 text-danger"></i>{{ acc.address }}</p>
+
+                            <div class="mb-3">
+                                <span class="badge bg-light text-secondary border me-1">{{ acc.room_type }} Room</span>
+                                <span class="badge bg-light text-secondary border"><i class="bi bi-wifi me-1"></i>Wi-Fi</span>
+                            </div>
+
+                            <p class="text-secondary small mb-3 flex-grow-1">{{ acc.facilities|truncatewords:14 }}</p>
+
+                            <div class="d-flex justify-content-between align-items-center pt-3 border-top mt-auto">
+                                <div>
+                                    <small class="text-muted d-block">Monthly Rent</small>
+                                    <span class="fw-bold text-primary fs-5">{{ acc.rent|inr }}</span>
+                                </div>
+                                <div class="d-flex gap-2">
+                                    <a href="tel:{{ acc.contact_phone }}" class="btn btn-sm btn-outline-success" title="Call Landlord">
+                                        <i class="bi bi-telephone-fill"></i>
+                                    </a>
+                                    <a href="{% url 'accommodation_detail' pk=acc.pk %}" class="btn btn-sm btn-primary">
+                                        Details
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <div class="col-12 text-center py-5">
+                    <i class="bi bi-houses fs-1 text-muted d-block mb-3"></i>
+                    <h5 class="fw-bold text-dark">No Accommodation Listed Yet Near This College</h5>
+                    <p class="text-muted">Explore city listings or check back soon.</p>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const cityInput = document.getElementById('city-search-input');
+    const findCollegesBtn = document.getElementById('find-colleges-btn');
+    const step2Container = document.getElementById('step-2-container');
+    const step3Container = document.getElementById('step-3-container');
+    const displaySelectedCity = document.getElementById('display-selected-city');
+    const collegesCountBadge = document.getElementById('colleges-count-badge');
+    const collegesGrid = document.getElementById('colleges-grid');
+    const cityChips = document.querySelectorAll('.city-chip-btn');
+
+    // Step 3 elements
+    const spotlightUniv = document.getElementById('spotlight-university');
+    const spotlightCollege = document.getElementById('spotlight-college-name');
+    const spotlightLoc = document.getElementById('spotlight-location');
+    const spotlightFac = document.getElementById('spotlight-facilities');
+    const spotlightCourses = document.getElementById('spotlight-courses-list');
+    const spotlightRegisterBtn = document.getElementById('spotlight-register-btn');
+    const spotlightDetailBtn = document.getElementById('spotlight-detail-btn');
+    const recomTargetCollege = document.getElementById('recom-target-college');
+    const recomCountBadge = document.getElementById('recom-count-badge');
+    const accommodationsGrid = document.getElementById('accommodations-grid');
+
+    // Stepper indicators
+    const stepInd1 = document.getElementById('step-indicator-1');
+    const stepInd2 = document.getElementById('step-indicator-2');
+    const stepInd3 = document.getElementById('step-indicator-3');
+
+    function updateStepper(step) {
+        if (step >= 2) {
+            stepInd2.classList.add('border-primary');
+            stepInd2.querySelector('strong').classList.replace('text-secondary', 'text-primary');
+            stepInd2.querySelector('.badge').classList.replace('bg-secondary', 'bg-primary');
+        }
+        if (step >= 3) {
+            stepInd3.classList.add('border-primary');
+            stepInd3.querySelector('strong').classList.replace('text-secondary', 'text-primary');
+            stepInd3.querySelector('.badge').classList.replace('bg-secondary', 'bg-primary');
+        }
+    }
+
+    function searchCollegesByCity(city) {
+        if (!city) return;
+        cityInput.value = city;
+
+        // Highlight chip
+        cityChips.forEach(chip => {
+            if (chip.getAttribute('data-city') === city) {
+                chip.classList.add('active', 'text-white', 'bg-primary');
+            } else {
+                chip.classList.remove('active', 'text-white', 'bg-primary');
+            }
+        });
+
+        displaySelectedCity.textContent = city;
+        collegesGrid.innerHTML = '<div class="col-12 text-center py-4"><span class="spinner-border spinner-border-sm me-2 text-primary"></span>Finding colleges in ' + city + '...</div>';
+        step2Container.classList.remove('d-none');
+        step3Container.classList.add('d-none');
+        updateStepper(2);
+
+        fetch(`/api/location-colleges/?city=${encodeURIComponent(city)}`)
+            .then(res => res.json())
+            .then(data => {
+                collegesCountBadge.textContent = `${data.colleges.length} Colleges Found`;
+                if (!data.colleges || data.colleges.length === 0) {
+                    collegesGrid.innerHTML = `
+                        <div class="col-12 text-center py-5">
+                            <i class="bi bi-mortarboard fs-1 text-muted d-block mb-3"></i>
+                            <h5 class="fw-bold">No Colleges Found in "${city}"</h5>
+                            <p class="text-muted">Try selecting one of the popular cities above (New Delhi, Bengaluru, Mumbai, Pune, Chennai, etc.).</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                let html = '';
+                data.colleges.forEach(col => {
+                    html += `
+                        <div class="col-md-6 col-lg-4 college-select-item" data-college-id="${col.id}" data-name="${col.name.toLowerCase()}" data-university="${col.university.toLowerCase()}">
+                            <div class="card h-100 college-card rounded-4 border shadow-sm">
+                                <div class="card-top-accent"></div>
+                                <div class="card-body p-4 d-flex flex-column">
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <span class="badge bg-light text-primary border text-truncate" style="max-width: 70%;">${col.university}</span>
+                                        <span class="badge-rating"><i class="bi bi-star-fill text-warning me-1"></i>${col.rating}</span>
+                                    </div>
+                                    <h5 class="fw-bold text-dark mb-1">${col.name}</h5>
+                                    <p class="text-muted small mb-2"><i class="bi bi-geo-alt-fill text-danger me-1"></i>${col.city}</p>
+                                    <p class="text-secondary small mb-3 flex-grow-1">${col.facilities ? col.facilities.substring(0, 90) + '...' : 'Full library, high speed Wi-Fi, computer labs, student sports'}</p>
+                                    
+                                    <div class="pt-2 border-top mt-auto">
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <small class="text-muted">Annual Tuition</small>
+                                            <span class="fw-bold text-primary">₹${Number(col.fees).toLocaleString('en-IN')}</span>
+                                        </div>
+                                        <div class="d-flex flex-wrap gap-2 mb-2">
+                                            <a href="/colleges/${col.slug}/" class="btn btn-sm btn-outline-primary fw-semibold flex-fill text-center">
+                                                <i class="bi bi-info-circle me-1"></i>View Info
+                                            </a>
+                                            <a href="/register-admission/?college=${col.id}" class="btn btn-sm btn-warning text-dark fw-bold flex-fill text-center shadow-sm">
+                                                <i class="bi bi-pencil-square me-1"></i>Apply Now
+                                            </a>
+                                        </div>
+                                        <button type="button" class="btn btn-sm btn-outline-success w-100 select-college-trigger fw-semibold" data-college-id="${col.id}">
+                                            <i class="bi bi-houses me-1"></i>Select &amp; See PGs &rarr;
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+                collegesGrid.innerHTML = html;
+                step2Container.scrollIntoView({ behavior: 'smooth' });
+            })
+            .catch(err => {
+                console.error(err);
+                collegesGrid.innerHTML = '<div class="col-12 text-danger text-center py-4">Error loading colleges for this location.</div>';
+            });
+    }
+
+    function selectCollegeAndRecommendPGs(collegeId) {
+        step3Container.classList.remove('d-none');
+        accommodationsGrid.innerHTML = '<div class="col-12 text-center py-4"><span class="spinner-border text-primary me-2"></span>Searching nearby verified PGs and Hostels...</div>';
+        updateStepper(3);
+
+        fetch(`/api/college-recommendations/${collegeId}/`)
+            .then(res => res.json())
+            .then(data => {
+                const col = data.college;
+                spotlightUniv.textContent = col.university;
+                spotlightCollege.textContent = col.name;
+                spotlightLoc.innerHTML = `<i class="bi bi-geo-alt-fill text-danger me-1"></i>${col.city} &bull; Rated <strong class="text-warning">★ ${col.rating}</strong>`;
+                spotlightFac.textContent = col.facilities || 'Campus sports complex, central digital library, high speed Wi-Fi, modern laboratories';
+                spotlightRegisterBtn.href = `/register-admission/?college=${col.id}`;
+                spotlightDetailBtn.href = `/colleges/${col.slug}/`;
+                const spotlightDedicatedAccBtn = document.getElementById('spotlight-dedicated-acc-btn');
+                if (spotlightDedicatedAccBtn) {
+                    spotlightDedicatedAccBtn.href = `/colleges/${col.slug}/accommodations/`;
+                }
+                recomTargetCollege.textContent = col.name;
+
+                // Courses
+                let coursesHtml = '';
+                if (data.courses && data.courses.length > 0) {
+                    data.courses.forEach(c => {
+                        coursesHtml += `
+                            <span class="badge bg-white text-dark border p-2 small">
+                                ${c.name} &bull; <strong class="text-primary">₹${Number(c.fee).toLocaleString('en-IN')}/yr</strong> (${c.duration_years} yrs)
+                            </span>
+                        `;
+                    });
+                } else {
+                    coursesHtml = '<span class="text-muted small">No courses recorded.</span>';
+                }
+                spotlightCourses.innerHTML = coursesHtml;
+
+                // Accommodations (PGs & Hostels)
+                recomCountBadge.textContent = `${data.accommodations.length} Housing Options`;
+                if (!data.accommodations || data.accommodations.length === 0) {
+                    accommodationsGrid.innerHTML = `
+                        <div class="col-12 text-center py-5">
+                            <i class="bi bi-houses fs-1 text-muted d-block mb-3"></i>
+                            <h5 class="fw-bold">No Accommodations Listed Near This College Yet</h5>
+                            <p class="text-muted">Check our general accommodations directory for nearby options.</p>
+                            <a href="/accommodations/?city=${encodeURIComponent(col.city)}" class="btn btn-outline-primary btn-sm">
+                                View all housing in ${col.city}
+                            </a>
+                        </div>
+                    `;
+                    return;
+                }
+
+                let accHtml = '';
+                data.accommodations.forEach(acc => {
+                    const badgeType = acc.is_direct 
+                        ? '<span class="badge bg-warning-subtle text-dark border border-warning-subtle"><i class="bi bi-geo-alt-fill text-danger me-1"></i>Campus Residence</span>'
+                        : '<span class="badge bg-success-subtle text-success border border-success-subtle"><i class="bi bi-check-circle-fill me-1"></i>Nearby Vicinity</span>';
+
+                    accHtml += `
+                        <div class="col-md-6 col-lg-4">
+                            <div class="card h-100 accommodation-card">
+                                <div class="card-top-accent"></div>
+                                <div class="card-body p-4 d-flex flex-column">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <span class="badge bg-primary-subtle text-primary border border-primary-subtle fw-semibold">${acc.type}</span>
+                                        ${badgeType}
+                                    </div>
+
+                                    <h5 class="fw-bold text-dark mb-1">
+                                        <a href="/accommodations/${acc.id}/" class="text-decoration-none text-dark">
+                                            ${acc.name}
+                                        </a>
+                                    </h5>
+
+                                    <p class="text-muted small mb-2"><i class="bi bi-geo-alt me-1 text-danger"></i>${acc.address}</p>
+
+                                    <div class="mb-3">
+                                        <span class="badge bg-light text-secondary border me-1">${acc.room_type} Room</span>
+                                        <span class="badge bg-light text-secondary border"><i class="bi bi-wifi me-1"></i>Wi-Fi</span>
+                                    </div>
+
+                                    <p class="text-secondary small mb-3 flex-grow-1">${acc.facilities ? acc.facilities.substring(0, 80) + '...' : 'Wi-Fi, 3 Homely Meals, 24/7 Security'}</p>
+
+                                    <div class="d-flex justify-content-between align-items-center pt-3 border-top mt-auto">
+                                        <div>
+                                            <small class="text-muted d-block">Monthly Rent</small>
+                                            <span class="fw-bold text-primary fs-5">₹${Number(acc.rent).toLocaleString('en-IN')}</span>
+                                        </div>
+                                        <div class="d-flex gap-2">
+                                            <a href="tel:${acc.contact_phone}" class="btn btn-sm btn-outline-success" title="Call Landlord">
+                                                <i class="bi bi-telephone-fill"></i>
+                                            </a>
+                                            <a href="/accommodations/${acc.id}/" class="btn btn-sm btn-primary">
+                                                Details
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+                accommodationsGrid.innerHTML = accHtml;
+                step3Container.scrollIntoView({ behavior: 'smooth' });
+            })
+            .catch(err => {
+                console.error(err);
+                accommodationsGrid.innerHTML = '<div class="col-12 text-danger text-center py-4">Error loading accommodations.</div>';
+            });
+    }
+
+    // Event listeners
+    cityChips.forEach(chip => {
+        chip.addEventListener('click', function () {
+            searchCollegesByCity(this.getAttribute('data-city'));
+        });
+    });
+
+    findCollegesBtn.addEventListener('click', function () {
+        searchCollegesByCity(cityInput.value.trim());
+    });
+
+    cityInput.addEventListener('keypress', function (e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            searchCollegesByCity(this.value.trim());
+        }
+    });
+
+    // Delegation for college card select buttons
+    document.addEventListener('click', function (e) {
+        const btn = e.target.closest('.select-college-trigger');
+        if (btn) {
+            const collegeId = btn.getAttribute('data-college-id');
+            selectCollegeAndRecommendPGs(collegeId);
+        }
+    });
+
+    // Live college search filter within chosen city
+    const finderCollegeSearch = document.getElementById('finder-college-search-input');
+    if (finderCollegeSearch) {
+        finderCollegeSearch.addEventListener('input', function () {
+            const query = this.value.toLowerCase().trim();
+            const items = collegesGrid.querySelectorAll('.college-select-item');
+            let matchCount = 0;
+            items.forEach(item => {
+                const name = item.getAttribute('data-name') || '';
+                const uni = item.getAttribute('data-university') || '';
+                if (!query || name.includes(query) || uni.includes(query)) {
+                    item.style.display = '';
+                    matchCount++;
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+            collegesCountBadge.textContent = `${matchCount} Colleges Found`;
+        });
+    }
+
+    // Check if initial college is preselected
+    const initialCollegeId = "{{ selected_college.id|default:'' }}";
+    if (initialCollegeId) {
+        updateStepper(3);
+    } else if ("{{ selected_city|default:'' }}") {
+        updateStepper(2);
+    }
+});
+</script>
+{% endblock %}

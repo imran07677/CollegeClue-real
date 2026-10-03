@@ -1,0 +1,551 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% block title %}Student Admission Application - College Clue{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'college_list' %}">Colleges</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Student Admission Application</li>
+        </ol>
+    </nav>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-9">
+            <div class="card border-0 shadow-lg rounded-4 overflow-hidden mb-4">
+                <!-- Header Banner -->
+                <div class="p-4 p-md-5 text-white position-relative" style="background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);">
+                    <span class="badge bg-warning text-dark mb-2 px-3 py-1 fw-bold">Academic Session 2026-27</span>
+                    <h2 class="fw-bold mb-1">Centralized College Admission Application</h2>
+                    <p class="mb-0 text-light opacity-90 small">
+                        Complete your application details and academic qualifications below. Admission eligibility will be automatically verified against the university's minimum criteria before submission.
+                    </p>
+                </div>
+
+                <div class="card-body p-4 p-md-5">
+                    <!-- College Academic Eligibility Criteria Banner -->
+                    <div id="eligibility-criteria-card" class="card border-0 rounded-4 p-3 p-md-4 mb-4 shadow-sm" style="background: #f8fafc; border: 1px solid #e2e8f0 !important;">
+                        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 border-bottom pb-3 mb-3">
+                            <div>
+                                <div class="d-flex align-items-center gap-2 mb-1 flex-wrap">
+                                    <span class="badge bg-primary text-white"><i class="bi bi-shield-check me-1"></i>Admission Cutoff Criteria</span>
+                                    {% if target_college and target_college.is_admission_open %}
+                                        <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill">
+                                            <i class="bi bi-calendar-check-fill me-1"></i>{{ target_college.admission_dates_display }}
+                                        </span>
+                                    {% endif %}
+                                </div>
+                                <h5 class="fw-bold text-dark mb-0" id="eligibility-college-name">
+                                    {% if target_college %}{{ target_college.name }}{% else %}Select a College to View Admission Cutoffs{% endif %}
+                                </h5>
+                            </div>
+                            <div class="d-flex flex-wrap gap-2">
+                                <div class="bg-white border rounded-3 px-3 py-2 text-center shadow-xs">
+                                    <small class="text-muted d-block text-uppercase fw-bold" style="font-size: 0.68rem;">Class X Min Required</small>
+                                    <span class="fw-bold text-primary fs-5" id="criteria-min-10th">
+                                        {% if target_college %}{{ target_college.min_10th_percentage }}%{% else %}--%{% endif %}
+                                    </span>
+                                </div>
+                                <div class="bg-white border rounded-3 px-3 py-2 text-center shadow-xs">
+                                    <small class="text-muted d-block text-uppercase fw-bold" style="font-size: 0.68rem;">Class XII Min Required</small>
+                                    <span class="fw-bold text-primary fs-5" id="criteria-min-12th">
+                                        {% if target_college %}{{ target_college.min_12th_percentage }}%{% else %}--%{% endif %}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Real-time Live Eligibility Feedback Banner -->
+                        <div id="live-eligibility-feedback" class="alert alert-info border-0 rounded-3 mb-0 d-flex align-items-center gap-3">
+                            <i id="eligibility-status-icon" class="bi bi-info-circle-fill fs-3 text-primary flex-shrink-0"></i>
+                            <div>
+                                <strong id="eligibility-status-title" class="d-block text-dark">Enter your academic marks below</strong>
+                                <span id="eligibility-status-desc" class="small text-muted">
+                                    Enter your Class X and Class XII percentages. You must meet or exceed the university cutoffs to be eligible to apply.
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Progress Bar Container -->
+                    <div id="submission-progress-wrapper" class="d-none mb-4">
+                        <div class="d-flex justify-content-between mb-1">
+                            <span class="small fw-semibold text-primary">Transmitting application to university admissions board...</span>
+                            <span id="submission-progress-percentage" class="small fw-bold text-primary">0%</span>
+                        </div>
+                        <div class="progress" style="height: 10px;">
+                            <div id="submission-progress-bar" class="progress-bar progress-bar-striped progress-bar-animated bg-primary" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                    </div>
+
+                    <form id="student-registration-form" method="post" novalidate>
+                        {% csrf_token %}
+
+                        <!-- ============================================== -->
+                        <!-- SECTION 1: TARGET COLLEGE & PROGRAM            -->
+                        <!-- ============================================== -->
+                        <div class="mb-4">
+                            <div class="d-flex align-items-center gap-2 mb-3">
+                                <span class="badge bg-primary rounded-circle p-2" style="width: 28px; height: 28px; display: inline-flex; align-items: center; justify-content: center;">1</span>
+                                <h5 class="fw-bold text-dark mb-0">Target College &amp; Academic Course</h5>
+                            </div>
+
+                            <div class="row g-3">
+                                <div class="col-12">
+                                    <label for="{{ form.college.id_for_label }}" class="form-label fw-bold">
+                                        <i class="bi bi-building me-1 text-primary"></i>Target College &amp; Campus <span class="text-danger">*</span>
+                                    </label>
+                                    {{ form.college }}
+                                    {% if form.college.errors %}
+                                        <div class="text-danger small mt-1">{{ form.college.errors.0 }}</div>
+                                    {% endif %}
+                                </div>
+
+                                <div class="col-12">
+                                    <label for="{{ form.course.id_for_label }}" class="form-label fw-bold">
+                                        <i class="bi bi-mortarboard me-1 text-primary"></i>Academic Course Program <span class="text-danger">*</span>
+                                    </label>
+                                    {{ form.course }}
+                                    <div id="course-help-text" class="form-text small text-muted">
+                                        Available degree programs load automatically for the selected campus.
+                                    </div>
+                                    {% if form.course.errors %}
+                                        <div class="text-danger small mt-1">{{ form.course.errors.0 }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <!-- Live Selected Course Summary Badge -->
+                            <div id="live-course-summary" class="alert alert-light border rounded-3 mt-3 d-none">
+                                <div class="d-flex align-items-center">
+                                    <i class="bi bi-check-circle-fill fs-4 me-3 text-success"></i>
+                                    <div>
+                                        <strong id="live-course-name" class="d-block text-dark">Course Title</strong>
+                                        <small id="live-course-details" class="text-muted">Duration: 4 Years | Annual Fee: ₹1,50,000</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr class="my-4">
+
+                        <!-- ============================================== -->
+                        <!-- SECTION 2: ACADEMIC QUALIFICATIONS & % MARKS   -->
+                        <!-- ============================================== -->
+                        <div class="mb-4">
+                            <div class="d-flex align-items-center gap-2 mb-3">
+                                <span class="badge bg-primary rounded-circle p-2" style="width: 28px; height: 28px; display: inline-flex; align-items: center; justify-content: center;">2</span>
+                                <h5 class="fw-bold text-dark mb-0">Academic Qualifications &amp; Percentage Marks</h5>
+                            </div>
+
+                            <div class="row g-3">
+                                <!-- Class X (10th) School/Board -->
+                                <div class="col-md-7">
+                                    <label for="{{ form.class_10_school.id_for_label }}" class="form-label fw-bold">
+                                        <i class="bi bi-journal-bookmark me-1 text-primary"></i>Class X (10th) School &amp; Board <span class="text-danger">*</span>
+                                    </label>
+                                    {{ form.class_10_school }}
+                                    {% if form.class_10_school.errors %}
+                                        <div class="text-danger small mt-1">{{ form.class_10_school.errors.0 }}</div>
+                                    {% endif %}
+                                </div>
+
+                                <!-- Class X Percentage -->
+                                <div class="col-md-5">
+                                    <label for="{{ form.class_10_percentage.id_for_label }}" class="form-label fw-bold">
+                                        <i class="bi bi-percent me-1 text-primary"></i>Class X Percentage (%) <span class="text-danger">*</span>
+                                    </label>
+                                    {{ form.class_10_percentage }}
+                                    <div id="c10-cutoff-hint" class="form-text small text-muted">Must meet college cutoff.</div>
+                                    {% if form.class_10_percentage.errors %}
+                                        <div class="text-danger small mt-1">{{ form.class_10_percentage.errors.0 }}</div>
+                                    {% endif %}
+                                </div>
+
+                                <!-- Class XII (12th / +2) School/Board -->
+                                <div class="col-md-7">
+                                    <label for="{{ form.class_12_school.id_for_label }}" class="form-label fw-bold">
+                                        <i class="bi bi-journal-text me-1 text-primary"></i>Class XII (12th / +2) School &amp; Board <span class="text-danger">*</span>
+                                    </label>
+                                    {{ form.class_12_school }}
+                                    {% if form.class_12_school.errors %}
+                                        <div class="text-danger small mt-1">{{ form.class_12_school.errors.0 }}</div>
+                                    {% endif %}
+                                </div>
+
+                                <!-- Class XII Percentage -->
+                                <div class="col-md-5">
+                                    <label for="{{ form.class_12_percentage.id_for_label }}" class="form-label fw-bold">
+                                        <i class="bi bi-percent me-1 text-primary"></i>Class XII Percentage (%) <span class="text-danger">*</span>
+                                    </label>
+                                    {{ form.class_12_percentage }}
+                                    <div id="c12-cutoff-hint" class="form-text small text-muted">Must meet college cutoff.</div>
+                                    {% if form.class_12_percentage.errors %}
+                                        <div class="text-danger small mt-1">{{ form.class_12_percentage.errors.0 }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr class="my-4">
+
+                        <!-- ============================================== -->
+                        <!-- SECTION 3: STUDENT PERSONAL INFORMATION        -->
+                        <!-- ============================================== -->
+                        <div class="mb-4">
+                            <div class="d-flex align-items-center gap-2 mb-3">
+                                <span class="badge bg-primary rounded-circle p-2" style="width: 28px; height: 28px; display: inline-flex; align-items: center; justify-content: center;">3</span>
+                                <h5 class="fw-bold text-dark mb-0">Student Personal Information</h5>
+                            </div>
+
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label for="{{ form.first_name.id_for_label }}" class="form-label fw-bold">
+                                        <i class="bi bi-person me-1 text-primary"></i>First Name <span class="text-danger">*</span>
+                                    </label>
+                                    {{ form.first_name }}
+                                    {% if form.first_name.errors %}
+                                        <div class="text-danger small mt-1">{{ form.first_name.errors.0 }}</div>
+                                    {% endif %}
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label for="{{ form.last_name.id_for_label }}" class="form-label fw-bold">
+                                        <i class="bi bi-person me-1 text-primary"></i>Last Name <span class="text-danger">*</span>
+                                    </label>
+                                    {{ form.last_name }}
+                                    {% if form.last_name.errors %}
+                                        <div class="text-danger small mt-1">{{ form.last_name.errors.0 }}</div>
+                                    {% endif %}
+                                </div>
+
+                                <div class="col-12">
+                                    <label for="{{ form.full_name.id_for_label }}" class="form-label fw-bold">
+                                        <i class="bi bi-person-badge me-1 text-primary"></i>Full Legal Name (as per 10th Certificate)
+                                    </label>
+                                    {{ form.full_name }}
+                                    {% if form.full_name.errors %}
+                                        <div class="text-danger small mt-1">{{ form.full_name.errors.0 }}</div>
+                                    {% endif %}
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label for="{{ form.email.id_for_label }}" class="form-label fw-bold">
+                                        <i class="bi bi-envelope me-1 text-primary"></i>Email Address <span class="text-danger">*</span>
+                                    </label>
+                                    {{ form.email }}
+                                    <div class="form-text small">Your registration confirmation slip will be sent here.</div>
+                                    {% if form.email.errors %}
+                                        <div class="text-danger small mt-1">{{ form.email.errors.0 }}</div>
+                                    {% endif %}
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label for="{{ form.phone.id_for_label }}" class="form-label fw-bold">
+                                        <i class="bi bi-telephone me-1 text-primary"></i>Mobile Phone Number <span class="text-danger">*</span>
+                                    </label>
+                                    {{ form.phone }}
+                                    <div class="form-text small">10-digit mobile number for SMS notifications.</div>
+                                    {% if form.phone.errors %}
+                                        <div class="text-danger small mt-1">{{ form.phone.errors.0 }}</div>
+                                    {% endif %}
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label for="{{ form.father_or_guardian_name.id_for_label }}" class="form-label fw-bold">
+                                        <i class="bi bi-people me-1 text-primary"></i>Father / Guardian Name <span class="text-danger">*</span>
+                                    </label>
+                                    {{ form.father_or_guardian_name }}
+                                    {% if form.father_or_guardian_name.errors %}
+                                        <div class="text-danger small mt-1">{{ form.father_or_guardian_name.errors.0 }}</div>
+                                    {% endif %}
+                                </div>
+
+                                <div class="col-md-3">
+                                    <label for="{{ form.date_of_birth.id_for_label }}" class="form-label fw-bold">
+                                        <i class="bi bi-calendar-date me-1 text-primary"></i>Date of Birth
+                                    </label>
+                                    {{ form.date_of_birth }}
+                                    {% if form.date_of_birth.errors %}
+                                        <div class="text-danger small mt-1">{{ form.date_of_birth.errors.0 }}</div>
+                                    {% endif %}
+                                </div>
+
+                                <div class="col-md-3">
+                                    <label for="{{ form.gender.id_for_label }}" class="form-label fw-bold">
+                                        <i class="bi bi-gender-ambiguous me-1 text-primary"></i>Gender <span class="text-danger">*</span>
+                                    </label>
+                                    {{ form.gender }}
+                                    {% if form.gender.errors %}
+                                        <div class="text-danger small mt-1">{{ form.gender.errors.0 }}</div>
+                                    {% endif %}
+                                </div>
+
+                                <div class="col-12">
+                                    <label for="{{ form.address.id_for_label }}" class="form-label fw-bold">
+                                        <i class="bi bi-geo-alt me-1 text-primary"></i>Residential / Permanent Address
+                                    </label>
+                                    {{ form.address }}
+                                    {% if form.address.errors %}
+                                        <div class="text-danger small mt-1">{{ form.address.errors.0 }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger mt-3">
+                                {% for error in form.non_field_errors %}
+                                    <div><i class="bi bi-exclamation-octagon me-1"></i>{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+
+                        <!-- Submit Button -->
+                        <div class="d-grid mt-4 pt-2">
+                            <button id="submit-registration-btn" type="submit" class="btn btn-primary btn-lg fw-bold shadow-sm py-3">
+                                <i class="bi bi-send-check me-2"></i>Submit Admission Application
+                            </button>
+                            <div id="submit-disabled-reason" class="text-center small text-danger mt-2 d-none">
+                                <i class="bi bi-exclamation-circle me-1"></i>Please ensure all required fields and minimum percentage criteria are satisfied to submit.
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const collegeSelect = document.getElementById('id_college');
+    const courseSelect = document.getElementById('id_course');
+    const courseHelpText = document.getElementById('course-help-text');
+    const liveSummary = document.getElementById('live-course-summary');
+    const liveCourseName = document.getElementById('live-course-name');
+    const liveCourseDetails = document.getElementById('live-course-details');
+    const initialCourseId = "{{ request.GET.course|default:'' }}";
+
+    // Eligibility elements
+    const collegeNameEl = document.getElementById('eligibility-college-name');
+    const criteriaMin10thEl = document.getElementById('criteria-min-10th');
+    const criteriaMin12thEl = document.getElementById('criteria-min-12th');
+    const feedbackCard = document.getElementById('live-eligibility-feedback');
+    const statusIcon = document.getElementById('eligibility-status-icon');
+    const statusTitle = document.getElementById('eligibility-status-title');
+    const statusDesc = document.getElementById('eligibility-status-desc');
+    const submitBtn = document.getElementById('submit-registration-btn');
+    const submitReason = document.getElementById('submit-disabled-reason');
+
+    const inputC10 = document.getElementById('id_class_10_percentage');
+    const inputC12 = document.getElementById('id_class_12_percentage');
+    const c10Hint = document.getElementById('c10-cutoff-hint');
+    const c12Hint = document.getElementById('c12-cutoff-hint');
+
+    // Auto-fill full name from first & last name
+    const firstNameInput = document.getElementById('id_first_name');
+    const lastNameInput = document.getElementById('id_last_name');
+    const fullNameInput = document.getElementById('id_full_name');
+
+    function syncFullName() {
+        if (firstNameInput && lastNameInput && fullNameInput) {
+            const f = firstNameInput.value.trim();
+            const l = lastNameInput.value.trim();
+            if (f || l) {
+                fullNameInput.value = `${f} ${l}`.trim();
+            }
+        }
+    }
+    if (firstNameInput) firstNameInput.addEventListener('input', syncFullName);
+    if (lastNameInput) lastNameInput.addEventListener('input', syncFullName);
+
+    // Initial eligibility state from backend if college was preselected
+    let currentMin10th = {% if target_college %}{{ target_college.min_10th_percentage }}{% else %}null{% endif %};
+    let currentMin12th = {% if target_college %}{{ target_college.min_12th_percentage }}{% else %}null{% endif %};
+    let currentCollegeName = "{% if target_college %}{{ target_college.name|escapejs }}{% endif %}";
+    let fetchedCoursesMap = {};
+
+    function checkEligibility() {
+        const c10Val = parseFloat(inputC10 ? inputC10.value : NaN);
+        const c12Val = parseFloat(inputC12 ? inputC12.value : NaN);
+
+        if (currentMin10th === null || currentMin12th === null) {
+            feedbackCard.className = "alert alert-secondary border-0 rounded-3 mb-0 d-flex align-items-center gap-3";
+            statusIcon.className = "bi bi-info-circle fs-3 text-secondary flex-shrink-0";
+            statusTitle.textContent = "Please select a target college above";
+            statusDesc.textContent = "Choose a college to inspect minimum qualifying cutoffs.";
+            submitBtn.disabled = false;
+            if (submitReason) submitReason.classList.add('d-none');
+            return;
+        }
+
+        const has10 = !isNaN(c10Val);
+        const has12 = !isNaN(c12Val);
+
+        if (!has10 || !has12) {
+            feedbackCard.className = "alert alert-info border-0 rounded-3 mb-0 d-flex align-items-center gap-3";
+            statusIcon.className = "bi bi-info-circle-fill fs-3 text-primary flex-shrink-0";
+            statusTitle.textContent = `Admission Criteria for ${currentCollegeName || 'Target College'}`;
+            statusDesc.textContent = `Requires at least ${currentMin10th}% in Class X and ${currentMin12th}% in Class XII. Please enter your marks below.`;
+            submitBtn.disabled = false;
+            if (submitReason) submitReason.classList.add('d-none');
+            return;
+        }
+
+        const pass10 = c10Val >= currentMin10th;
+        const pass12 = c12Val >= currentMin12th;
+
+        if (inputC10) {
+            if (pass10) {
+                inputC10.classList.remove('is-invalid');
+                inputC10.classList.add('is-valid');
+                if (c10Hint) c10Hint.innerHTML = `<span class="text-success"><i class="bi bi-check-circle me-1"></i>Eligible (${c10Val}% &ge; ${currentMin10th}%)</span>`;
+            } else {
+                inputC10.classList.remove('is-valid');
+                inputC10.classList.add('is-invalid');
+                if (c10Hint) c10Hint.innerHTML = `<span class="text-danger"><i class="bi bi-x-circle me-1"></i>Below cutoff (${c10Val}% &lt; ${currentMin10th}%)</span>`;
+            }
+        }
+
+        if (inputC12) {
+            if (pass12) {
+                inputC12.classList.remove('is-invalid');
+                inputC12.classList.add('is-valid');
+                if (c12Hint) c12Hint.innerHTML = `<span class="text-success"><i class="bi bi-check-circle me-1"></i>Eligible (${c12Val}% &ge; ${currentMin12th}%)</span>`;
+            } else {
+                inputC12.classList.remove('is-valid');
+                inputC12.classList.add('is-invalid');
+                if (c12Hint) c12Hint.innerHTML = `<span class="text-danger"><i class="bi bi-x-circle me-1"></i>Below cutoff (${c12Val}% &lt; ${currentMin12th}%)</span>`;
+            }
+        }
+
+        if (pass10 && pass12) {
+            feedbackCard.className = "alert alert-success border-0 rounded-3 mb-0 d-flex align-items-center gap-3";
+            statusIcon.className = "bi bi-check-circle-fill fs-3 text-success flex-shrink-0";
+            statusTitle.textContent = "✅ Academic Eligibility Satisfied!";
+            statusDesc.textContent = `Your Class X (${c10Val}%) and Class XII (${c12Val}%) percentages satisfy the minimum requirements for ${currentCollegeName}. You are eligible to apply.`;
+            submitBtn.disabled = false;
+            if (submitReason) submitReason.classList.add('d-none');
+        } else {
+            feedbackCard.className = "alert alert-danger border-0 rounded-3 mb-0 d-flex align-items-center gap-3";
+            statusIcon.className = "bi bi-x-circle-fill fs-3 text-danger flex-shrink-0";
+            statusTitle.textContent = "❌ Ineligible for Admission at this College";
+
+            let reasons = [];
+            if (!pass10) reasons.push(`Class X requires at least ${currentMin10th}% (you entered ${c10Val}%)`);
+            if (!pass12) reasons.push(`Class XII requires at least ${currentMin12th}% (you entered ${c12Val}%)`);
+
+            statusDesc.textContent = `Criteria not met: ${reasons.join(' and ')}. Applications below required cutoff cannot be accepted.`;
+            submitBtn.disabled = true;
+            if (submitReason) {
+                submitReason.textContent = `Cannot submit: Academic percentage does not meet the university's criteria.`;
+                submitReason.classList.remove('d-none');
+            }
+        }
+    }
+
+    if (inputC10) inputC10.addEventListener('input', checkEligibility);
+    if (inputC12) inputC12.addEventListener('input', checkEligibility);
+
+    function updateLiveSummary() {
+        const selectedCourseId = courseSelect.value;
+        if (selectedCourseId && fetchedCoursesMap[selectedCourseId]) {
+            const c = fetchedCoursesMap[selectedCourseId];
+            liveCourseName.textContent = c.name;
+            liveCourseDetails.textContent = `Program Duration: ${c.duration_years} Years | Annual Tuition: ₹${Number(c.fee).toLocaleString('en-IN')} | Seats: ${c.seats}`;
+            liveSummary.classList.remove('d-none');
+        } else {
+            liveSummary.classList.add('d-none');
+        }
+    }
+
+    courseSelect.addEventListener('change', updateLiveSummary);
+
+    function loadCollegeData(collegeId, preselectCourseId) {
+        if (!collegeId) {
+            courseSelect.innerHTML = '<option value="">-- Select Course (choose college first) --</option>';
+            courseSelect.disabled = true;
+            if (courseHelpText) courseHelpText.textContent = "Please select a college to see available courses.";
+            liveSummary.classList.add('d-none');
+            currentMin10th = null;
+            currentMin12th = null;
+            currentCollegeName = "";
+            if (collegeNameEl) collegeNameEl.textContent = "Select a College to View Admission Cutoffs";
+            if (criteriaMin10thEl) criteriaMin10thEl.textContent = "--%";
+            if (criteriaMin12thEl) criteriaMin12thEl.textContent = "--%";
+            checkEligibility();
+            return;
+        }
+
+        courseSelect.disabled = true;
+        courseSelect.innerHTML = '<option value="">Loading courses and cutoffs...</option>';
+        if (courseHelpText) courseHelpText.textContent = "Fetching accredited courses and admission criteria...";
+
+        fetch(`/courses/by-college/${collegeId}/`)
+            .then(response => {
+                if (!response.ok) throw new Error("Failed to fetch college details");
+                return response.json();
+            })
+            .then(data => {
+                // Update criteria indicators
+                currentMin10th = data.min_10th_percentage;
+                currentMin12th = data.min_12th_percentage;
+                currentCollegeName = data.college_name || "";
+
+                if (collegeNameEl) collegeNameEl.textContent = data.college_name;
+                if (criteriaMin10thEl) criteriaMin10thEl.textContent = `${data.min_10th_percentage}%`;
+                if (criteriaMin12thEl) criteriaMin12thEl.textContent = `${data.min_12th_percentage}%`;
+
+                // Update courses dropdown
+                courseSelect.innerHTML = '<option value="">-- Select Academic Course --</option>';
+                fetchedCoursesMap = {};
+
+                if (data.courses && data.courses.length > 0) {
+                    data.courses.forEach(c => {
+                        fetchedCoursesMap[c.id] = c;
+                        const opt = document.createElement('option');
+                        opt.value = c.id;
+                        opt.textContent = `${c.name} (${c.duration_years} yrs - ₹${Number(c.fee).toLocaleString('en-IN')})`;
+                        if (preselectCourseId && String(c.id) === String(preselectCourseId)) {
+                            opt.selected = true;
+                        }
+                        courseSelect.appendChild(opt);
+                    });
+                    courseSelect.disabled = false;
+                    if (courseHelpText) courseHelpText.textContent = `${data.courses.length} accredited courses available for admission.`;
+                    updateLiveSummary();
+                } else {
+                    courseSelect.innerHTML = '<option value="">No courses currently available for this college</option>';
+                    if (courseHelpText) courseHelpText.textContent = "This college currently has no courses listed in database.";
+                    liveSummary.classList.add('d-none');
+                }
+
+                checkEligibility();
+            })
+            .catch(err => {
+                console.error("Fetch error:", err);
+                courseSelect.innerHTML = '<option value="">Error loading courses</option>';
+                if (courseHelpText) courseHelpText.textContent = "Could not load courses. Please check connection.";
+                liveSummary.classList.add('d-none');
+            });
+    }
+
+    if (collegeSelect) {
+        collegeSelect.addEventListener('change', function () {
+            loadCollegeData(this.value, null);
+        });
+
+        if (collegeSelect.value) {
+            loadCollegeData(collegeSelect.value, initialCourseId);
+        }
+    }
+});
+</script>
+{% endblock %}

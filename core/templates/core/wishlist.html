@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% load core_extras %}
+
+{% block title %}My Saved Universities - College Clue{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Header -->
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 pb-2 border-bottom">
+        <div>
+            <h2 class="fw-bold mb-1"><i class="bi bi-heart-fill text-danger me-2"></i>My Saved Wishlist</h2>
+            <p class="text-muted small mb-0">Institutes and universities you have bookmarked for future reference.</p>
+        </div>
+        <div class="mt-3 mt-md-0">
+            <span class="badge bg-danger-subtle text-danger fs-6 px-3 py-2 rounded-pill">
+                {{ wishlist_items|length }} Saved
+            </span>
+        </div>
+    </div>
+
+    {% if wishlist_items %}
+        <div class="row g-4">
+            {% for item in wishlist_items %}
+                <div class="col-md-6 col-lg-4">
+                    <div class="card h-100 border-0 shadow-sm rounded-4 university-card">
+                        <div class="card-body p-4 d-flex flex-column">
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                {% if item.university.logo %}
+                                    <img src="{{ item.university.logo.url }}" alt="{{ item.university.name }}" class="rounded-3 shadow-sm" style="width: 50px; height: 50px; object-fit: contain;">
+                                {% else %}
+                                    <div class="bg-primary-subtle text-primary rounded-3 d-flex align-items-center justify-content-center fw-bold fs-4" style="width: 50px; height: 50px;">
+                                        {{ item.university.name|slice:":1" }}
+                                    </div>
+                                {% endif %}
+                                <span class="badge bg-warning text-dark"><i class="bi bi-star-fill me-1"></i>{{ item.university.rating }}</span>
+                            </div>
+
+                            <h5 class="fw-bold text-dark mb-1">
+                                <a href="{% url 'university_detail' slug=item.university.slug %}" class="text-decoration-none text-dark">
+                                    {{ item.university.name }}
+                                </a>
+                            </h5>
+                            <p class="text-muted small mb-2"><i class="bi bi-geo-alt me-1"></i>{{ item.university.city }}, {{ item.university.state }}</p>
+                            <p class="text-secondary small mb-3 flex-grow-1">{{ item.university.description|truncatewords:15 }}</p>
+
+                            <div class="d-flex justify-content-between align-items-center pt-3 border-top mt-auto">
+                                <a href="{% url 'wishlist_toggle' item.university.id %}" class="btn btn-outline-danger btn-sm">
+                                    <i class="bi bi-trash3 me-1"></i>Remove
+                                </a>
+                                <a href="{% url 'university_detail' slug=item.university.slug %}" class="btn btn-primary btn-sm">
+                                    View Campus <i class="bi bi-arrow-right ms-1"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="card border-0 shadow-sm rounded-4 p-5 text-center my-4">
+            <div class="mb-3 text-muted">
+                <i class="bi bi-heartbreak display-3 text-danger opacity-50"></i>
+            </div>
+            <h4 class="fw-bold text-dark">Your Wishlist is Empty</h4>
+            <p class="text-muted mx-auto" style="max-width: 450px;">
+                You haven't bookmarked any universities yet. Click the heart icon on any university card to save it here for fast access.
+            </p>
+            <div>
+                <a href="{% url 'university_list' %}" class="btn btn-primary px-4 fw-semibold">
+                    <i class="bi bi-building me-2"></i>Explore Universities
+                </a>
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

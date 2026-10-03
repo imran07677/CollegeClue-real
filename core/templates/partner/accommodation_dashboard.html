@@ -1,0 +1,186 @@
+{% extends "base.html" %}
+
+{% block title %}Accommodation Partner Portal - College Clue{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Header Banner -->
+    <div class="card border-0 shadow-sm rounded-4 mb-4 bg-gradient bg-info text-white p-4" style="background: linear-gradient(135deg, #0d6efd 0%, #0dcaf0 100%) !important;">
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+            <div>
+                <span class="badge bg-warning text-dark px-3 py-1 rounded-pill fw-bold mb-2">Housing Provider Portal</span>
+                <h2 class="fw-bold text-white mb-1">
+                    <i class="bi bi-house-door-fill me-2 text-warning"></i>PG & Student Hostel Partner Dashboard
+                </h2>
+                <p class="text-white-50 mb-0 small">
+                    Submit student accommodations, hostels, and PGs. Submissions are verified by the platform admin before being made available to students.
+                </p>
+            </div>
+            <div>
+                <a href="{% url 'accommodation_submit' %}" class="btn btn-warning text-dark fw-bold px-4 py-2 rounded-pill shadow-sm">
+                    <i class="bi bi-plus-circle-fill me-2"></i>List New PG / Hostel
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Stats -->
+    <div class="row g-3 mb-4">
+        <div class="col-sm-6 col-lg-3">
+            <div class="card border-0 shadow-sm rounded-4 p-3 bg-white">
+                <div class="d-flex align-items-center">
+                    <div class="bg-primary-subtle text-primary p-3 rounded-circle me-3">
+                        <i class="bi bi-houses fs-3"></i>
+                    </div>
+                    <div>
+                        <div class="text-muted small fw-semibold">Total Listings</div>
+                        <h3 class="fw-bold mb-0 text-dark">{{ stats.total }}</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-lg-3">
+            <div class="card border-0 shadow-sm rounded-4 p-3 bg-white">
+                <div class="d-flex align-items-center">
+                    <div class="bg-warning-subtle text-warning-emphasis p-3 rounded-circle me-3">
+                        <i class="bi bi-hourglass-split fs-3"></i>
+                    </div>
+                    <div>
+                        <div class="text-muted small fw-semibold">Pending Review</div>
+                        <h3 class="fw-bold mb-0 text-warning">{{ stats.pending }}</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-lg-3">
+            <div class="card border-0 shadow-sm rounded-4 p-3 bg-white">
+                <div class="d-flex align-items-center">
+                    <div class="bg-success-subtle text-success p-3 rounded-circle me-3">
+                        <i class="bi bi-check-circle-fill fs-3"></i>
+                    </div>
+                    <div>
+                        <div class="text-muted small fw-semibold">Approved & Live</div>
+                        <h3 class="fw-bold mb-0 text-success">{{ stats.approved }}</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-lg-3">
+            <div class="card border-0 shadow-sm rounded-4 p-3 bg-white">
+                <div class="d-flex align-items-center">
+                    <div class="bg-danger-subtle text-danger p-3 rounded-circle me-3">
+                        <i class="bi bi-x-circle-fill fs-3"></i>
+                    </div>
+                    <div>
+                        <div class="text-muted small fw-semibold">Rejected</div>
+                        <h3 class="fw-bold mb-0 text-danger">{{ stats.rejected }}</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Submitted Accommodations List -->
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+        <div class="card-header bg-white py-3 px-4 d-flex justify-content-between align-items-center border-bottom">
+            <h5 class="fw-bold mb-0 text-dark">
+                <i class="bi bi-list-check me-2 text-primary"></i>Your Submitted Accommodations
+            </h5>
+            <span class="badge bg-secondary-subtle text-secondary rounded-pill">{{ stats.total }} properties</span>
+        </div>
+        <div class="card-body p-4">
+            {% if submitted_accommodations %}
+                <div class="row g-4">
+                    {% for acc in submitted_accommodations %}
+                        <div class="col-md-6 col-lg-4">
+                            <div class="card h-100 border rounded-4 shadow-sm overflow-hidden bg-light">
+                                <div class="card-body p-4">
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <span class="badge bg-info-subtle text-info-emphasis rounded-pill">{{ acc.get_type_display }}</span>
+                                        {% if acc.status == 'Approved' %}
+                                            <span class="badge bg-success rounded-pill"><i class="bi bi-check-circle me-1"></i>Approved</span>
+                                        {% elif acc.status == 'Rejected' %}
+                                            <span class="badge bg-danger rounded-pill"><i class="bi bi-x-circle me-1"></i>Rejected</span>
+                                        {% else %}
+                                            <span class="badge bg-warning text-dark rounded-pill"><i class="bi bi-hourglass-split me-1"></i>Pending</span>
+                                        {% endif %}
+                                    </div>
+
+                                    <h5 class="fw-bold text-dark mb-1">{{ acc.name }}</h5>
+                                    <p class="text-muted small mb-3">
+                                        <i class="bi bi-geo-alt-fill text-danger me-1"></i>{{ acc.city }}
+                                    </p>
+
+                                    <div class="bg-white p-3 rounded-3 border mb-3">
+                                        <div class="d-flex justify-content-between mb-1">
+                                            <span class="text-muted small">Monthly Rent:</span>
+                                            <span class="fw-bold text-primary">₹{{ acc.rent }}</span>
+                                        </div>
+                                        <div class="d-flex justify-content-between mb-1">
+                                            <span class="text-muted small">Room Type:</span>
+                                            <span class="fw-semibold text-dark small">{{ acc.get_room_type_display }}</span>
+                                        </div>
+                                        {% if acc.college %}
+                                            <div class="d-flex justify-content-between">
+                                                <span class="text-muted small">Campus:</span>
+                                                <span class="fw-semibold text-dark small text-truncate" style="max-width: 140px;">{{ acc.college.name }}</span>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+
+                                    <div class="small text-secondary mb-3">
+                                        <strong>Facilities:</strong> {{ acc.facilities|default:"Standard student amenities"|truncatewords:8 }}
+                                    </div>
+
+                                    {% if acc.admin_notes %}
+                                        <div class="p-2 rounded-2 bg-warning-subtle text-dark small mb-3">
+                                            <strong>Admin Note:</strong> {{ acc.admin_notes }}
+                                        </div>
+                                    {% endif %}
+
+                                    {% if acc.status == 'Approved' %}
+                                        <div class="d-flex flex-column gap-2">
+                                            <div class="d-flex gap-2">
+                                                <a href="{% url 'accommodation_edit' acc.id %}" class="btn btn-sm btn-primary rounded-pill px-3 flex-grow-1 fw-semibold">
+                                                    <i class="bi bi-pencil-square me-1"></i>Manage &amp; Edit
+                                                </a>
+                                                <a href="{% url 'accommodation_detail' acc.id %}" class="btn btn-sm btn-outline-primary rounded-pill px-3" target="_blank" title="View live">
+                                                    <i class="bi bi-box-arrow-up-right"></i>
+                                                </a>
+                                            </div>
+                                            <!-- 1-Click Vacancy Quick Toggle -->
+                                            <form method="post" action="{% url 'accommodation_toggle_vacancy' acc.id %}">
+                                                {% csrf_token %}
+                                                {% if acc.is_available %}
+                                                    <button type="submit" class="btn btn-sm btn-outline-danger w-100 rounded-pill small py-1" title="Click to mark full">
+                                                        <i class="bi bi-check-circle-fill text-success me-1"></i>Vacant &bull; Click to Mark Full
+                                                    </button>
+                                                {% else %}
+                                                    <button type="submit" class="btn btn-sm btn-outline-success w-100 rounded-pill small py-1" title="Click to mark available">
+                                                        <i class="bi bi-slash-circle-fill text-danger me-1"></i>Full &bull; Click to Mark Vacant
+                                                    </button>
+                                                {% endif %}
+                                            </form>
+                                        </div>
+                                    {% else %}
+                                        <div class="text-center small text-muted fst-italic">Under Admin Verification</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="text-center py-5">
+                    <div class="display-5 text-muted mb-3"><i class="bi bi-house-add"></i></div>
+                    <h5 class="fw-bold text-dark">No Accommodation Listings Yet</h5>
+                    <p class="text-muted small mb-4">You have not submitted any PGs or hostels for verification yet. Click below to submit your property details to the admin.</p>
+                    <a href="{% url 'accommodation_submit' %}" class="btn btn-info text-white rounded-pill px-4 fw-bold">
+                        <i class="bi bi-plus-circle-fill me-2"></i>List Your Property
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

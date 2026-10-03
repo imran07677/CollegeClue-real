@@ -1,0 +1,234 @@
+{% extends "base.html" %}
+{% load core_extras %}
+
+{% block title %}My College Applications &amp; Status - College Clue{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Applied Colleges &amp; Status</li>
+        </ol>
+    </nav>
+
+    <!-- Header Banner -->
+    <div class="card border-0 shadow-sm rounded-4 mb-4 text-white p-4 p-md-5" style="background: linear-gradient(135deg, #1e3a8a 0%, #0284c7 100%);">
+        <div class="row align-items-center">
+            <div class="col-lg-8">
+                <span class="badge bg-warning text-dark px-3 py-1 rounded-pill fw-bold mb-2">
+                    <i class="bi bi-file-earmark-check-fill me-1"></i>Official Admission Portal
+                </span>
+                <h1 class="display-6 fw-bold mb-2">My Applied Colleges &amp; Status</h1>
+                <p class="lead mb-0 text-light opacity-90 fs-6">
+                    Track the verification status of your college applications, download official admission slips, and discover verified student accommodations near your allotted campus.
+                </p>
+            </div>
+            <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
+                {% if not request.user.is_authenticated %}
+                    <a href="{% url 'login' %}?next={{ request.get_full_path|urlencode }}" class="btn btn-light fw-bold text-dark px-4 py-2 shadow-sm rounded-pill me-2" title="Log In to View Your Applications">
+                        <i class="bi bi-box-arrow-in-right me-1"></i>Log In
+                    </a>
+                {% endif %}
+                <a href="{% url 'university_list' %}" class="btn btn-warning fw-bold text-dark px-4 py-2 shadow-sm rounded-pill" title="Explore universities and colleges to apply">
+                    <i class="bi bi-mortarboard-fill me-1"></i>New College Application
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Application Status Lookup / Tracker Form -->
+    <div class="card border-0 shadow-sm rounded-4 p-3 mb-4 bg-white">
+        <form method="get" action="{% url 'my_applications' %}" class="row g-2 align-items-center">
+            <div class="col-md-9">
+                <div class="input-group">
+                    <span class="input-group-text bg-light border-0 text-muted ps-3"><i class="bi bi-search"></i></span>
+                    <input type="text" name="q" class="form-control bg-light border-0 shadow-none ps-2" placeholder="Track by Registration UUID (e.g. 89f6ac84...) or Student Email / Phone..." value="{{ search_query }}">
+                </div>
+            </div>
+            <div class="col-md-3 d-flex gap-2">
+                <button type="submit" class="btn btn-primary fw-bold w-100 rounded-3">
+                    <i class="bi bi-search me-1"></i>Track Status
+                </button>
+                {% if search_query %}
+                    <a href="{% url 'my_applications' %}" class="btn btn-outline-secondary rounded-3" title="Clear Search">
+                        <i class="bi bi-x-lg"></i>
+                    </a>
+                {% endif %}
+            </div>
+        </form>
+    </div>
+
+    <!-- Application Results Section -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h5 class="fw-bold text-dark mb-0">
+            <i class="bi bi-card-checklist text-primary me-2"></i>Applications Record
+        </h5>
+        <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-3 py-2 rounded-pill">
+            {{ applications|length }} Application{{ applications|length|pluralize }}
+        </span>
+    </div>
+
+    {% if applications %}
+        <div class="row g-4">
+            {% for app in applications %}
+                <div class="col-12">
+                    <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+                        <div class="card-body p-4 p-md-5">
+                            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-start gap-3 mb-3 border-bottom pb-3">
+                                <div>
+                                    <div class="d-flex flex-wrap align-items-center gap-2 mb-2">
+                                        {% if app.status == 'Confirmed' %}
+                                            <span class="badge bg-success px-3 py-2 rounded-pill fw-bold">
+                                                <i class="bi bi-check-circle-fill me-1"></i>Admission Confirmed
+                                            </span>
+                                        {% elif app.status == 'Cancelled' %}
+                                            <span class="badge bg-danger px-3 py-2 rounded-pill fw-bold">
+                                                <i class="bi bi-x-circle-fill me-1"></i>Application Cancelled
+                                            </span>
+                                        {% else %}
+                                            <span class="badge bg-warning text-dark px-3 py-2 rounded-pill fw-bold">
+                                                <i class="bi bi-clock-history me-1"></i>Under Document Verification (Pending)
+                                            </span>
+                                        {% endif %}
+
+                                        <span class="badge bg-light text-secondary border">
+                                            <i class="bi bi-calendar3 me-1"></i>Submitted on {{ app.created_at|date:"F j, Y, g:i A" }}
+                                        </span>
+                                    </div>
+
+                                    <h4 class="fw-bold text-dark mb-1">
+                                        <a href="{% url 'college_detail' slug=app.college.slug %}" class="text-decoration-none text-dark">
+                                            {{ app.college.name }}
+                                        </a>
+                                    </h4>
+                                    <p class="text-muted small mb-0">
+                                        <i class="bi bi-building me-1 text-primary"></i>{{ app.college.university.name }} &bull; 
+                                        <i class="bi bi-geo-alt-fill me-1 text-danger"></i>{{ app.college.city }}
+                                    </p>
+                                </div>
+
+                                <div class="bg-light rounded-3 p-3 text-md-end border">
+                                    <small class="text-uppercase text-muted d-block fw-semibold" style="font-size: 0.72rem;">Permanent Registration ID</small>
+                                    <span class="font-monospace fw-bold text-primary small d-inline-block">{{ app.registration_id }}</span>
+                                </div>
+                            </div>
+
+                            <div class="row g-3 mb-4">
+                                <div class="col-md-6">
+                                    <div class="bg-light rounded-3 p-3 h-100">
+                                        <small class="text-uppercase text-secondary d-block fw-semibold mb-1" style="font-size: 0.72rem;">Enrolled Program</small>
+                                        <h6 class="fw-bold text-success mb-1">
+                                            <i class="bi bi-book-half me-1"></i>{{ app.course.name }}
+                                        </h6>
+                                        <div class="small text-muted">
+                                            Duration: {{ app.course.duration_years }} Year{{ app.course.duration_years|pluralize }} &bull; Tuition: <strong class="text-dark">{{ app.course.fee|inr }}/yr</strong>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="bg-light rounded-3 p-3 h-100">
+                                        <small class="text-uppercase text-secondary d-block fw-semibold mb-1" style="font-size: 0.72rem;">Applicant Information &amp; Academic Scores</small>
+                                        <div class="fw-bold text-dark mb-1">
+                                            <i class="bi bi-person-fill me-1 text-primary"></i>{{ app.full_name }}
+                                        </div>
+                                        <div class="small text-muted mb-2">
+                                            <i class="bi bi-envelope me-1"></i>{{ app.email }} &bull; <i class="bi bi-telephone me-1"></i>{{ app.phone }}
+                                        </div>
+                                        {% if app.class_10_percentage or app.class_12_percentage %}
+                                            <div class="d-flex flex-wrap gap-2 pt-1 border-top">
+                                                <span class="badge bg-white text-dark border">
+                                                    Class X: <strong>{{ app.class_10_percentage }}%</strong>
+                                                </span>
+                                                <span class="badge bg-white text-dark border">
+                                                    Class XII: <strong>{{ app.class_12_percentage }}%</strong>
+                                                </span>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Action Buttons -->
+                            <div class="d-flex flex-wrap gap-2 justify-content-between align-items-center pt-2">
+                                <div class="d-flex flex-wrap gap-2">
+                                    <a href="{% url 'registration_success' registration_id=app.registration_id %}" class="btn btn-outline-primary btn-sm rounded-pill px-3 fw-semibold">
+                                        <i class="bi bi-printer me-1"></i>View Official Slip
+                                    </a>
+                                    <a href="{% url 'college_detail' slug=app.college.slug %}" class="btn btn-light btn-sm border rounded-pill px-3">
+                                        <i class="bi bi-info-circle me-1"></i>College Details
+                                    </a>
+                                </div>
+                                <div>
+                                    <a href="{% url 'college_accommodations' slug=app.college.slug %}" class="btn btn-outline-success btn-sm rounded-pill px-3 fw-bold">
+                                        <i class="bi bi-houses me-1"></i>Explore PGs Near Campus &rarr;
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        {% if not request.user.is_authenticated and not search_query %}
+            <div class="card border-0 shadow-sm rounded-4 p-5 text-center bg-white">
+                <div class="py-4">
+                    <div class="bg-primary-subtle text-primary rounded-circle d-inline-flex align-items-center justify-content-center p-3 mb-3 shadow-sm" style="width: 72px; height: 72px;">
+                        <i class="bi bi-box-arrow-in-right fs-1"></i>
+                    </div>
+                    <h3 class="fw-bold text-dark mb-2">Please Log In to View Your Applications</h3>
+                    <p class="text-muted mb-4" style="max-width: 520px; margin: 0 auto;">
+                        Sign in with your student account to access your submitted college applications, track live admission approvals, and download official admission slips.
+                    </p>
+                    <div class="d-flex justify-content-center gap-3 flex-wrap">
+                        <a href="{% url 'login' %}?next={{ request.get_full_path|urlencode }}" class="btn btn-warning text-dark px-4 py-2 rounded-pill fw-bold shadow-sm">
+                            <i class="bi bi-box-arrow-in-right me-2"></i>Log In to Student Account
+                        </a>
+                        <a href="{% url 'register' %}" class="btn btn-outline-primary px-4 py-2 rounded-pill fw-semibold">
+                            <i class="bi bi-person-plus me-1"></i>Create Free Account
+                        </a>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <div class="card border-0 shadow-sm rounded-4 p-5 text-center bg-white">
+                <div class="py-4">
+                    <i class="bi bi-file-earmark-person display-3 text-secondary opacity-50 mb-3 d-block"></i>
+                    <h4 class="fw-bold text-dark">
+                        {% if search_query %}
+                            No applications matched "{{ search_query }}"
+                        {% else %}
+                            No college applications found
+                        {% endif %}
+                    </h4>
+                    <p class="text-muted mb-4" style="max-width: 520px; margin: 0 auto;">
+                        {% if search_query %}
+                            Please verify your Registration Tracking UUID or Email Address and try again, or explore available colleges to submit a new application.
+                            {% if not request.user.is_authenticated %}
+                                <br><span class="mt-2 d-inline-block">Already have an account? <a href="{% url 'login' %}?next={{ request.get_full_path|urlencode }}" class="fw-bold text-decoration-none">Log in</a> to view all your applications.</span>
+                            {% endif %}
+                        {% else %}
+                            You haven't submitted any college applications yet. Browse through top Indian institutes and apply directly with transparent fees and verified eligibility.
+                        {% endif %}
+                    </p>
+                    <div class="d-flex justify-content-center gap-2">
+                        {% if not request.user.is_authenticated %}
+                            <a href="{% url 'login' %}?next={{ request.get_full_path|urlencode }}" class="btn btn-warning text-dark px-4 rounded-pill fw-bold shadow-sm">
+                                <i class="bi bi-box-arrow-in-right me-1"></i>Log In
+                            </a>
+                        {% endif %}
+                        <a href="{% url 'home' %}" class="btn btn-primary px-4 rounded-pill fw-semibold">
+                            <i class="bi bi-search me-1"></i>Explore Colleges
+                        </a>
+                        <a href="{% url 'university_list' %}" class="btn btn-outline-secondary px-4 rounded-pill fw-bold" title="Explore universities to submit a new application">
+                            <i class="bi bi-mortarboard-fill me-1"></i>New College Application
+                        </a>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    {% endif %}
+</div>
+{% endblock %}

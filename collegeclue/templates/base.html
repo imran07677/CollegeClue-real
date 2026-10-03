@@ -1,0 +1,2076 @@
+{% load static core_extras %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}College Clue - Explore Universities, Colleges & Accommodation{% endblock %}</title>
+
+    <!-- Bootstrap 5 CSS CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <!-- Bootstrap Icons CDN -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;0,800;0,900;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- Custom Application CSS (Cache-busted) -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}?v=5.0">
+
+    <!-- Brand Logo Styles -->
+    <style id="collegeClueLogoStyles">
+        .cc-navbar-logo-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            filter: drop-shadow(0 2px 8px rgba(245, 158, 11, 0.45));
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .navbar-brand:hover .cc-navbar-logo-badge {
+            transform: scale(1.1) rotate(-3deg);
+        }
+        .cc-nb-orbit {
+            transform-origin: 20px 20px;
+        }
+    </style>
+    <!-- CollegeClue Modern Button & Control System (Sleek Squircle Geometry & Modern SaaS Depth) -->
+    <style id="collegeClueModernButtonStyles">
+        /* Global Button Base & Shape Transformation */
+        .btn,
+        button.btn,
+        a.btn,
+        input[type="submit"].btn,
+        input[type="button"].btn {
+            font-family: inherit;
+            font-weight: 580;
+            letter-spacing: -0.012em;
+            border-radius: 9px !important;
+            padding: 0.52rem 1.15rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.45rem;
+            transition: all 0.16s cubic-bezier(0.16, 1, 0.3, 1) !important;
+            position: relative;
+            text-decoration: none;
+            box-sizing: border-box;
+            border-width: 1px;
+            border-style: solid;
+            border-color: transparent;
+            box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06), 0 0 0 1px rgba(15, 23, 42, 0.04);
+        }
+
+        .btn:hover,
+        button.btn:hover,
+        a.btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px -2px rgba(15, 23, 42, 0.12), 0 2px 4px -1px rgba(15, 23, 42, 0.06);
+        }
+
+        .btn:active,
+        button.btn:active,
+        a.btn:active {
+            transform: translateY(0.5px) scale(0.985) !important;
+            box-shadow: 0 1px 2px rgba(15, 23, 42, 0.1) !important;
+        }
+
+        .btn:focus-visible {
+            outline: none !important;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.35) !important;
+        }
+
+        .btn-sm,
+        button.btn-sm,
+        a.btn-sm {
+            padding: 0.34rem 0.8rem !important;
+            font-size: 0.8125rem !important;
+            border-radius: 7px !important;
+            gap: 0.35rem !important;
+        }
+
+        .btn-lg,
+        button.btn-lg,
+        a.btn-lg {
+            padding: 0.72rem 1.6rem !important;
+            font-size: 1rem !important;
+            border-radius: 11px !important;
+            gap: 0.55rem !important;
+        }
+
+        /* Eliminate AI-looking circular capsule pills across ALL pages and portals */
+        .btn.rounded-pill,
+        a.btn.rounded-pill,
+        button.btn.rounded-pill,
+        .btn-group > .btn.rounded-pill,
+        .rounded-pill.btn {
+            border-radius: 9px !important;
+        }
+        .btn-sm.rounded-pill,
+        a.btn-sm.rounded-pill,
+        button.btn-sm.rounded-pill,
+        .rounded-pill.btn-sm {
+            border-radius: 7px !important;
+        }
+        .btn-lg.rounded-pill,
+        a.btn-lg.rounded-pill,
+        button.btn-lg.rounded-pill,
+        .rounded-pill.btn-lg {
+            border-radius: 11px !important;
+        }
+
+        /* Modern Primary Button (Indigo-Blue Linear Depth) */
+        .btn-primary {
+            background: linear-gradient(180deg, #2563eb 0%, #1d4ed8 100%) !important;
+            border: 1px solid #1d4ed8 !important;
+            color: #ffffff !important;
+            box-shadow: 0 1px 2px rgba(15, 23, 42, 0.12), inset 0 1px 0.5px rgba(255, 255, 255, 0.28) !important;
+        }
+        .btn-primary:hover {
+            background: linear-gradient(180deg, #1d4ed8 0%, #1e40af 100%) !important;
+            border-color: #1e40af !important;
+            color: #ffffff !important;
+            box-shadow: 0 4px 14px -2px rgba(37, 99, 235, 0.42), inset 0 1px 0.5px rgba(255, 255, 255, 0.32) !important;
+        }
+        .btn-primary:active {
+            background: #1e40af !important;
+        }
+
+        /* Modern Success Button (Emerald Tactile) */
+        .btn-success {
+            background: linear-gradient(180deg, #10b981 0%, #059669 100%) !important;
+            border: 1px solid #059669 !important;
+            color: #ffffff !important;
+            box-shadow: 0 1px 2px rgba(16, 185, 129, 0.18), inset 0 1px 0.5px rgba(255, 255, 255, 0.28) !important;
+        }
+        .btn-success:hover {
+            background: linear-gradient(180deg, #059669 0%, #047857 100%) !important;
+            border-color: #047857 !important;
+            color: #ffffff !important;
+            box-shadow: 0 4px 14px -2px rgba(16, 185, 129, 0.4), inset 0 1px 0.5px rgba(255, 255, 255, 0.3) !important;
+        }
+        .btn-success:active {
+            background: #047857 !important;
+        }
+
+        /* Modern Warning Button (Amber Gold) */
+        .btn-warning {
+            background: linear-gradient(180deg, #fbbf24 0%, #f59e0b 100%) !important;
+            border: 1px solid #d97706 !important;
+            color: #0f172a !important;
+            font-weight: 600 !important;
+            box-shadow: 0 1px 2px rgba(245, 158, 11, 0.2), inset 0 1px 0.5px rgba(255, 255, 255, 0.45) !important;
+        }
+        .btn-warning:hover {
+            background: linear-gradient(180deg, #f59e0b 0%, #d97706 100%) !important;
+            border-color: #b45309 !important;
+            color: #0f172a !important;
+            box-shadow: 0 4px 14px -2px rgba(245, 158, 11, 0.45), inset 0 1px 0.5px rgba(255, 255, 255, 0.35) !important;
+        }
+        .btn-warning:active {
+            background: #d97706 !important;
+        }
+
+        /* Modern Danger Button (Crimson) */
+        .btn-danger {
+            background: linear-gradient(180deg, #ef4444 0%, #dc2626 100%) !important;
+            border: 1px solid #dc2626 !important;
+            color: #ffffff !important;
+            box-shadow: 0 1px 2px rgba(239, 68, 68, 0.2), inset 0 1px 0.5px rgba(255, 255, 255, 0.25) !important;
+        }
+        .btn-danger:hover {
+            background: linear-gradient(180deg, #dc2626 0%, #b91c1c 100%) !important;
+            border-color: #b91c1c !important;
+            color: #ffffff !important;
+            box-shadow: 0 4px 14px -2px rgba(239, 68, 68, 0.4) !important;
+        }
+        .btn-danger:active {
+            background: #b91c1c !important;
+        }
+
+        /* Modern Dark Button (Obsidian) */
+        .btn-dark {
+            background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%) !important;
+            border: 1px solid #0f172a !important;
+            color: #ffffff !important;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.22), inset 0 1px 0.5px rgba(255, 255, 255, 0.12) !important;
+        }
+        .btn-dark:hover {
+            background: linear-gradient(180deg, #0f172a 0%, #020617 100%) !important;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px -2px rgba(0, 0, 0, 0.35) !important;
+        }
+
+        /* Modern Light & Neutral Secondary Buttons */
+        .btn-light,
+        .btn-secondary {
+            background: #ffffff !important;
+            border: 1px solid #cbd5e1 !important;
+            color: #1e293b !important;
+            box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.8) !important;
+        }
+        .btn-light:hover,
+        .btn-secondary:hover {
+            background: #f8fafc !important;
+            border-color: #94a3b8 !important;
+            color: #0f172a !important;
+            box-shadow: 0 3px 8px rgba(15, 23, 42, 0.08) !important;
+        }
+
+        /* Modern Outline Glass Variants */
+        .btn-outline-primary {
+            background: rgba(37, 99, 235, 0.05) !important;
+            border: 1px solid rgba(37, 99, 235, 0.35) !important;
+            color: #2563eb !important;
+        }
+        .btn-outline-primary:hover {
+            background: #2563eb !important;
+            border-color: #2563eb !important;
+            color: #ffffff !important;
+            box-shadow: 0 4px 12px -2px rgba(37, 99, 235, 0.35) !important;
+        }
+
+        .btn-outline-secondary {
+            background: rgba(148, 163, 184, 0.08) !important;
+            border: 1px solid #cbd5e1 !important;
+            color: #475569 !important;
+        }
+        .btn-outline-secondary:hover {
+            background: #f1f5f9 !important;
+            border-color: #94a3b8 !important;
+            color: #0f172a !important;
+        }
+
+        .btn-outline-success {
+            background: rgba(16, 185, 129, 0.06) !important;
+            border: 1px solid rgba(16, 185, 129, 0.35) !important;
+            color: #059669 !important;
+        }
+        .btn-outline-success:hover {
+            background: #10b981 !important;
+            border-color: #10b981 !important;
+            color: #ffffff !important;
+            box-shadow: 0 4px 12px -2px rgba(16, 185, 129, 0.35) !important;
+        }
+
+        .btn-outline-danger {
+            background: rgba(239, 68, 68, 0.06) !important;
+            border: 1px solid rgba(239, 68, 68, 0.35) !important;
+            color: #dc2626 !important;
+        }
+        .btn-outline-danger:hover {
+            background: #ef4444 !important;
+            border-color: #ef4444 !important;
+            color: #ffffff !important;
+            box-shadow: 0 4px 12px -2px rgba(239, 68, 68, 0.35) !important;
+        }
+
+        .btn-outline-warning {
+            background: rgba(245, 158, 11, 0.08) !important;
+            border: 1px solid rgba(245, 158, 11, 0.45) !important;
+            color: #b45309 !important;
+        }
+        .btn-outline-warning:hover {
+            background: #f59e0b !important;
+            border-color: #f59e0b !important;
+            color: #0f172a !important;
+            box-shadow: 0 4px 12px -2px rgba(245, 158, 11, 0.35) !important;
+        }
+
+        .btn-outline-light {
+            background: rgba(255, 255, 255, 0.12) !important;
+            border: 1px solid rgba(255, 255, 255, 0.3) !important;
+            color: #ffffff !important;
+            backdrop-filter: blur(8px);
+        }
+        .btn-outline-light:hover {
+            background: rgba(255, 255, 255, 0.22) !important;
+            border-color: rgba(255, 255, 255, 0.5) !important;
+            color: #ffffff !important;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+        }
+
+        /* Modern Segmented Status Tabs & Filter Controls */
+        .d-flex.flex-wrap.gap-2.align-items-center a.btn-sm,
+        .filter-tabs .btn-sm,
+        .status-tab-btn {
+            border-radius: 8px !important;
+            font-weight: 550 !important;
+            padding: 0.38rem 0.85rem !important;
+            letter-spacing: -0.01em !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            gap: 0.4rem !important;
+        }
+
+        /* Modern Badge Tags */
+        .badge {
+            border-radius: 6px !important;
+            font-weight: 600 !important;
+            letter-spacing: 0.015em !important;
+            padding: 0.32em 0.65em !important;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+        }
+        .badge.rounded-pill {
+            border-radius: 6px !important;
+        }
+
+        /* Top Navbar Menu Toggle Button */
+        .btn-menu-toggle {
+            border-radius: 9px !important;
+            background: rgba(255, 255, 255, 0.12) !important;
+            border: 1px solid rgba(255, 255, 255, 0.22) !important;
+            backdrop-filter: blur(10px) !important;
+            padding: 0.42rem 0.95rem !important;
+            font-weight: 600 !important;
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+        }
+        .btn-menu-toggle:hover {
+            background: rgba(255, 255, 255, 0.22) !important;
+            border-color: rgba(255, 255, 255, 0.4) !important;
+            transform: translateY(-1px) !important;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2) !important;
+        }
+    </style>
+    <!-- CollegeClue Non-Overlapping Sidebar Docking Layout Styles (Zero Cache Risk) -->
+    <style id="collegeClueSidebarDockingStyles">
+        :root {
+            --cc-sidebar-width: 290px;
+        }
+        @media (min-width: 768px) and (max-width: 1024px) {
+            :root { --cc-sidebar-width: 260px; }
+        }
+        @media (min-width: 480px) and (max-width: 767.98px) {
+            :root { --cc-sidebar-width: 240px; }
+        }
+        @media (min-width: 380px) and (max-width: 479.98px) {
+            :root { --cc-sidebar-width: 210px; }
+        }
+        @media (max-width: 379.98px) {
+            :root { --cc-sidebar-width: 85vw; }
+        }
+
+        #collegeClueSidebar {
+            width: var(--cc-sidebar-width) !important;
+            max-width: 85vw !important;
+            z-index: 1080 !important;
+            position: fixed !important;
+            top: 0 !important;
+            bottom: 0 !important;
+            left: 0 !important;
+            transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), width 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        }
+
+        body {
+            transition: padding-left 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        }
+
+        @media (min-width: 380px) {
+            body.sidebar-open,
+            html.sidebar-open-init body {
+                padding-left: var(--cc-sidebar-width) !important;
+                margin-left: 0 !important;
+                width: 100% !important;
+                box-sizing: border-box !important;
+            }
+            body.sidebar-open nav.navbar,
+            html.sidebar-open-init body nav.navbar {
+                box-sizing: border-box !important;
+            }
+        }
+    </style>
+    <!-- Immediate Theme & Layout Initialization Script -->
+    <script>
+        (function() {
+            try {
+                // Clear any leftover theme / dark mode overrides
+                localStorage.removeItem('collegeclue_dual_theme_override');
+                localStorage.removeItem('collegeclue_theme');
+                document.documentElement.setAttribute('data-bs-theme', 'light');
+                if (localStorage.getItem('collegeclue_sidebar_open') === 'true' && window.innerWidth >= 380) {
+                    document.documentElement.classList.add('sidebar-open-init');
+                }
+            } catch (e) {}
+        })();
+    </script>
+
+    <!-- ============================================================== -->
+    <!-- CAMPUSCLUE MODERN ACADEMIC SAAS DESIGN SYSTEM                  -->
+    <!-- Matching media_1790975431617.jpg                               -->
+    <!-- Cobalt Blue (#0b57d0), Collegiate Navy (#0f2b5c), Soft Tint    -->
+    <!-- ============================================================== -->
+    <style id="collegeClueSingleThemeSystem">
+        :root {
+            --cc-primary: #0b57d0;
+            --cc-primary-hover: #0842a0;
+            --cc-primary-dark: #0f2b5c;
+            --cc-primary-soft: #e8f0fe;
+            --cc-primary-soft-text: #174ea6;
+            --cc-canvas-bg: #f8fafc;
+            --cc-surface: #ffffff;
+            --cc-border: #eaecf0;
+            --cc-border-subtle: #f1f5f9;
+            --cc-text-main: #0f172a;
+            --cc-text-muted: #64748b;
+            --cc-radius-sm: 8px;
+            --cc-radius-md: 12px;
+            --cc-radius-lg: 16px;
+            --cc-sidebar-width: 250px;
+            /* Legacy fallback aliases */
+            --cc-linen-bg: #f8fafc;
+            --cc-linen-surface: #ffffff;
+            --cc-olive-primary: #0b57d0;
+        }
+
+        /* 1. Global Document Base */
+        html, body {
+            background-color: #f8fafc !important;
+            color: #0f172a !important;
+            font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+            min-height: 100vh;
+        }
+
+        /* 2. Global Headings */
+        h1, h2, h3, h4, h5, h6,
+        .theme-editorial-heading,
+        .hero-title {
+            font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif !important;
+            font-weight: 700 !important;
+            letter-spacing: -0.02em !important;
+            color: #0f172a !important;
+        }
+
+        .theme-editorial-subtitle,
+        .hero-subtitle {
+            color: #64748b !important;
+            font-weight: 400 !important;
+            letter-spacing: normal !important;
+            line-height: 1.6 !important;
+        }
+
+        /* 3. Top Navigation Bar */
+        .navbar,
+        nav.navbar,
+        nav.navbar.bg-primary {
+            background-color: #ffffff !important;
+            background: #ffffff !important;
+            border-bottom: 1px solid #eaecf0 !important;
+            box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04) !important;
+            min-height: 64px;
+        }
+
+        .navbar-brand {
+            color: #0f2b5c !important;
+            font-weight: 700 !important;
+            font-size: 1.25rem !important;
+            letter-spacing: -0.02em !important;
+        }
+
+        .navbar .nav-link {
+            color: #475569 !important;
+            font-weight: 550 !important;
+            font-size: 0.9rem !important;
+        }
+
+        .navbar .nav-link:hover {
+            color: #0b57d0 !important;
+            background-color: #f8fafc !important;
+        }
+
+        .navbar .nav-link.active {
+            color: #0b57d0 !important;
+            background-color: #e8f0fe !important;
+            font-weight: 600 !important;
+        }
+
+        body.sidebar-open .topbar-brand-link {
+            display: none !important;
+        }
+
+        .campusclue-search-input,
+        .navbar #navCollegeSearchInput {
+            background-color: #f1f3f4 !important;
+            border: 1px solid transparent !important;
+            color: #0f172a !important;
+            border-radius: 9999px !important;
+            padding: 0.55rem 1rem 0.55rem 2.6rem !important;
+            font-size: 0.88rem !important;
+            font-weight: 500 !important;
+            transition: all 0.2s ease !important;
+        }
+
+        .campusclue-search-input:focus,
+        .navbar #navCollegeSearchInput:focus {
+            background-color: #ffffff !important;
+            border-color: #0b57d0 !important;
+            box-shadow: 0 0 0 3px rgba(11, 87, 208, 0.15) !important;
+            color: #0f172a !important;
+        }
+
+        /* 4. Unified Action Buttons */
+        .btn-primary,
+        .btn-theme-action,
+        .btn-olive-cta,
+        button[type="submit"].btn-primary,
+        input[type="submit"].btn-primary {
+            background: #0b57d0 !important;
+            background-color: #0b57d0 !important;
+            border: 1px solid #0b57d0 !important;
+            border-color: #0b57d0 !important;
+            color: #ffffff !important;
+            box-shadow: 0 1px 2px rgba(11, 87, 208, 0.2) !important;
+            border-radius: 9px !important;
+            font-weight: 600 !important;
+            transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1) !important;
+        }
+
+        .btn-primary:hover,
+        .btn-theme-action:hover,
+        .btn-olive-cta:hover,
+        button[type="submit"].btn-primary:hover,
+        input[type="submit"].btn-primary:hover {
+            background: #0842a0 !important;
+            background-color: #0842a0 !important;
+            border-color: #0842a0 !important;
+            color: #ffffff !important;
+            transform: translateY(-1px) !important;
+            box-shadow: 0 4px 12px rgba(11, 87, 208, 0.3) !important;
+        }
+
+        .btn-primary:active,
+        .btn-theme-action:active,
+        .btn-olive-cta:active {
+            background: #06327d !important;
+            background-color: #06327d !important;
+            transform: translateY(0.5px) !important;
+        }
+
+        .btn-outline-primary {
+            background: #e8f0fe !important;
+            border: 1px solid #c2e7ff !important;
+            color: #0b57d0 !important;
+            border-radius: 9px !important;
+            font-weight: 600 !important;
+            transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1) !important;
+        }
+
+        .btn-outline-primary:hover {
+            background: #0b57d0 !important;
+            border-color: #0b57d0 !important;
+            color: #ffffff !important;
+            transform: translateY(-1px) !important;
+            box-shadow: 0 4px 12px rgba(11, 87, 208, 0.25) !important;
+        }
+
+        .btn-dark {
+            background: #0f2b5c !important;
+            background-color: #0f2b5c !important;
+            border-color: #0f2b5c !important;
+            color: #ffffff !important;
+        }
+        .btn-dark:hover {
+            background: #091b3a !important;
+            background-color: #091b3a !important;
+            border-color: #091b3a !important;
+            color: #ffffff !important;
+        }
+
+        .btn-light,
+        .btn-secondary {
+            background: #ffffff !important;
+            border: 1px solid #eaecf0 !important;
+            color: #334155 !important;
+            border-radius: 9px !important;
+        }
+
+        .btn-light:hover,
+        .btn-secondary:hover {
+            background: #f8fafc !important;
+            border-color: #cbd5e1 !important;
+            color: #0f172a !important;
+        }
+
+        /* 5. Cards & Containers */
+        .card {
+            background: #ffffff !important;
+            border: 1px solid #eaecf0 !important;
+            box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05) !important;
+            color: #0f172a !important;
+            border-radius: 14px !important;
+        }
+
+        .card-header {
+            background: #ffffff !important;
+            border-bottom: 1px solid #eaecf0 !important;
+            color: #0f172a !important;
+            font-weight: 600 !important;
+        }
+
+        .card-footer {
+            background: #f8fafc !important;
+            border-top: 1px solid #eaecf0 !important;
+        }
+
+        /* Dashboard Banner Cards (University Partner, Housing Partner, Admin) */
+        .card.bg-primary,
+        .card.bg-info,
+        .card.bg-gradient {
+            background: linear-gradient(135deg, #0f2b5c 0%, #0b57d0 100%) !important;
+            border: 1px solid rgba(11, 87, 208, 0.3) !important;
+            color: #ffffff !important;
+        }
+
+        .card.bg-primary h2,
+        .card.bg-info h2,
+        .card.bg-primary h3,
+        .card.bg-info h3 {
+            color: #ffffff !important;
+        }
+
+        /* 6. Form Inputs & Selects */
+        .form-control,
+        .form-select {
+            background-color: #ffffff !important;
+            border: 1px solid #eaecf0 !important;
+            color: #0f172a !important;
+            border-radius: 8px !important;
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            background-color: #ffffff !important;
+            border-color: #0b57d0 !important;
+            box-shadow: 0 0 0 3px rgba(11, 87, 208, 0.15) !important;
+            color: #0f172a !important;
+        }
+
+        /* 7. Tables Across All Portals */
+        .table {
+            color: #0f172a !important;
+            border-color: #eaecf0 !important;
+        }
+
+        .table th {
+            background-color: #f8fafc !important;
+            color: #475569 !important;
+            border-color: #eaecf0 !important;
+            font-weight: 600 !important;
+            font-size: 0.82rem !important;
+            text-transform: uppercase !important;
+            letter-spacing: 0.04em !important;
+        }
+
+        .table td {
+            border-color: #eaecf0 !important;
+            color: #0f172a !important;
+            background-color: transparent !important;
+            vertical-align: middle !important;
+        }
+
+        .table-striped > tbody > tr:nth-of-type(odd) > * {
+            background-color: #f8fafc !important;
+        }
+
+        .table-hover > tbody > tr:hover > * {
+            background-color: #f1f5f9 !important;
+        }
+
+        /* 8. Offcanvas Sidebar (CampusClue White & Blue Style) */
+        #collegeClueSidebar,
+        .offcanvas#collegeClueSidebar {
+            background-color: #ffffff !important;
+            border-right: 1px solid #eaecf0 !important;
+            color: #0f172a !important;
+        }
+
+        #collegeClueSidebar .offcanvas-header {
+            border-bottom: 1px solid #eaecf0 !important;
+            background-color: #ffffff !important;
+            color: #0f172a !important;
+        }
+
+        #collegeClueSidebar .sidebar-section .text-secondary {
+            color: #94a3b8 !important;
+        }
+
+        #collegeClueSidebar .sidebar-nav-item,
+        .sidebar-nav-item {
+            color: #475569 !important;
+            font-size: 0.9rem !important;
+            font-weight: 550 !important;
+            border-radius: 9px !important;
+            border: 1px solid transparent !important;
+            transition: background-color 0.15s ease, color 0.15s ease !important;
+            transform: none !important;
+        }
+
+        #collegeClueSidebar .sidebar-nav-item:hover,
+        .sidebar-nav-item:hover {
+            background-color: #f8fafc !important;
+            color: #0f172a !important;
+            border-color: transparent !important;
+            transform: none !important;
+        }
+
+        #collegeClueSidebar .sidebar-nav-item i,
+        .sidebar-nav-item i {
+            color: #64748b !important;
+            transition: none !important;
+            transform: none !important;
+        }
+
+        #collegeClueSidebar .sidebar-nav-item:hover i,
+        .sidebar-nav-item:hover i {
+            color: #0b57d0 !important;
+        }
+
+        #collegeClueSidebar .sidebar-nav-item.active,
+        .sidebar-nav-item.active {
+            background-color: #e8f0fe !important;
+            background: #e8f0fe !important;
+            color: #0b57d0 !important;
+            border: 1px solid transparent !important;
+            font-weight: 600 !important;
+            transform: none !important;
+        }
+
+        #collegeClueSidebar .sidebar-nav-item.active i,
+        .sidebar-nav-item.active i {
+            color: #0b57d0 !important;
+        }
+
+        #collegeClueSidebar .sidebar-nav-item.active .badge,
+        .sidebar-nav-item.active .badge {
+            background-color: #0b57d0 !important;
+            color: #ffffff !important;
+        }
+
+        /* 8b. Nav Pills & Tabs */
+        .nav-pills {
+            gap: 0.5rem;
+        }
+
+        .nav-pills .nav-link {
+            color: #475569 !important;
+            font-weight: 600 !important;
+            border-radius: 9px !important;
+            padding: 0.48rem 1.15rem !important;
+            border: 1px solid transparent !important;
+            transition: all 0.16s ease !important;
+            transform: none !important;
+        }
+
+        .nav-pills .nav-link:hover {
+            background-color: #f8fafc !important;
+            color: #0f172a !important;
+            border-color: #eaecf0 !important;
+            transform: none !important;
+        }
+
+        .nav-pills .nav-link.active,
+        .nav-pills .nav-link.active.bg-primary {
+            background: #0b57d0 !important;
+            background-color: #0b57d0 !important;
+            color: #ffffff !important;
+            border: 1px solid #0b57d0 !important;
+            box-shadow: 0 2px 6px rgba(11, 87, 208, 0.25) !important;
+            font-weight: 600 !important;
+            transform: none !important;
+        }
+
+        .nav-pills .nav-link.active i {
+            color: #ffffff !important;
+        }
+
+        /* 10. Modals & Dropdown Menus */
+        .modal-content {
+            background-color: #ffffff !important;
+            border: 1px solid #eaecf0 !important;
+            color: #0f172a !important;
+            box-shadow: 0 20px 40px rgba(15, 23, 42, 0.15) !important;
+            border-radius: 16px !important;
+        }
+
+        .modal-header {
+            border-bottom: 1px solid #eaecf0 !important;
+        }
+
+        .modal-footer {
+            border-top: 1px solid #eaecf0 !important;
+        }
+
+        .dropdown-menu {
+            background-color: #ffffff !important;
+            border: 1px solid #eaecf0 !important;
+            box-shadow: 0 10px 28px -4px rgba(15, 23, 42, 0.12) !important;
+            border-radius: 12px !important;
+        }
+
+        .dropdown-item {
+            color: #334155 !important;
+        }
+
+        .dropdown-item:hover {
+            background-color: #f8fafc !important;
+            color: #0b57d0 !important;
+        }
+
+        /* 11. Footer */
+        footer,
+        footer.footer {
+            background-color: #0f172a !important;
+            border-top: 1px solid #1e293b !important;
+            color: #94a3b8 !important;
+        }
+
+        footer a {
+            color: #94a3b8 !important;
+        }
+
+        footer a:hover {
+            color: #ffffff !important;
+        }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body data-confetti="{% block data_confetti %}false{% endblock %}" class="campusclue-theme">
+
+    <!-- ====================================================================== -->
+    <!-- CAMPUSCLUE MODERN ACADEMIC TOPBAR                                      -->
+    <!-- Matching media_1790975431617.jpg                                       -->
+    <!-- ====================================================================== -->
+    <header class="campusclue-topbar sticky-top py-2 px-3 px-md-4 d-flex align-items-center justify-content-between shadow-sm">
+        <div class="d-flex align-items-center gap-2">
+            <!-- Sidebar Drawer Toggle (Hamburger) -->
+            <button id="sidebarToggleBtn" class="btn btn-icon-subtle p-2 d-flex align-items-center justify-content-center text-dark border-0 bg-transparent" type="button" data-bs-toggle="offcanvas" data-bs-target="#collegeClueSidebar" aria-controls="collegeClueSidebar" title="Toggle Navigation Menu">
+                <i class="bi bi-list fs-4"></i>
+            </button>
+            
+            <!-- Brand Link (Shown on mobile, and on desktop when sidebar is closed) -->
+            <a class="navbar-brand d-flex align-items-center gap-2 fw-bold text-dark text-decoration-none topbar-brand-link" href="{% url 'home' %}">
+                <span class="d-inline-flex align-items-center justify-content-center rounded-2" style="width: 28px; height: 28px; background: #0b57d0; color: #ffffff;">
+                    <i class="bi bi-mortarboard-fill fs-6"></i>
+                </span>
+                <span style="color: #0f2b5c; font-size: 1.05rem;">College<span style="color: #0b57d0;">Clue</span></span>
+            </a>
+        </div>
+
+        <!-- Center Search Bar + Filter Trigger (Student Portal & Public; Hidden on Auth, University Partner & Filtered Views) -->
+        {% if not hide_navbar_search and request.resolver_match.url_name != 'accommodation_list' and request.resolver_match.url_name != 'university_list' and request.resolver_match.url_name != 'college_list' and request.resolver_match.url_name != 'login' and request.resolver_match.url_name != 'register' and request.resolver_match.url_name != 'admin_login' %}
+            {% if not request.user.is_authenticated or request.user.profile.role == 'student' or request.user.is_staff or request.user.is_superuser %}
+            <div class="flex-grow-1 mx-2 mx-md-4 d-flex justify-content-center align-items-center gap-2" style="max-width: 580px;">
+                <form action="{% url 'college_list' %}" method="get" class="w-100 position-relative" role="search" id="navbarSearchForm">
+                    <div class="input-group input-group-sm rounded-pill overflow-hidden border shadow-none" style="background-color: #f1f5f9; border-color: #e2e8f0 !important;">
+                        <span class="input-group-text bg-transparent border-0 ps-3 text-muted">
+                            <i class="bi bi-search" style="color: #64748b;"></i>
+                        </span>
+                        <input type="text" id="navCollegeSearchInput" name="search" class="form-control border-0 bg-transparent py-2 shadow-none" placeholder="Search universities, courses, locations..." value="{{ request.GET.search|default:'' }}" aria-label="Search universities, courses, locations" autocomplete="off" style="font-size: 0.88rem; color: #0f172a;">
+                    </div>
+                </form>
+
+                {% if request.resolver_match.url_name != 'home' %}
+                <button type="button" class="btn btn-outline-secondary btn-sm rounded-pill px-3 py-1 fw-semibold d-inline-flex align-items-center gap-1 shadow-sm text-nowrap flex-shrink-0" data-bs-toggle="modal" data-bs-target="#searchFilterModal" title="Filter by Location, Course &amp; Budget" style="font-size: 0.82rem; border-color: #cbd5e1; color: #334155; background: #ffffff;">
+                    <i class="bi bi-funnel-fill text-primary"></i>
+                    <span>Filter</span>
+                    {% if request.GET.city or request.GET.course or request.GET.max_fee %}
+                        <span class="badge bg-primary text-white rounded-pill ms-1" style="font-size: 0.65rem;">Active</span>
+                    {% endif %}
+                </button>
+                {% endif %}
+            </div>
+            {% endif %}
+        {% endif %}
+
+        <!-- Right Action Controls (Location, Wishlist, Notification Bell, User Login/Profile) -->
+        <ul class="navbar-nav ms-auto align-items-center flex-row flex-wrap gap-2">
+            <!-- Filter button fallback on non-home pages if search input is hidden -->
+            {% if request.resolver_match.url_name != 'home' and request.resolver_match.url_name == 'college_list' and not request.user.profile.role == 'university' and not request.user.profile.role == 'accommodation' %}
+            <li class="nav-item">
+                <button type="button" class="btn btn-outline-secondary btn-sm rounded-pill px-3 py-1 fw-semibold d-inline-flex align-items-center gap-1 shadow-sm text-nowrap flex-shrink-0" data-bs-toggle="modal" data-bs-target="#searchFilterModal" title="Filter by Location, Course &amp; Budget" style="font-size: 0.82rem; border-color: #cbd5e1; color: #334155; background: #ffffff;">
+                    <i class="bi bi-funnel-fill text-primary"></i>
+                    <span>Filter</span>
+                    {% if request.GET.city or request.GET.course or request.GET.max_fee %}
+                        <span class="badge bg-primary text-white rounded-pill ms-1" style="font-size: 0.65rem;">Active</span>
+                    {% endif %}
+                </button>
+            </li>
+            {% endif %}
+
+            <!-- Location Dropdown: India -->
+            <li class="nav-item dropdown d-none d-sm-block">
+                <button class="btn btn-sm btn-light border-0 d-flex align-items-center gap-1 px-3 py-1 text-secondary rounded-pill" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="background-color: #f1f5f9; font-size: 0.84rem; color: #334155;">
+                    <i class="bi bi-geo-alt-fill text-danger" style="font-size: 0.82rem;"></i>
+                    <span class="fw-semibold text-dark">India</span>
+                    <i class="bi bi-chevron-down ms-1 text-muted" style="font-size: 0.68rem;"></i>
+                </button>
+                <ul class="dropdown-menu shadow-sm border-0 rounded-3 mt-1 py-1" style="min-width: 140px; font-size: 0.85rem;">
+                    <li><a class="dropdown-item active" href="#"><i class="bi bi-check2 me-1"></i>India</a></li>
+                    <li><a class="dropdown-item" href="#">All Regions</a></li>
+                </ul>
+            </li>
+
+            <!-- Saved Colleges / Wishlist Quick Icon -->
+            <li class="nav-item">
+                <a href="{% url 'wishlist' %}" class="btn btn-sm btn-icon-subtle p-2 position-relative rounded-circle text-secondary d-flex align-items-center justify-content-center text-decoration-none" title="Saved Colleges" style="width: 36px; height: 36px; background-color: #f1f5f9;">
+                    <i class="bi bi-heart text-secondary fs-6"></i>
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger wishlist-count-badge {% if not wishlist_count %}d-none{% endif %}" style="font-size: 0.62rem; padding: 0.25em 0.45em;">
+                        {{ wishlist_count|default:0 }}
+                    </span>
+                </a>
+            </li>
+
+            <!-- Notification Bell -->
+            <li class="nav-item">
+                <button class="btn btn-sm btn-icon-subtle p-2 position-relative rounded-circle text-secondary d-flex align-items-center justify-content-center" type="button" title="Notifications" style="width: 36px; height: 36px; background-color: #f1f5f9;">
+                    <i class="bi bi-bell text-secondary fs-6"></i>
+                    {% if partner_pending_applications_count or applied_count %}
+                        <span class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle">
+                            <span class="visually-hidden">New alerts</span>
+                        </span>
+                    {% endif %}
+                </button>
+            </li>
+
+            <!-- Staff / Admin shortcut if logged in as staff -->
+            {% if request.user.is_staff or request.user.is_superuser %}
+            <li class="nav-item">
+                <a href="{% url 'admin_moderation' %}" class="btn btn-sm btn-outline-warning rounded-pill px-2 py-1 d-none d-md-inline-flex align-items-center gap-1" style="font-size: 0.8rem;" title="Moderation &amp; Approval Center">
+                    <i class="bi bi-shield-check"></i>
+                    <span>Moderation</span>
+                </a>
+            </li>
+            {% endif %}
+
+            <!-- User Auth Pill -->
+            {% if request.user.is_authenticated %}
+                <li class="nav-item dropdown">
+                    <button class="btn btn-sm btn-light border-0 d-flex align-items-center gap-2 px-2 py-1 rounded-pill shadow-none" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="background-color: #f1f5f9;">
+                        <div class="rounded-circle d-flex align-items-center justify-content-center text-white fw-bold shadow-sm" style="width: 28px; height: 28px; font-size: 0.8rem; background: #0b57d0;">
+                            {{ request.user.first_name|default:request.user.username|slice:":1"|upper }}
+                        </div>
+                        <span class="fw-semibold small text-dark d-none d-md-inline" style="max-width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                            {{ request.user.first_name|default:request.user.username }}
+                        </span>
+                        <i class="bi bi-chevron-down text-muted" style="font-size: 0.68rem;"></i>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 rounded-3 mt-2 p-2" style="min-width: 220px;">
+                        <li class="px-2 py-1">
+                            <div class="fw-bold text-dark small">{{ request.user.username }}</div>
+                            <span class="badge rounded-pill small" style="background: #e8f0fe; color: #0b57d0;">{{ request.user.profile.get_role_display|default:"Student" }}</span>
+                        </li>
+                        <li><hr class="dropdown-divider my-2"></li>
+                        <li>
+                            <a class="dropdown-item py-2 rounded-2 text-danger small fw-semibold d-flex align-items-center" href="{% url 'logout' %}">
+                                <i class="bi bi-box-arrow-right me-2"></i>Log Out
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            {% else %}
+                <li class="nav-item">
+                    <a href="{% url 'login' %}" class="btn btn-sm d-inline-flex align-items-center gap-2 px-3 py-1 rounded-pill fw-semibold border-0" style="background-color: #0b57d0; color: #ffffff !important; font-size: 0.85rem;" title="Sign In">
+                        <i class="bi bi-person-fill"></i>
+                        <span>Login</span>
+                    </a>
+                </li>
+            {% endif %}
+        </ul>
+    </header>
+
+    <!-- ====================================================================== -->
+    <!-- SEARCH & FILTER MODAL (Location, Courses, Budget)                     -->
+    <!-- ====================================================================== -->
+    <div class="modal fade" id="searchFilterModal" tabindex="-1" aria-labelledby="searchFilterModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content rounded-4 border-0 shadow-lg" style="background-color: #ffffff; color: #1e293b;">
+                <div class="modal-header border-0 pb-0 pt-4 px-4">
+                    <div class="d-flex align-items-center gap-2">
+                        <div class="bg-warning-subtle text-warning-emphasis p-2 rounded-circle d-flex align-items-center justify-content-center" style="width: 44px; height: 44px;">
+                            <i class="bi bi-funnel-fill fs-5 text-warning"></i>
+                        </div>
+                        <div>
+                            <h5 class="modal-title fw-bold text-dark mb-0" id="searchFilterModalLabel">Filter Institutions &amp; Courses</h5>
+                            <p class="text-muted small mb-0">Select your preferred city, degree program, and tuition budget.</p>
+                        </div>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                
+                <form action="{% url 'college_list' %}" method="get" id="filterModalForm">
+                    <div class="modal-body p-4">
+                        <!-- Preserved Search Term (Hidden) -->
+                        <input type="hidden" name="search" id="modalHiddenSearch" value="{{ request.GET.search|default:'' }}">
+
+                        <!-- 1. Select Location (City) -->
+                        <div class="mb-4">
+                            <label class="form-label fw-bold small text-uppercase text-secondary mb-2" for="filterCitySelect">
+                                <i class="bi bi-geo-alt-fill text-danger me-1"></i>Select Location / City
+                            </label>
+                            <select name="city" id="filterCitySelect" class="form-select form-select-lg rounded-3 shadow-none border-secondary border-opacity-25" style="font-size: 0.95rem;">
+                                <option value="">Select Location Across India</option>
+                                {% for c in filter_cities %}
+                                    <option value="{{ c }}" {% if request.GET.city == c %}selected{% endif %}>{{ c }}</option>
+                                {% endfor %}
+                            </select>
+                            
+                            <!-- Quick City Pills -->
+                            <div class="d-flex flex-wrap gap-2 mt-2">
+                                <span class="text-muted small align-self-center me-1" style="font-size: 0.75rem;">Popular:</span>
+                                {% for c in filter_cities|slice:":7" %}
+                                    <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill py-0 px-2 quick-city-btn {% if request.GET.city == c %}active bg-primary text-white border-primary{% endif %}" data-city="{{ c }}" style="font-size: 0.75rem;">
+                                        {{ c }}
+                                    </button>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <!-- 2. Select Course / Specialization -->
+                        <div class="mb-4">
+                            <label class="form-label fw-bold small text-uppercase text-secondary mb-2" for="filterCourseSelect">
+                                <i class="bi bi-mortarboard-fill text-primary me-1"></i>Select Course / Degree Program
+                            </label>
+                            <select name="course" id="filterCourseSelect" class="form-select form-select-lg rounded-3 shadow-none border-secondary border-opacity-25" style="font-size: 0.95rem;">
+                                <option value="">All Courses &amp; Specializations</option>
+                                {% for crs in filter_courses %}
+                                    <option value="{{ crs }}" {% if request.GET.course == crs %}selected{% endif %}>{{ crs }}</option>
+                                {% endfor %}
+                            </select>
+                            
+                            <!-- Quick Course Pills -->
+                            <div class="d-flex flex-wrap gap-2 mt-2">
+                                <span class="text-muted small align-self-center me-1" style="font-size: 0.75rem;">Top Picks:</span>
+                                {% for tag in popular_course_tags %}
+                                    <button type="button" class="btn btn-sm btn-outline-primary rounded-pill py-0 px-2 quick-course-btn {% if request.GET.course == tag %}active bg-primary text-white{% endif %}" data-course="{{ tag }}" style="font-size: 0.75rem;">
+                                        {{ tag }}
+                                    </button>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <!-- 3. Tuition Budget Selection -->
+                        <div class="mb-2">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <label class="form-label fw-bold small text-uppercase text-secondary mb-0" for="filterBudgetSlider">
+                                    <i class="bi bi-currency-rupee text-success me-1"></i>Max Annual Tuition Fee
+                                </label>
+                                <span id="budgetDisplayValue" class="badge bg-warning-subtle text-warning-emphasis fs-6 fw-bold px-3 py-1 border border-warning">
+                                    {% if request.GET.max_fee %}₹{{ request.GET.max_fee }} / yr{% else %}₹10,00,000 / yr (All Budgets){% endif %}
+                                </span>
+                            </div>
+                            <input type="range" class="form-range" id="filterBudgetSlider" name="max_fee" min="20000" max="1500000" step="10000" value="{{ request.GET.max_fee|default:'1000000' }}">
+                            
+                            <!-- Quick Budget Chips -->
+                            <div class="d-flex flex-wrap gap-2 mt-2">
+                                <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill py-0 px-2 quick-budget-btn" data-budget="100000" style="font-size: 0.75rem;">&lt; ₹1 Lakh</button>
+                                <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill py-0 px-2 quick-budget-btn" data-budget="250000" style="font-size: 0.75rem;">&lt; ₹2.5 Lakh</button>
+                                <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill py-0 px-2 quick-budget-btn" data-budget="500000" style="font-size: 0.75rem;">&lt; ₹5 Lakh</button>
+                                <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill py-0 px-2 quick-budget-btn" data-budget="1000000" style="font-size: 0.75rem;">&lt; ₹10 Lakh</button>
+                                <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill py-0 px-2 quick-budget-btn" data-budget="" style="font-size: 0.75rem;">Any Budget</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer border-0 pt-0 pb-4 px-4 d-flex justify-content-between">
+                        <a href="{% url 'college_list' %}" class="btn btn-outline-secondary rounded-pill px-4" id="resetFiltersBtn">
+                            <i class="bi bi-arrow-counterclockwise me-1"></i>Reset
+                        </a>
+                        <div class="d-flex gap-2">
+                            <button type="button" class="btn btn-light rounded-pill px-3" data-bs-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-warning text-dark fw-bold rounded-pill px-4 shadow-sm">
+                                <i class="bi bi-funnel-fill me-1"></i>Apply Filters
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- ====================================================================== -->
+    <!-- QUICK ADD COURSE MODAL (For University Partners)                      -->
+    <!-- ====================================================================== -->
+    {% if request.user.is_authenticated and request.user.profile.role == 'university' %}
+    <div class="modal fade" id="quickAddCourseModal" tabindex="-1" aria-labelledby="quickAddCourseModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content rounded-4 border-0 shadow-lg" style="background-color: #ffffff; color: #1e293b;">
+                <div class="modal-header border-0 pb-0 pt-4 px-4">
+                    <div class="d-flex align-items-center gap-2">
+                        <div class="bg-primary-subtle text-primary p-2 rounded-circle d-flex align-items-center justify-content-center" style="width: 44px; height: 44px;">
+                            <i class="bi bi-mortarboard-fill fs-5 text-primary"></i>
+                        </div>
+                        <div>
+                            <h5 class="modal-title fw-bold text-dark mb-0" id="quickAddCourseModalLabel">Create New Course / Program</h5>
+                            <p class="text-muted small mb-0" id="quickAddCourseSubtitle">Publish a new academic program with fees &amp; seats.</p>
+                        </div>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <form method="post" id="quickAddCourseForm" action="">
+                    {% csrf_token %}
+                    <input type="hidden" name="next" id="quickAddCourseNext" value="{{ request.get_full_path }}">
+                    
+                    <div class="modal-body p-4">
+                        <!-- Campus Selection -->
+                        <div class="mb-3" id="quickCourseCollegeGroup">
+                            <label class="form-label fw-bold small text-secondary" for="quickCourseCollegeSelect">
+                                <i class="bi bi-building me-1 text-primary"></i>Campus / College *
+                            </label>
+                            <select name="college_select" id="quickCourseCollegeSelect" class="form-select rounded-3" required>
+                                {% for item in partner_colleges_data %}
+                                    <option value="{{ item.college.id }}">{{ item.college.name }} ({{ item.college.city }})</option>
+                                {% empty %}
+                                    <option value="">No college registered</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <!-- Department / Headline indicator -->
+                        <div class="mb-3" id="quickCourseHeadlineBadgeGroup" style="display: none;">
+                            <label class="form-label fw-bold small text-secondary">Department Headline</label>
+                            <div>
+                                <span class="badge bg-primary-subtle text-primary px-3 py-2 fs-6 rounded-pill" id="quickCourseHeadlineBadgeText">
+                                    Engineering &amp; Technology
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Course Name -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold small text-secondary" for="quickCourseName">
+                                <i class="bi bi-journal-text me-1 text-warning"></i>Course / Program Name *
+                            </label>
+                            <input type="text" name="name" id="quickCourseName" class="form-control rounded-3" placeholder="e.g. B.Com (Honors) in Financial Analytics" required>
+                            <div class="d-flex flex-wrap gap-1 mt-2">
+                                <span class="text-muted small align-self-center me-1" style="font-size: 0.72rem;">Suggestions:</span>
+                                <button type="button" class="btn btn-sm btn-light border rounded-pill py-0 px-2 quick-name-pill" style="font-size: 0.72rem;" data-name="B.Com Honors">B.Com Honors</button>
+                                <button type="button" class="btn btn-sm btn-light border rounded-pill py-0 px-2 quick-name-pill" style="font-size: 0.72rem;" data-name="B.Tech Computer Science">B.Tech CSE</button>
+                                <button type="button" class="btn btn-sm btn-light border rounded-pill py-0 px-2 quick-name-pill" style="font-size: 0.72rem;" data-name="MBA in Marketing">MBA</button>
+                                <button type="button" class="btn btn-sm btn-light border rounded-pill py-0 px-2 quick-name-pill" style="font-size: 0.72rem;" data-name="BCA Cloud Computing">BCA</button>
+                            </div>
+                        </div>
+
+                        <!-- Fee and Duration Row -->
+                        <div class="row g-2 mb-3">
+                            <div class="col-6">
+                                <label class="form-label fw-bold small text-secondary" for="quickCourseFee">
+                                    <i class="bi bi-currency-rupee me-1 text-success"></i>Annual Fee (₹) *
+                                </label>
+                                <input type="number" name="fee" id="quickCourseFee" class="form-control rounded-3" placeholder="e.g. 75000" min="0" step="500" required>
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label fw-bold small text-secondary" for="quickCourseDuration">
+                                    <i class="bi bi-clock-history me-1 text-info"></i>Duration (Years) *
+                                </label>
+                                <select name="duration_years" id="quickCourseDuration" class="form-select rounded-3" required>
+                                    <option value="3" selected>3 Years (UG)</option>
+                                    <option value="4">4 Years (B.Tech/Eng)</option>
+                                    <option value="2">2 Years (PG/Masters)</option>
+                                    <option value="1">1 Year (Diploma)</option>
+                                    <option value="5">5 Years (Integrated)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Intake Seats -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold small text-secondary" for="quickCourseSeats">
+                                <i class="bi bi-people-fill me-1 text-secondary"></i>Intake Seats *
+                            </label>
+                            <input type="number" name="seats" id="quickCourseSeats" class="form-control rounded-3" value="60" min="1" required>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer border-0 pt-0 pb-4 px-4 d-flex justify-content-end gap-2">
+                        <button type="button" class="btn btn-light rounded-pill px-3" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary fw-bold rounded-pill px-4 shadow-sm" id="quickCourseSubmitBtn">
+                            <i class="bi bi-check2-circle me-1"></i>Publish Course
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- ====================================================================== -->
+    <!-- SLIDE-OUT DRAWER: CAMPUSCLUE MENU (Role-Tailored)                      -->
+    <!-- ====================================================================== -->
+    <div class="offcanvas offcanvas-start border-0 shadow-lg" tabindex="-1" id="collegeClueSidebar" aria-labelledby="collegeClueSidebarLabel" data-bs-backdrop="false" data-bs-scroll="true" data-bs-keyboard="false" style="z-index: 1080; background-color: #ffffff; color: #1e293b;">
+        <div class="offcanvas-header border-bottom pb-3 pt-3 px-3" style="border-color: #eaecf0 !important; background-color: #ffffff;">
+            <div class="d-flex align-items-center gap-2" id="collegeClueSidebarLabel">
+                <span class="d-inline-flex align-items-center justify-content-center rounded-3 shadow-sm flex-shrink-0" style="width: 38px; height: 38px; background: linear-gradient(135deg, #0b57d0 0%, #0f2b5c 100%); color: #ffffff;">
+                    <i class="bi bi-mortarboard-fill fs-5"></i>
+                </span>
+                <div class="overflow-hidden">
+                    <div class="fw-bold fs-5 d-flex align-items-center" style="color: #0f2b5c; letter-spacing: -0.3px; line-height: 1.15;">
+                        College<span style="color: #0b57d0;">Clue</span>
+                        <span class="d-none">College<span class="text-warning">Clue</span><span class="badge">MENU</span></span>
+                    </div>
+                    <div class="text-uppercase fw-semibold" style="font-size: 0.65rem; letter-spacing: 0.8px; color: #64748b;">
+                        Explore • Compare • Apply
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="offcanvas-body d-flex flex-column p-3 pb-4">
+            {% if request.user.is_authenticated and request.user.profile.role == 'university' and not request.user.is_staff %}
+                <!-- ============================================== -->
+                <!-- 1. UNIVERSITY PARTNER SIDEBAR                  -->
+                <!-- ============================================== -->
+                <!-- Top Partner Profile Card -->
+                <div class="mb-3 p-3 rounded-4 shadow-sm" style="background: #ffffff; border: 1px solid #ede8dc;">
+                    <div class="d-flex align-items-center justify-content-between mb-2">
+                        <span class="badge fw-bold px-2 py-1" style="font-size: 0.72rem; letter-spacing: 0.5px; background: #525445; color: #faf8f2;">
+                            <i class="bi bi-building me-1"></i>UNIVERSITY PARTNER
+                        </span>
+                        {% if partner_pending_applications_count %}
+                            <span class="badge bg-danger rounded-pill">{{ partner_pending_applications_count }} pending</span>
+                        {% endif %}
+                    </div>
+                    <div class="fw-bold small text-truncate fs-6" style="color: #2c3022;">{{ request.user.profile.organization_name|default:request.user.first_name|default:request.user.username }}</div>
+                    <div class="small text-truncate" style="font-size: 0.78rem; color: #636655;">
+                        <i class="bi bi-envelope-at me-1" style="color: #525445;"></i>{{ request.user.email }}
+                    </div>
+                </div>
+
+                <!-- Section 1: Campus Controls -->
+                <div class="sidebar-section mb-3">
+                    <div class="text-uppercase fw-bold px-2 mb-2" style="font-size: 0.7rem; letter-spacing: 1px; color: #636655;">
+                        CAMPUS CONTROLS
+                    </div>
+                    <nav class="nav flex-column gap-1">
+                        <a href="{% url 'university_dashboard' %}" class="sidebar-nav-item d-flex align-items-center gap-3 px-3 py-2 rounded-3 text-decoration-none {% active_link 'university_dashboard' %}">
+                            <i class="bi bi-speedometer2 fs-5" style="color: #525445;"></i>
+                            <span class="fw-semibold">Campus Dashboard</span>
+                        </a>
+                        {% if partner_colleges_data %}
+                            {% with active_col=partner_colleges_data.0.college %}
+                                <a href="{% url 'college_edit' active_col.id %}" class="sidebar-nav-item d-flex align-items-center gap-3 px-3 py-2 rounded-3 text-decoration-none {% active_link 'college_edit' %}">
+                                    <i class="bi bi-building-gear fs-5" style="color: #525445;"></i>
+                                    <span class="fw-semibold">Campus Details</span>
+                                </a>
+                                <a href="{% url 'college_courses' active_col.id %}" class="sidebar-nav-item d-flex justify-content-between align-items-center px-3 py-2 rounded-3 text-decoration-none {% active_link 'college_courses' %}">
+                                    <div class="d-flex align-items-center gap-3">
+                                        <i class="bi bi-journal-bookmark fs-5" style="color: #525445;"></i>
+                                        <span class="fw-semibold">Academic Courses</span>
+                                    </div>
+                                    <span class="badge rounded-pill" style="background: #ede8dc; color: #434538;">{{ partner_colleges_data.0.courses|length }}</span>
+                                </a>
+                            {% endwith %}
+                        {% endif %}
+                    </nav>
+                </div>
+
+                <!-- Section 2: Departments & Courses (Campus Offerings) -->
+                {% if partner_colleges_data %}
+                <div class="sidebar-section mb-3">
+                    <div class="d-flex align-items-center justify-content-between px-2 mb-2">
+                        <div class="text-uppercase fw-bold" style="font-size: 0.7rem; letter-spacing: 1px; color: #636655;">
+                            DEPARTMENTS &amp; COURSES
+                        </div>
+                        <span class="badge rounded-pill fw-semibold" style="font-size: 0.62rem; background: #ede8dc; color: #434538;">Campus Offerings</span>
+                    </div>
+
+                    {% for item in partner_colleges_data %}
+                        <div class="p-2 mb-2 rounded-3" style="background: #ffffff; border: 1px solid #ede8dc;">
+                            <div class="d-flex align-items-center justify-content-between mb-2 px-1">
+                                <div class="d-flex align-items-center gap-2 overflow-hidden">
+                                    <i class="bi bi-mortarboard fs-5 flex-shrink-0" style="color: #525445;"></i>
+                                    <span class="fw-bold text-truncate small" style="color: #3d4032;">{{ item.college.name }}</span>
+                                </div>
+                            </div>
+
+                            <nav class="nav flex-column gap-1">
+                                {% for headline in item.categorized_headlines %}
+                                    {% if headline.courses %}
+                                        <div class="d-flex justify-content-between align-items-center px-2 py-1 rounded-2" style="background: #faf8f2; border: 1px solid #ede8dc; font-size: 0.8rem;">
+                                            <a href="{% url 'college_courses' item.college.id %}" class="d-flex align-items-center gap-2 text-truncate text-decoration-none flex-grow-1" style="color: #434538;" title="Manage {{ headline.badge }} Courses">
+                                                <i class="bi {{ headline.icon }} flex-shrink-0" style="font-size: 0.85rem; color: #525445;"></i>
+                                                <span class="text-truncate">{{ headline.badge }}</span>
+                                            </a>
+                                            <div class="d-flex align-items-center gap-1">
+                                                <span class="badge rounded-pill" style="font-size: 0.65rem; background: #ede8dc; color: #434538;">{{ headline.courses|length }}</span>
+                                            </div>
+                                        </div>
+                                    {% endif %}
+                                {% endfor %}
+                            </nav>
+                        </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <!-- Section 3: About CollegeClue -->
+                <div class="sidebar-section mb-3">
+                    <div class="text-uppercase fw-bold px-2 mb-2" style="font-size: 0.7rem; letter-spacing: 1px; color: #636655;">
+                        ABOUT &amp; TRANSPARENCY
+                    </div>
+                    <nav class="nav flex-column gap-1">
+                        <a href="{% url 'about' %}" class="sidebar-nav-item d-flex align-items-center gap-3 px-3 py-2 rounded-3 text-decoration-none {% active_link 'about' %}">
+                            <i class="bi bi-info-circle-fill fs-5" style="color: #525445;"></i>
+                            <span class="fw-semibold">About CollegeClue</span>
+                        </a>
+                    </nav>
+                </div>
+
+            {% elif request.user.is_authenticated and request.user.profile.role == 'accommodation' and not request.user.is_staff %}
+                <!-- ============================================== -->
+                <!-- 2. ACCOMMODATION PROVIDER SIDEBAR              -->
+                <!-- ============================================== -->
+                <!-- Top Partner Profile Card -->
+                <div class="mb-3 p-3 rounded-4 shadow-sm" style="background: #ffffff; border: 1px solid #ede8dc;">
+                    <div class="d-flex align-items-center justify-content-between mb-2">
+                        <span class="badge fw-bold px-2 py-1" style="font-size: 0.72rem; letter-spacing: 0.5px; background: #525445; color: #faf8f2;">
+                            <i class="bi bi-houses-fill me-1"></i>HOUSING PARTNER
+                        </span>
+                        {% if partner_accommodations_data %}
+                            <span class="badge bg-success rounded-pill">{{ partner_accommodations_data|length }} active</span>
+                        {% endif %}
+                    </div>
+                    <div class="fw-bold small text-truncate fs-6" style="color: #2c3022;">{{ request.user.profile.organization_name|default:request.user.first_name|default:request.user.username }}</div>
+                    <div class="small text-truncate" style="font-size: 0.78rem; color: #636655;">
+                        <i class="bi bi-envelope-at me-1" style="color: #525445;"></i>{{ request.user.email }}
+                    </div>
+                    
+                    <a href="{% url 'accommodation_submit' %}" class="btn btn-primary btn-sm w-100 fw-bold mt-3 py-2 d-flex align-items-center justify-content-center gap-2 shadow-sm">
+                        <i class="bi bi-plus-circle-fill"></i>
+                        <span>+ List New PG / Hostel</span>
+                    </a>
+                </div>
+
+                <!-- Section 1: Housing Controls -->
+                <div class="sidebar-section mb-3">
+                    <div class="text-uppercase fw-bold px-2 mb-2" style="font-size: 0.7rem; letter-spacing: 1px; color: #636655;">
+                        HOUSING CONTROLS
+                    </div>
+                    <nav class="nav flex-column gap-1">
+                        <a href="{% url 'accommodation_dashboard' %}" class="sidebar-nav-item d-flex align-items-center gap-3 px-3 py-2 rounded-3 text-decoration-none {% active_link 'accommodation_dashboard' %}">
+                            <i class="bi bi-speedometer2 fs-5" style="color: #525445;"></i>
+                            <span class="fw-semibold">Housing Dashboard</span>
+                        </a>
+                        <a href="{% url 'accommodation_submit' %}" class="sidebar-nav-item d-flex align-items-center gap-3 px-3 py-2 rounded-3 text-decoration-none {% active_link 'accommodation_submit' %}">
+                            <i class="bi bi-plus-circle-fill fs-5" style="color: #525445;"></i>
+                            <span class="fw-semibold">List New PG / Hostel</span>
+                        </a>
+                        {% if partner_accommodations_data %}
+                            <div class="mt-2 pt-2 border-top" style="border-color: #ede8dc !important;">
+                                <div class="text-uppercase fw-bold px-2 mb-2" style="font-size: 0.65rem; letter-spacing: 0.8px; color: #636655;">
+                                    MY LISTINGS ({{ partner_accommodations_data|length }})
+                                </div>
+                                {% for acc in partner_accommodations_data %}
+                                    <a href="{% url 'accommodation_edit' acc.id %}" class="sidebar-nav-item d-flex justify-content-between align-items-center px-3 py-2 rounded-3 text-decoration-none">
+                                        <div class="d-flex align-items-center gap-2 overflow-hidden">
+                                            <i class="bi bi-house-check flex-shrink-0" style="color: #525445;"></i>
+                                            <span class="fw-semibold text-truncate small">{{ acc.name }}</span>
+                                        </div>
+                                        <span class="badge {% if acc.is_available %}bg-success-subtle text-success{% else %}bg-danger-subtle text-danger{% endif %} rounded-pill" style="font-size: 0.65rem;">
+                                            {% if acc.is_available %}Active{% else %}Full{% endif %}
+                                        </span>
+                                    </a>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </nav>
+                </div>
+
+                <!-- Section 2: About CollegeClue -->
+                <div class="sidebar-section mb-3">
+                    <div class="text-uppercase fw-bold px-2 mb-2" style="font-size: 0.7rem; letter-spacing: 1px; color: #636655;">
+                        ABOUT &amp; TRANSPARENCY
+                    </div>
+                    <nav class="nav flex-column gap-1">
+                        <a href="{% url 'about' %}" class="sidebar-nav-item d-flex align-items-center gap-3 px-3 py-2 rounded-3 text-decoration-none {% active_link 'about' %}">
+                            <i class="bi bi-info-circle-fill fs-5" style="color: #525445;"></i>
+                            <span class="fw-semibold">About CollegeClue</span>
+                        </a>
+                    </nav>
+                </div>
+
+            {% else %}
+                <!-- ============================================== -->
+                <!-- 3. MAIN STUDENT & PUBLIC PORTAL NAVIGATION     -->
+                <!-- Exact Layout Matching media_1790975431617.jpg  -->
+                <!-- ============================================== -->
+                <!-- Section 1: Main Exploration -->
+                <div class="sidebar-section mb-3">
+                    <div class="text-uppercase fw-bold px-2 mb-2" style="font-size: 0.7rem; letter-spacing: 1px; color: #64748b;">
+                        MAIN
+                    </div>
+                    <nav class="nav flex-column gap-1">
+                        <a href="{% url 'home' %}" class="sidebar-nav-item d-flex align-items-center gap-3 px-3 py-2 rounded-3 text-decoration-none {% active_link 'home' %}">
+                            <i class="bi bi-house-door fs-5 text-primary"></i>
+                            <span class="fw-semibold">Home</span>
+                        </a>
+                        <a href="{% url 'university_list' %}" class="sidebar-nav-item d-flex align-items-center gap-3 px-3 py-2 rounded-3 text-decoration-none {% active_link 'university_list' %}">
+                            <i class="bi bi-bank fs-5 text-primary"></i>
+                            <span class="fw-semibold">Universities</span>
+                        </a>
+                        <a href="{% url 'accommodation_list' %}" class="sidebar-nav-item d-flex align-items-center gap-3 px-3 py-2 rounded-3 text-decoration-none {% active_link 'accommodation_list' %}">
+                            <i class="bi bi-geo-alt fs-5 text-primary"></i>
+                            <span class="fw-semibold">Near by PG/Flats</span>
+                        </a>
+                    </nav>
+                </div>
+
+                <!-- Section 2: Student Tools -->
+                <div class="sidebar-section mb-3">
+                    <div class="text-uppercase fw-bold px-2 mb-2" style="font-size: 0.7rem; letter-spacing: 1px; color: #64748b;">
+                        STUDENT TOOLS
+                    </div>
+                    <nav class="nav flex-column gap-1">
+                        <a href="{% url 'compare' %}" class="sidebar-nav-item d-flex justify-content-between align-items-center px-3 py-2 rounded-3 text-decoration-none {% active_link 'compare' %}">
+                            <div class="d-flex align-items-center gap-3">
+                                <i class="bi bi-arrow-left-right fs-5 text-primary"></i>
+                                <span class="fw-semibold">Compare Colleges</span>
+                            </div>
+                            {% if request.session.compare_colleges|length > 0 %}
+                                <span class="badge rounded-pill" style="background: #e8f0fe; color: #0b57d0;">{{ request.session.compare_colleges|length }}</span>
+                            {% endif %}
+                        </a>
+                        <a href="{% url 'wishlist' %}" class="sidebar-nav-item d-flex justify-content-between align-items-center px-3 py-2 rounded-3 text-decoration-none {% active_link 'wishlist' %}">
+                            <div class="d-flex align-items-center gap-3">
+                                <i class="bi bi-heart fs-5 text-danger"></i>
+                                <span class="fw-semibold">Saved Colleges <span class="d-none">Wishlists</span></span>
+                            </div>
+                            <span class="badge bg-danger text-white rounded-pill wishlist-count-badge {% if not wishlist_count %}d-none{% endif %}">{{ wishlist_count|default:0 }}</span>
+                        </a>
+                        <a href="{% url 'my_applications' %}" class="sidebar-nav-item d-flex justify-content-between align-items-center px-3 py-2 rounded-3 text-decoration-none {% active_link 'my_applications' %}">
+                            <div class="d-flex align-items-center gap-3">
+                                <i class="bi bi-journal-text fs-5 text-primary"></i>
+                                <span class="fw-semibold">Applications <span class="d-none">Applied Status</span></span>
+                            </div>
+                            {% if applied_count > 0 %}
+                                <span class="badge rounded-pill" style="background: #0b57d0; color: #ffffff;">{{ applied_count }}</span>
+                            {% endif %}
+                        </a>
+                    </nav>
+                </div>
+
+                <!-- Section 3: More -->
+                <div class="sidebar-section mb-3">
+                    <div class="text-uppercase fw-bold px-2 mb-2" style="font-size: 0.7rem; letter-spacing: 1px; color: #64748b;">
+                        MORE
+                    </div>
+                    <nav class="nav flex-column gap-1">
+                        <a href="{% url 'about' %}" class="sidebar-nav-item d-flex align-items-center gap-3 px-3 py-2 rounded-3 text-decoration-none {% active_link 'about' %}">
+                            <i class="bi bi-info-circle fs-5 text-primary"></i>
+                            <span class="fw-semibold">About Us <span class="d-none">About CollegeClue</span></span>
+                        </a>
+                        <a href="{% url 'about' %}" class="sidebar-nav-item d-flex align-items-center gap-3 px-3 py-2 rounded-3 text-decoration-none">
+                            <i class="bi bi-question-circle fs-5 text-primary"></i>
+                            <span class="fw-semibold">Help &amp; Support</span>
+                        </a>
+                    </nav>
+                </div>
+            {% endif %}
+
+            <!-- Section: Logged in as / Guest Card (Bottom Matching Screenshot) -->
+            <div class="mt-auto pt-3 pb-3" style="border-top: 1px solid #eaecf0;">
+                {% if request.user.is_authenticated %}
+                    <div class="card border-0 rounded-4 p-3 shadow-sm" style="background: #f8fafc; border: 1px solid #eaecf0 !important;">
+                        <div class="d-flex align-items-center justify-content-between mb-2">
+                            <div class="d-flex align-items-center gap-2 overflow-hidden">
+                                <div class="rounded-circle d-flex align-items-center justify-content-center fw-bold shadow-sm flex-shrink-0" style="width: 36px; height: 36px; font-size: 0.95rem; background-color: #0b57d0; color: #ffffff;">
+                                    {{ request.user.first_name|default:request.user.username|slice:":1"|upper }}
+                                </div>
+                                <div class="overflow-hidden">
+                                    <div class="fw-bold small text-truncate" style="color: #0f2b5c;">{{ request.user.first_name|default:request.user.username }}</div>
+                                    <div class="small text-truncate text-muted" style="font-size: 0.72rem;">{{ request.user.email|default:"Active Account" }}</div>
+                                </div>
+                            </div>
+                            <span class="badge rounded-pill fw-bold" style="font-size: 0.68rem; background: #e8f0fe; color: #0b57d0;">
+                                {% if request.user.profile.role == 'university' %}
+                                    University Partner
+                                {% elif request.user.profile.role == 'accommodation' %}
+                                    Housing Partner
+                                {% elif request.user.is_staff or request.user.is_superuser %}
+                                    Administrator
+                                {% else %}
+                                    Student
+                                {% endif %}
+                            </span>
+                        </div>
+                        <div class="pt-2 mt-2 border-top" style="border-color: #eaecf0 !important;">
+                            <a href="{% url 'logout' %}" class="btn btn-sm btn-outline-danger w-100 rounded-pill py-2 px-3 fw-semibold d-flex align-items-center justify-content-center gap-2 shadow-none" style="font-size: 0.8rem; border-color: #fecaca; background-color: #fef2f2; color: #dc2626;">
+                                <i class="bi bi-box-arrow-right"></i>
+                                <span>Sign Out</span>
+                            </a>
+                        </div>
+                    </div>
+                {% else %}
+                    <!-- Guest Card Matching Screenshot media_1790975431617.jpg -->
+                    <div class="card border-0 rounded-4 p-3 shadow-sm" style="background: #f8fafc; border: 1px solid #eaecf0 !important;">
+                        <div class="fw-bold small mb-1" style="color: #0f2b5c;">Guest Visitor</div>
+                        <p class="mb-3 text-muted" style="font-size: 0.76rem; line-height: 1.4;">
+                            Sign in to save colleges, compare programs and track your applications.
+                        </p>
+                        <div class="d-grid">
+                            <a href="{% url 'login' %}" class="btn fw-semibold rounded-pill py-2 shadow-sm d-flex align-items-center justify-content-between px-3" style="background-color: #0f2b5c; color: #ffffff; font-size: 0.85rem;">
+                                <span>Login</span>
+                                <span class="d-none">Student Sign In</span>
+                                <i class="bi bi-arrow-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                {% endif %}
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Global Toast / Message Alerts -->
+    <div class="container mt-3">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags|default:'info' }} alert-dismissible fade show shadow-sm" role="alert">
+                    {% if message.tags == 'success' %}<i class="bi bi-check-circle-fill me-2"></i>{% endif %}
+                    {% if message.tags == 'warning' %}<i class="bi bi-exclamation-triangle-fill me-2"></i>{% endif %}
+                    {% if message.tags == 'error' or message.tags == 'danger' %}<i class="bi bi-x-circle-fill me-2"></i>{% endif %}
+                    {% if message.tags == 'info' %}<i class="bi bi-info-circle-fill me-2"></i>{% endif %}
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    </div>
+
+    <!-- Main Content Area -->
+    <main class="{% if not request.user.is_authenticated and request.resolver_match.url_name == 'home' %}p-0{% else %}py-4{% endif %}">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer bg-dark text-white pt-5 pb-3 mt-auto">
+        <div class="container">
+            <div class="row g-4">
+                <div class="col-lg-3 col-md-6">
+                    <h5 class="fw-bold text-warning mb-3">
+                        <i class="bi bi-mortarboard-fill me-2"></i>College Clue
+                    </h5>
+                    <p class="text-secondary small">
+                        A centralized higher education admission and verified accommodation platform helping students explore accredited universities, compare campus programs, and find safe student housing.
+                    </p>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <h6 class="text-uppercase fw-bold text-light mb-3">Explore</h6>
+                    <ul class="list-unstyled footer-links small">
+                        <li class="mb-2"><a href="{% url 'university_list' %}" class="text-secondary text-decoration-none">Universities</a></li>
+                        <li class="mb-2"><a href="{% url 'college_list' %}" class="text-secondary text-decoration-none">Colleges &amp; Courses</a></li>
+                        <li class="mb-2"><a href="{% url 'compare' %}" class="text-secondary text-decoration-none">Compare Institutes</a></li>
+                        <li class="mb-2"><a href="{% url 'accommodation_list' %}" class="text-secondary text-decoration-none">PGs &amp; Hostels</a></li>
+                        <li class="mb-2"><a href="{% url 'about' %}" class="text-warning text-decoration-none fw-semibold"><i class="bi bi-info-circle me-1"></i>About CollegeClue</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <h6 class="text-uppercase fw-bold text-light mb-3">Student Hub</h6>
+                    <ul class="list-unstyled footer-links small">
+                        <li class="mb-2"><a href="{% url 'registration_form' %}" class="text-secondary text-decoration-none">Online Admission Portal</a></li>
+                        <li class="mb-2"><a href="{% url 'my_applications' %}" class="text-secondary text-decoration-none">Applied Colleges</a></li>
+                        <li class="mb-2"><a href="{% url 'wishlist' %}" class="text-secondary text-decoration-none">Saved Wishlist</a></li>
+                        <li class="mb-2"><a href="/api/" class="text-secondary text-decoration-none">REST API Endpoints</a></li>
+                    </ul>
+                </div>
+
+                <!-- Show Partner Portals in footer ONLY when NOT logged in as a student -->
+                {% if not request.user.is_authenticated or request.user.profile.role != 'student' or request.user.is_staff %}
+                    <div class="col-lg-3 col-md-6">
+                        <h6 class="text-uppercase fw-bold text-warning mb-3">Partner Portals</h6>
+                        <ul class="list-unstyled footer-links small">
+                            <li class="mb-2"><a href="{% url 'university_dashboard' %}" class="text-secondary text-decoration-none"><i class="bi bi-building me-1"></i>University Portal</a></li>
+                            {% if not request.user.is_authenticated or request.user.profile.role != 'university' %}
+                                <li class="mb-2"><a href="{% url 'college_submit' %}" class="text-secondary text-decoration-none"><i class="bi bi-plus-circle me-1"></i>Submit College</a></li>
+                            {% endif %}
+                            <li class="mb-2"><a href="{% url 'accommodation_dashboard' %}" class="text-secondary text-decoration-none"><i class="bi bi-house-door me-1"></i>PG / Hostel Portal</a></li>
+                            <li class="mb-2"><a href="{% url 'accommodation_submit' %}" class="text-secondary text-decoration-none"><i class="bi bi-plus-circle me-1"></i>List Student PG</a></li>
+                            {% if request.user.is_staff or request.user.is_superuser %}
+                                <li class="mb-2"><a href="{% url 'admin_moderation' %}" class="text-warning text-decoration-none"><i class="bi bi-shield-check me-1"></i>Admin Moderation</a></li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                {% else %}
+                    <div class="col-lg-3 col-md-6">
+                        <h6 class="text-uppercase fw-bold text-light mb-3">Help & Support</h6>
+                        <p class="text-secondary small mb-2"><i class="bi bi-envelope-fill me-2"></i>support@collegeclue.local</p>
+                        <p class="text-secondary small mb-2"><i class="bi bi-telephone-fill me-2"></i>+91 (011) 4000-8000</p>
+                        <p class="text-secondary small"><i class="bi bi-geo-alt-fill me-2"></i>Connaught Place, New Delhi, India</p>
+                    </div>
+                {% endif %}
+            </div>
+            <hr class="border-secondary my-4">
+            <div class="d-flex flex-column flex-sm-row justify-content-between align-items-center text-secondary small">
+                <span>&copy; {% now "Y" %} College Clue. All rights reserved.</span>
+                <span>Production-grade Django Web Platform</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap 5 JS Bundle CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <!-- Canvas Confetti CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+    <!-- Custom Application JS -->
+    <script src="{% static 'js/progress-bar.js' %}"></script>
+    <script src="{% static 'js/confetti-init.js' %}"></script>
+    <script src="{% static 'js/search-suggest.js' %}"></script>
+    <script>
+        // Search Filter Modal & Quick Add Course Interactivity
+        document.addEventListener('DOMContentLoaded', function () {
+            // 1. Budget Slider Interaction
+            const budgetSlider = document.getElementById('filterBudgetSlider');
+            const budgetDisplay = document.getElementById('budgetDisplayValue');
+            if (budgetSlider && budgetDisplay) {
+                const updateBudget = function () {
+                    const val = parseInt(budgetSlider.value, 10);
+                    budgetDisplay.textContent = '₹' + val.toLocaleString('en-IN') + ' / yr';
+                };
+                budgetSlider.addEventListener('input', updateBudget);
+            }
+
+            // Quick budget preset buttons
+            document.querySelectorAll('.quick-budget-btn').forEach(function (btn) {
+                btn.addEventListener('click', function () {
+                    const budget = this.getAttribute('data-budget');
+                    if (budgetSlider) {
+                        if (budget) {
+                            budgetSlider.value = budget;
+                            if (budgetDisplay) budgetDisplay.textContent = '₹' + parseInt(budget, 10).toLocaleString('en-IN') + ' / yr';
+                        } else {
+                            budgetSlider.value = 1000000;
+                            if (budgetDisplay) budgetDisplay.textContent = 'Any Budget';
+                        }
+                    }
+                });
+            });
+
+            // Quick city preset buttons
+            document.querySelectorAll('.quick-city-btn').forEach(function (btn) {
+                btn.addEventListener('click', function () {
+                    const city = this.getAttribute('data-city');
+                    const citySelect = document.getElementById('filterCitySelect');
+                    if (citySelect) {
+                        citySelect.value = city;
+                    }
+                    document.querySelectorAll('.quick-city-btn').forEach(function (b) {
+                        b.classList.remove('active', 'bg-primary', 'text-white');
+                    });
+                    this.classList.add('active', 'bg-primary', 'text-white');
+                });
+            });
+
+            // Quick course preset buttons
+            document.querySelectorAll('.quick-course-btn').forEach(function (btn) {
+                btn.addEventListener('click', function () {
+                    const crs = this.getAttribute('data-course');
+                    const courseSelect = document.getElementById('filterCourseSelect');
+                    if (courseSelect) {
+                        courseSelect.value = crs;
+                    }
+                    document.querySelectorAll('.quick-course-btn').forEach(function (b) {
+                        b.classList.remove('active', 'bg-primary', 'text-white');
+                    });
+                    this.classList.add('active', 'bg-primary', 'text-white');
+                });
+            });
+
+            // Sync navbar search text into modal hidden search input before modal opens
+            const searchFilterModal = document.getElementById('searchFilterModal');
+            if (searchFilterModal) {
+                searchFilterModal.addEventListener('show.bs.modal', function () {
+                    const navSearchInput = document.getElementById('navCollegeSearchInput');
+                    const modalHiddenSearch = document.getElementById('modalHiddenSearch');
+                    if (navSearchInput && modalHiddenSearch && navSearchInput.value.trim()) {
+                        modalHiddenSearch.value = navSearchInput.value.trim();
+                    }
+                });
+            }
+
+            // Quick course suggestion pills in Add Course modal
+            document.querySelectorAll('.quick-name-pill').forEach(function (pill) {
+                pill.addEventListener('click', function () {
+                    const courseInput = document.getElementById('quickCourseName');
+                    if (courseInput) {
+                        courseInput.value = this.getAttribute('data-name');
+                        courseInput.focus();
+                    }
+                });
+            });
+
+            // Submit handler for quickAddCourseForm
+            const quickAddCourseForm = document.getElementById('quickAddCourseForm');
+            if (quickAddCourseForm) {
+                quickAddCourseForm.addEventListener('submit', function (e) {
+                    const collegeSelect = document.getElementById('quickCourseCollegeSelect');
+                    if (collegeSelect && collegeSelect.value) {
+                        this.action = '/partner/university/college/' + collegeSelect.value + '/add-course/';
+                    }
+                });
+            }
+        });
+
+        // Global function to trigger the Quick Add Course Modal
+        window.openQuickAddCourse = function (collegeId, collegeName, headlineBadge) {
+            // Close sidebar if open
+            const sidebarEl = document.getElementById('collegeClueSidebar');
+            if (sidebarEl) {
+                const sb = bootstrap.Offcanvas.getInstance(sidebarEl);
+                if (sb) sb.hide();
+            }
+
+            const modalEl = document.getElementById('quickAddCourseModal');
+            if (!modalEl) return;
+
+            const collegeSelect = document.getElementById('quickCourseCollegeSelect');
+            const headlineBadgeGroup = document.getElementById('quickCourseHeadlineBadgeGroup');
+            const headlineBadgeText = document.getElementById('quickCourseHeadlineBadgeText');
+            const subtitle = document.getElementById('quickAddCourseSubtitle');
+            const courseInput = document.getElementById('quickCourseName');
+            const form = document.getElementById('quickAddCourseForm');
+
+            if (collegeSelect && collegeId) {
+                collegeSelect.value = collegeId;
+            }
+
+            if (headlineBadge && headlineBadge.trim()) {
+                if (headlineBadgeGroup) headlineBadgeGroup.style.display = 'block';
+                if (headlineBadgeText) headlineBadgeText.textContent = headlineBadge;
+                if (courseInput) courseInput.placeholder = 'e.g. ' + headlineBadge + ' Specialization';
+                if (subtitle && collegeName) {
+                    subtitle.textContent = 'Adding new course under ' + headlineBadge + ' for ' + collegeName;
+                }
+            } else {
+                if (headlineBadgeGroup) headlineBadgeGroup.style.display = 'none';
+                if (courseInput) courseInput.placeholder = 'e.g. B.Com (Honors) in Financial Analytics';
+                if (subtitle && collegeName) {
+                    subtitle.textContent = 'Adding new course for ' + collegeName;
+                }
+            }
+
+            if (form && collegeSelect && collegeSelect.value) {
+                form.action = '/partner/university/college/' + collegeSelect.value + '/add-course/';
+            }
+
+            const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
+            modal.show();
+        };
+
+        // Global function to show floating toasts without page shifts or screen shake
+        window.showCcToast = function (message, type = 'info') {
+            let container = document.getElementById('ccFloatingToastContainer');
+            if (!container) {
+                container = document.createElement('div');
+                container.id = 'ccFloatingToastContainer';
+                container.className = 'toast-container position-fixed bottom-0 end-0 p-3';
+                container.style.zIndex = '2050';
+                document.body.appendChild(container);
+            }
+            const toastId = 'toast-' + Math.random().toString(36).substring(2, 9);
+            const bgClass = type === 'danger' ? 'bg-danger text-white' : (type === 'success' ? 'bg-success text-white' : 'bg-dark text-white');
+            const icon = type === 'danger' ? 'bi-exclamation-triangle-fill' : (type === 'success' ? 'bi-check-circle-fill' : 'bi-info-circle-fill');
+
+            const toastHtml = `
+                <div id="${toastId}" class="toast align-items-center ${bgClass} border-0 shadow-lg rounded-3 mb-2" role="alert" aria-live="assertive" aria-atomic="true">
+                    <div class="d-flex">
+                        <div class="toast-body d-flex align-items-center gap-2 py-2 px-3 small fw-medium">
+                            <i class="bi ${icon} fs-5 flex-shrink-0"></i>
+                            <div>${message}</div>
+                        </div>
+                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                    </div>
+                </div>
+            `;
+            container.insertAdjacentHTML('beforeend', toastHtml);
+            const toastEl = document.getElementById(toastId);
+            if (toastEl && window.bootstrap) {
+                const bsToast = new bootstrap.Toast(toastEl, { delay: 4000 });
+                bsToast.show();
+                toastEl.addEventListener('hidden.bs.toast', () => toastEl.remove());
+            }
+        };
+
+        // Async Compare Toggle (Prevents screen reload and screen shake, shows tick mark)
+        document.addEventListener('DOMContentLoaded', function () {
+            document.addEventListener('click', function (e) {
+                const btn = e.target.closest('.compare-toggle-btn');
+                if (!btn) return;
+
+                e.preventDefault();
+                e.stopPropagation();
+
+                const collegeId = btn.getAttribute('data-college-id');
+                const toggleUrl = btn.getAttribute('href');
+                if (!toggleUrl) return;
+
+                // Disable briefly to prevent multi-click spam
+                if (btn.dataset.loading === 'true') return;
+                btn.dataset.loading = 'true';
+                btn.style.opacity = '0.7';
+
+                fetch(toggleUrl, {
+                    method: 'GET',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Accept': 'application/json'
+                    }
+                })
+                .then(function (res) {
+                    return res.json();
+                })
+                .then(function (data) {
+                    btn.dataset.loading = 'false';
+                    btn.style.opacity = '1';
+
+                    if (data.status === 'limit_reached') {
+                        showCcToast(data.message || 'Maximum 4 colleges can be compared at a time. Remove one first.', 'danger');
+                        return;
+                    }
+
+                    const matchingBtns = document.querySelectorAll('.compare-toggle-btn[data-college-id="' + collegeId + '"]');
+
+                    if (data.is_in_compare) {
+                        matchingBtns.forEach(function (b) {
+                            b.classList.remove('btn-outline-secondary');
+                            b.classList.add('btn-success', 'shadow-sm');
+                            const isDetail = b.getAttribute('data-detail') === 'true';
+                            b.innerHTML = '<i class="bi bi-check-lg me-1"></i>' + (isDetail ? 'In Comparison' : 'In Compare');
+                            b.title = 'Click to remove from comparison';
+                        });
+                    } else {
+                        matchingBtns.forEach(function (b) {
+                            b.classList.remove('btn-success', 'shadow-sm');
+                            b.classList.add('btn-outline-secondary');
+                            const isDetail = b.getAttribute('data-detail') === 'true';
+                            b.innerHTML = '<i class="bi bi-arrow-left-right me-1"></i>' + (isDetail ? 'Add to Compare' : 'Compare');
+                            b.title = 'Add to comparison';
+                        });
+                    }
+
+                    // Update comparison count badges
+                    document.querySelectorAll('.compare-count-badge').forEach(function (badge) {
+                        badge.textContent = data.count;
+                        if (data.count > 0) {
+                            badge.classList.remove('d-none');
+                        } else {
+                            badge.classList.add('d-none');
+                        }
+                    });
+
+                    // Update college list reminder bar if present
+                    const countText = document.getElementById('compareReminderCountText');
+                    const reminderBar = document.getElementById('compareActiveReminderBar');
+                    if (countText) {
+                        countText.textContent = data.count;
+                    }
+                    if (reminderBar) {
+                        if (data.count > 0) {
+                            reminderBar.classList.remove('d-none');
+                            reminderBar.classList.add('d-flex');
+                        } else {
+                            reminderBar.classList.remove('d-flex');
+                            reminderBar.classList.add('d-none');
+                        }
+                    }
+                })
+                .catch(function (err) {
+                    btn.dataset.loading = 'false';
+                    btn.style.opacity = '1';
+                    console.error('Compare toggle error:', err);
+                });
+            });
+        });
+
+        // =============================================================
+        // Async Wishlist Toggle (Prevents screen reload, screen shake, and scrolling up)
+        // =============================================================
+        document.addEventListener('DOMContentLoaded', function () {
+            document.addEventListener('click', function (e) {
+                const btn = e.target.closest('.wishlist-toggle-btn');
+                if (!btn) return;
+
+                e.preventDefault();
+                e.stopPropagation();
+
+                const universityId = btn.getAttribute('data-university-id');
+                const toggleUrl = btn.getAttribute('href');
+                if (!toggleUrl) return;
+
+                if (btn.dataset.loading === 'true') return;
+                btn.dataset.loading = 'true';
+                btn.style.opacity = '0.7';
+
+                fetch(toggleUrl, {
+                    method: 'GET',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Accept': 'application/json'
+                    }
+                })
+                .then(function (res) {
+                    if (res.status === 401) {
+                        return res.json().then(function (data) {
+                            if (typeof showCcToast === 'function') {
+                                showCcToast(data.message || 'Please log in to add to wishlist.', 'warning');
+                            }
+                            setTimeout(function () {
+                                window.location.href = data.login_url || '/account/login/';
+                            }, 1200);
+                        });
+                    }
+                    return res.json();
+                })
+                .then(function (data) {
+                    if (!data) return;
+                    btn.dataset.loading = 'false';
+                    btn.style.opacity = '1';
+
+                    if (data.status === 'success') {
+                        // Update all wishlist buttons for this university across the page
+                        const matchingBtns = document.querySelectorAll('.wishlist-toggle-btn[data-university-id="' + universityId + '"]');
+
+                        matchingBtns.forEach(function (b) {
+                            const isCircle = b.classList.contains('rounded-circle');
+                            const isDetail = b.classList.contains('rounded-pill');
+
+                            if (data.is_wishlisted) {
+                                b.classList.remove('btn-outline-danger', 'btn-outline-secondary');
+                                b.classList.add('btn-danger', 'text-white', 'shadow-sm');
+                                b.title = 'Saved to wishlist (click to remove)';
+
+                                if (isCircle) {
+                                    b.innerHTML = '<i class="bi bi-heart-fill"></i>';
+                                } else if (isDetail) {
+                                    b.innerHTML = '<i class="bi bi-heart-fill me-1"></i>In Wishlist';
+                                } else {
+                                    b.innerHTML = '<i class="bi bi-heart-fill me-1"></i>Wishlist';
+                                }
+                            } else {
+                                b.classList.remove('btn-danger', 'text-white', 'shadow-sm');
+                                b.classList.add('btn-outline-danger');
+                                b.title = 'Add to wishlist';
+
+                                if (isCircle) {
+                                    b.innerHTML = '<i class="bi bi-heart"></i>';
+                                } else if (isDetail) {
+                                    b.innerHTML = '<i class="bi bi-heart me-1"></i>Add to Wishlist';
+                                } else {
+                                    b.innerHTML = '<i class="bi bi-heart me-1"></i>Wishlist';
+                                }
+                            }
+                        });
+
+                        // Update wishlist count badge in sidebar
+                        document.querySelectorAll('.wishlist-count-badge').forEach(function (badge) {
+                            badge.textContent = data.wishlist_count;
+                            if (data.wishlist_count > 0) {
+                                badge.classList.remove('d-none');
+                            } else {
+                                badge.classList.add('d-none');
+                            }
+                        });
+
+                        // Floating non-intrusive toast (stays in place, no screen jump or layout shake)
+                        if (typeof showCcToast === 'function') {
+                            showCcToast(data.message, data.is_wishlisted ? 'success' : 'info');
+                        }
+                    }
+                })
+                .catch(function (err) {
+                    btn.dataset.loading = 'false';
+                    btn.style.opacity = '1';
+                    console.error('Wishlist toggle error:', err);
+                });
+            });
+        });
+
+
+
+        // =============================================================
+        // CollegeClue Sidebar Docking & Responsive Layout Interactivity
+        // =============================================================
+        (function() {
+            const sidebarEl = document.getElementById('collegeClueSidebar');
+            if (!sidebarEl) return;
+
+            // Dock side-by-side on all screens down to 380px to avoid overlapping content
+            const canDock = function() {
+                return window.innerWidth >= 380;
+            };
+
+            const applyDocked = function() {
+                if (canDock()) {
+                    document.body.classList.add('sidebar-open');
+                    document.body.style.setProperty('padding-left', 'var(--cc-sidebar-width)', 'important');
+                } else {
+                    removeDocked();
+                }
+            };
+
+            const removeDocked = function() {
+                document.body.classList.remove('sidebar-open');
+                document.documentElement.classList.remove('sidebar-open-init');
+                document.body.style.removeProperty('padding-left');
+            };
+
+            // Restore open state if user left it open
+            try {
+                const savedOpen = localStorage.getItem('collegeclue_sidebar_open');
+                if (canDock() && savedOpen === 'true') {
+                    applyDocked();
+                    const sb = bootstrap.Offcanvas.getOrCreateInstance(sidebarEl);
+                    sb.show();
+                } else {
+                    removeDocked();
+                }
+            } catch(e) {}
+
+            sidebarEl.addEventListener('show.bs.offcanvas', function() {
+                applyDocked();
+                try {
+                    localStorage.setItem('collegeclue_sidebar_open', 'true');
+                } catch(e) {}
+            });
+
+            sidebarEl.addEventListener('shown.bs.offcanvas', function() {
+                applyDocked();
+            });
+
+            sidebarEl.addEventListener('hide.bs.offcanvas', function() {
+                removeDocked();
+                try {
+                    localStorage.setItem('collegeclue_sidebar_open', 'false');
+                } catch(e) {}
+            });
+
+            sidebarEl.addEventListener('hidden.bs.offcanvas', function() {
+                removeDocked();
+            });
+
+            // Robust toggle button handler ensuring 100% reliable click response
+            const toggleBtn = document.getElementById('sidebarToggleBtn') || document.querySelector('[title="Toggle Navigation Menu"]');
+            if (toggleBtn) {
+                toggleBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    const sb = bootstrap.Offcanvas.getOrCreateInstance(sidebarEl);
+                    if (sidebarEl.classList.contains('show')) {
+                        sb.hide();
+                    } else {
+                        sb.show();
+                    }
+                });
+            }
+
+            // Dynamically adjust on window resize
+            window.addEventListener('resize', function() {
+                if (sidebarEl.classList.contains('show')) {
+                    applyDocked();
+                }
+            });
+        })();
+    </script>
+
+    {% block extra_js %}{% endblock %}
+</body>
+</html>
